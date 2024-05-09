@@ -1,7 +1,7 @@
-import { Costumer } from '../model/costumer';
+import { CostumerEntity } from '../model/costumer.entity';
 
 export interface ICostumerRepository {
-  findAll(): Costumer[];
+  findAll(): Promise<CostumerEntity[]>;
 }
 
 export const ICostumerRepository = Symbol('ICostumerRepository');

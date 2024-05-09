@@ -1,5 +1,5 @@
-import { Costumer } from '../model/costumer';
+import { CostumerEntity } from '../model/costumer.entity';
 
 export interface ICostumerService {
-  findAll(): Costumer[];
+  findAll(): Promise<CostumerEntity[]>;
 }

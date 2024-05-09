@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { Costumer } from 'src/costumer/domain/model/costumer';
+import { CostumerEntity } from 'src/costumer/domain/model/costumer.entity';
 import { ICostumerRepository } from 'src/costumer/domain/outboundPorts/costumer-repository.interface';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class CostumerRepository implements ICostumerRepository {
-  findAll(): Costumer[] {
-    throw new Error('Method not implemented.');
+  constructor(private readonly prisma: PrismaService) {}
+  async findAll(): Promise<CostumerEntity[]> {
+    const costumers = await this.prisma.costumers.findMany();
+    return costumers.map((costumer) => new CostumerEntity(costumer));
   }
 }

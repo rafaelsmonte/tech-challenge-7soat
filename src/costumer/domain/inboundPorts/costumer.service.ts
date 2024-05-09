@@ -1,15 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ICostumerService } from './costumer-service.interface';
 import { ICostumerRepository } from '../outboundPorts/costumer-repository.interface';
-import { Costumer } from '../model/costumer';
+import { CostumerEntity } from '../model/costumer.entity';
 
 @Injectable()
 export class CostumerService implements ICostumerService {
   constructor(
     @Inject(ICostumerRepository)
-    private readonly CostumerRepository: ICostumerRepository,
+    private readonly costumerRepository: ICostumerRepository,
   ) {}
-  findAll(): Costumer[] {
-    throw new Error('Method not implemented.');
+  async findAll(): Promise<CostumerEntity[]> {
+    return await this.costumerRepository.findAll();
   }
 }

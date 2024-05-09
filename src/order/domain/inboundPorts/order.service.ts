@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { IOrderService } from './IOrderService';
 import { IOrderRepository } from '../outboundPorts/order-repository.interface';
+import { IOrderService } from './order-service.interface';
 import { Order } from '../model/order';
 
 @Injectable()
