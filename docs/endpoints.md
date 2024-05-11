@@ -1,7 +1,7 @@
 # Documentação da API de Produtos
 ## Criar um novo produto
 - **Método:** POST
-- **URL:** `/produtos`
+- **URL:** `/products`
 - **Descrição:** Cria um novo produto com os dados fornecidos.
 - **Corpo da Requisição:**
   ```json
@@ -18,7 +18,7 @@
   - **400:** Requisição inválida
 ## Obter um produto por ID
 - **Método:** GET
-- **URL:** `/produtos/{id}`
+- **URL:** `/products/{id}`
 - **Descrição:** Obtém um produto com base no ID fornecido.
 - **Parâmetros:** `id` (integer): ID do produto a ser obtido.
 - **Respostas:**
@@ -37,7 +37,7 @@
   - **404:** Produto não encontrado
 ## Obter todos produtos
 - **Método:** GET
-- **URL:** `/produtos`
+- **URL:** `/products`
 - **Descrição:** Obtém todos produtos com base nos parametros.
 - **Query:**
   - `name` (string): ID do produto a ser obtido.
@@ -61,7 +61,7 @@
 ## Atualizar um produto por ID
 
 - **Método:** PUT
-- **URL:** `/produtos/{id}`
+- **URL:** `/products/{id}`
 - **Descrição:** Atualiza um produto com base no ID fornecido.
 - **Parâmetros:** `id` (integer): ID do produto a ser atualizado.
 - **Corpo da Requisição:**
@@ -81,7 +81,7 @@
 ## Remover um produto por ID
 
 - **Método:** DELETE
-- **URL:** `/produtos/{id}`
+- **URL:** `/products/{id}`
 - **Descrição:** Remove um produto com base no ID fornecido.
 - **Parâmetros:** `id` (integer): ID do produto a ser removido.
 - **Respostas:**
@@ -175,19 +175,7 @@
 - **Respostas:**
   - **204:** Cliente removido com sucesso
   - **404:** Cliente não encontrada
-### Criar uma nova categoria
 
-- **Método:** GET
-- **URL:** `/categorias`
-- **Descrição:** Cria uma nova categoria com os dados fornecidos.
-- **Corpo da Requisição:**
-  ```json
-  {
-    "id": 1,
-    "createdAt": "2024-05-11T12:00:00Z",
-    "updatedAt": "2024-05-11T12:00:00Z",
-    "type": "Tipo da Categoria"
-  }
 ## Obter todas categorias
 - **Método:** GET
 - **URL:** `/category`
