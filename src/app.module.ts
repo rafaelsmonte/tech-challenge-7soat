@@ -7,7 +7,8 @@ import appConfig from './app.config';
 import logger from './app.logger';
 import { AppLoggerMiddleware } from './app.logger.middleware';
 import { ProductModule } from './product/product.module';
-import { PrismaModule } from './prisma/prisma.module';
+import { PrismaModule } from './infra/prisma/prisma.module';
+import { CategoryModule } from './category/category.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { PrismaModule } from './prisma/prisma.module';
     CostumerModule,
     ProductModule,
     OrderModule,
+    CategoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],

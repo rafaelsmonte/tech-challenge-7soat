@@ -1,7 +1,7 @@
-import { Order } from '../model/order';
+import { OrderEntity } from '../model/order.entity';
 
 export interface IOrderRepository {
-  findAll(): Order[];
+  findAll(): OrderEntity[];
 }
 
 export const IOrderRepository = Symbol('IOrderRepository');

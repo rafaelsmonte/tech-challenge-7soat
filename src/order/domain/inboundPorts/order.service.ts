@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { IOrderRepository } from '../outboundPorts/order-repository.interface';
 import { IOrderService } from './order-service.interface';
-import { Order } from '../model/order';
+import { OrderEntity } from '../model/order.entity';
 
 @Injectable()
 export class OrderService implements IOrderService {
@@ -9,7 +9,7 @@ export class OrderService implements IOrderService {
     @Inject(IOrderRepository)
     private readonly orderRepository: IOrderRepository,
   ) {}
-  findAll(): Order[] {
+  findAll(): OrderEntity[] {
     throw new Error('Method not implemented.');
   }
 }

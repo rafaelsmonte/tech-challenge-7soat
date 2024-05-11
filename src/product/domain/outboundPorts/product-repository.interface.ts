@@ -1,7 +1,7 @@
-import { Product } from '../model/product';
+import { ProductEntity } from '../model/product.entity';
 
 export interface IProductRepository {
-  findAll(): Product[];
+  findAll(): ProductEntity[];
 }
 
 export const IProductRepository = Symbol('IProductRepository');

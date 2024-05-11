@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CostumerEntity } from 'src/costumer/domain/model/costumer.entity';
 import { ICostumerRepository } from 'src/costumer/domain/outboundPorts/costumer-repository.interface';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from 'src/infra/prisma/prisma.service';
 
 @Injectable()
 export class CostumerRepository implements ICostumerRepository {

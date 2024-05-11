@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { Order } from 'src/order/domain/model/order';
+import { OrderEntity } from 'src/order/domain/model/order.entity';
 import { IOrderRepository } from 'src/order/domain/outboundPorts/order-repository.interface';
 
 @Injectable()
 export class OrderRepository implements IOrderRepository {
-  findAll(): Order[] {
+  findAll(): OrderEntity[] {
     throw new Error('Method not implemented.');
   }
 }

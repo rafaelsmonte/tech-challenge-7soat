@@ -1,5 +1,5 @@
-import { Order } from '../model/order';
+import { OrderEntity } from '../model/order.entity';
 
 export interface IOrderService {
-  findAll(): Order[];
+  findAll(): OrderEntity[];
 }
