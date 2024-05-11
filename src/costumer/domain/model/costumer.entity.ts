@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Costumers } from '@prisma/client';
+import { Costumer } from '@prisma/client';
 
-export class CostumerEntity implements Costumers {
+export class CostumerEntity implements Costumer {
   @ApiProperty()
   id: number;
 

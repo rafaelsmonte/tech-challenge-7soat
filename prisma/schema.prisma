@@ -7,29 +7,29 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Costumers {
+model Costumer {
   id               Int      @id @default(autoincrement())
   createdAt        DateTime @default(now()) @db.Timestamptz(3)
   updatedAt        DateTime @updatedAt @db.Timestamptz(3)
   name             String   @db.VarChar(256)
   taxpayerRegistry String   @map("taxpayerRegistry") @db.VarChar(256)
   email            String   @db.VarChar(256)
-  Orders           Orders[]
+  Order            Order[]
 
   @@map("costumers")
 }
 
-model Categories {
+model Category {
   id        Int          @id @default(autoincrement())
   createdAt DateTime     @default(now()) @db.Timestamptz(3)
   updatedAt DateTime     @updatedAt @db.Timestamptz(3)
   type      CategoryType @default(MEAL)
-  Products  Products[]
+  Product   Product[]
 
   @@map("categories")
 }
 
-model Products {
+model Product {
   id          Int      @id @default(autoincrement())
   createdAt   DateTime @default(now()) @db.Timestamptz(3)
   updatedAt   DateTime @updatedAt @db.Timestamptz(3)
@@ -39,13 +39,13 @@ model Products {
   pictures    String   @db.VarChar(256)
   categoryId  Int
 
-  Categories    Categories      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  OrderProducts OrderProducts[]
+  Category     Category       @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  OrderProduct OrderProduct[]
 
   @@map("products")
 }
 
-model Orders {
+model Order {
   id         Int         @id @default(autoincrement())
   createdAt  DateTime    @default(now()) @db.Timestamptz(3)
   updatedAt  DateTime    @updatedAt @db.Timestamptz(3)
@@ -54,13 +54,13 @@ model Orders {
   trackingId Int
   status     OrderStatus @default(AWAITING)
 
-  Costumers     Costumers?      @relation(fields: [costumerId], references: [id], onDelete: Cascade)
-  OrderProducts OrderProducts[]
+  Costumer     Costumer?      @relation(fields: [costumerId], references: [id], onDelete: Cascade)
+  OrderProduct OrderProduct[]
 
   @@map("orders")
 }
 
-model OrderProducts {
+model OrderProduct {
   id        Int      @id @default(autoincrement())
   orderId   Int
   productId Int
@@ -68,8 +68,8 @@ model OrderProducts {
   updatedAt DateTime @updatedAt @db.Timestamptz(3)
   quantity  Int
   unitPrice Decimal  @db.Decimal(10, 2)
-  Orders    Orders   @relation(fields: [orderId], references: [id])
-  Products  Products @relation(fields: [productId], references: [id])
+  Order     Order    @relation(fields: [orderId], references: [id])
+  Product   Product  @relation(fields: [productId], references: [id])
 
   @@map("orderProducts")
 }

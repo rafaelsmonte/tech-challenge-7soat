@@ -2,7 +2,7 @@ import { Controller, Get } from '@nestjs/common';
 import { ProductService } from 'src/product/domain/inboundPorts/product.service';
 
 @Controller('product')
-export class productController {
+export class ProductController {
   constructor(private productService: ProductService) {}
 
   @Get()

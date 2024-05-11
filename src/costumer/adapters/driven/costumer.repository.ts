@@ -7,7 +7,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class CostumerRepository implements ICostumerRepository {
   constructor(private readonly prisma: PrismaService) {}
   async findAll(): Promise<CostumerEntity[]> {
-    const costumers = await this.prisma.costumers.findMany();
+    const costumers = await this.prisma.costumer.findMany();
     return costumers.map((costumer) => new CostumerEntity(costumer));
   }
 }

@@ -3,7 +3,7 @@ import { CategoryType, PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-  const mealCategory = await prisma.categories.upsert({
+  const mealCategory = await prisma.category.upsert({
     where: { id: 1 },
     update: {
       type: CategoryType.MEAL,
@@ -13,7 +13,7 @@ async function main() {
     },
   });
 
-  const drinkCategory = await prisma.categories.upsert({
+  const drinkCategory = await prisma.category.upsert({
     where: { id: 2 },
     update: {
       type: CategoryType.DRINK,
@@ -23,7 +23,7 @@ async function main() {
     },
   });
 
-  const sideCategory = await prisma.categories.upsert({
+  const sideCategory = await prisma.category.upsert({
     where: { id: 3 },
     update: {
       type: CategoryType.SIDE,
@@ -33,7 +33,7 @@ async function main() {
     },
   });
 
-  const dessertCategory = await prisma.categories.upsert({
+  const dessertCategory = await prisma.category.upsert({
     where: { id: 4 },
     update: {
       type: CategoryType.DESSERT,

@@ -6,9 +6,18 @@ import { CostumerModule } from './costumer/costumer.module';
 import appConfig from './app.config';
 import logger from './app.logger';
 import { AppLoggerMiddleware } from './app.logger.middleware';
+import { ProductModule } from './product/product.module';
+import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
-  imports: [OrderModule, logger, appConfig, CostumerModule],
+  imports: [
+    logger,
+    appConfig,
+    PrismaModule,
+    CostumerModule,
+    ProductModule,
+    OrderModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
