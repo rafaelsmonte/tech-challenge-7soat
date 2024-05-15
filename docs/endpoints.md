@@ -10,7 +10,7 @@
     "price": 10.99,
     "description": "Descrição do produto",
     "pictures": "http://linkdapimagem.com/imagem.png",
-    "Categories": 1,
+    "category": 1,
   }
   ```
 - **Respostas:**
@@ -30,8 +30,8 @@
       "name": "Produto",
       "price": 10.99,
       "description": "Descrição do produto",
-      "pictures": "http://linkdapimagem.com/imagem.png",
-      "Categories": {"id": 1, "name": "Categoria"},
+      "pictures": ["http://linkdapimagem.com/imagem.png"],
+      "category": {"id": 1, "name": "Categoria"},
     }
     ```
   - **404:** Produto não encontrado
@@ -41,7 +41,8 @@
 - **Descrição:** Obtém todos produtos com base nos parametros.
 - **Query:**
   - `name` (string): ID do produto a ser obtido.
-  - `order-by`: name, createAt, price, categories.
+  - `order-by`: name, createAt, price, category.
+  - `sort`: asc or desc.
   - `category` (integer): ID da categoria a ser obtido.
 - **Respostas:**
   - **200:** Produto obtido com sucesso
@@ -53,8 +54,8 @@
       "name": "Produto",
       "price": 10.99,
       "description": "Descrição do produto",
-      "pictures": "http://linkdapimagem.com/imagem.png",
-      "Categories": {"id": 1, "name": "Categoria"},
+      "pictures": ["http://linkdapimagem.com/imagem.png"],
+      "category": {"id": 1, "name": "Categoria"},
     }]
     ```
   - **404:** Produto não encontrado
@@ -69,8 +70,8 @@
     "name": "Produto Atualizado",
     "price": 15.99,
     "description": "Descrição atualizada do produto",
-    "pictures": "http://linkdapimagem.com/imagem_atualizada.png",
-    "Categories": 1,
+    "pictures": ["http://linkdapimagem.com/imagem.png"],
+    "category": 1,
   }
   ```
 - **Respostas:**
@@ -94,7 +95,7 @@
 - **Corpo da Requisição:**
   ```json
   {
-    "name": "Nome da customer",
+    "name": "Nome do Cliente",
     "taxpayerRegistry": "123456789",
     "email": "email@example.com",
   }
@@ -102,6 +103,7 @@
 - **Respostas:**
   - **201:** customer criado com sucesso
   - **400:** Requisição inválida
+  - **409:** CPF ja registrado
 ## Obter um cliente por ID
 - **Método:** GET
 - **URL:** `/customers/{id}`
@@ -129,7 +131,7 @@
   - `taxpayerRegistry` (string): documento do cliente.
   - `email` (string): email do cliente.
   - `order-by`: name, taxpayerRegistry e email.
-  - 
+  - `sort`: asc or desc.
 - **Respostas:**
   - **200:** Cliente obtida com sucesso
     ```json
@@ -157,9 +159,10 @@
   }
   ```
 - **Respostas:**
-  - **200:** customer atualizada com sucesso
+  - **200:** Cliente atualizado com sucesso
   - **400:** Requisição inválida
-  - **404:** customer não encontrada
+  - **404:** Cliente não encontrada
+  - **409:** CPF já cadastrado
 ## Remover um Cliente por ID
 - **Método:** DELETE
 - **URL:** `/customers/{id}`
@@ -205,8 +208,6 @@
   {
     "costumerId": 1,
     "notes": "sem cebola",
-    "trackingId": 111,
-    //Nao enviar o status sempre que criar um pedido ja vai para o status de AWAITING????
     "OrderProducts":[
     {
       "productId": 1,
@@ -235,7 +236,7 @@
     "id":1,
     "createdAt": "2024-05-11T12:00:00Z",
     "updatedAt": "2024-05-11T12:00:00Z",
-    "Costumers":{
+    "customer":{
         "id": 1,
         "createdAt": "2024-05-11T12:00:00Z",
         "updatedAt": "2024-05-11T12:00:00Z",
@@ -248,12 +249,12 @@
     "status":"DONE",
     "OrderProducts":[
     {
-      "Products": {
+      "product": {
         "name": "Batata",
         "price": 15.99,
         "description": "Batata 200gr",
-        "pictures": "http://linkdapimagem.com/imagem_atualizada.png",
-        "Categories": {
+        "pictures": ["http://linkdapimagem.com/imagem.png"],
+        "category": {
           "id": 1,
           "type":"SIDE"
         },
@@ -262,12 +263,12 @@
       "unitPrice":10.50,
     },
     {
-      "Products": {
+      "product": {
         "name": "Milk Shake",
         "price": 15.99,
         "description": "Milk shake de chocolate",
-        "pictures": "http://linkdapimagem.com/imagem_atualizada.png",
-        "Categories": {
+        "pictures": ["http://linkdapimagem.com/imagem.png"],
+        "category": {
           "id": 1,
           "type":"SIDE"
         },
@@ -288,6 +289,7 @@
   - `status` (string): Status do pedido.
   - `createdAt` (date): data do pedido.
   - `order-by`: createdAt, status e customer.
+  - `sort`: asc or desc.
 - **Respostas:**
   - **200:** Pedidos obtidos com sucesso
   ```json
@@ -295,7 +297,7 @@
     "id":1,
     "createdAt": "2024-05-11T12:00:00Z",
     "updatedAt": "2024-05-11T12:00:00Z",
-    "Costumers":{
+    "customer":{
         "id": 1,
         "createdAt": "2024-05-11T12:00:00Z",
         "updatedAt": "2024-05-11T12:00:00Z",
@@ -308,12 +310,12 @@
     "status":"DONE",
     "OrderProducts":[
     {
-      "Products": {
+      "product": {
         "name": "Batata",
         "price": 15.99,
         "description": "Batata 200gr",
-        "pictures": "http://linkdapimagem.com/imagem_atualizada.png",
-        "Categories": {
+        "pictures": ["http://linkdapimagem.com/imagem.png"],
+        "category": {
           "id": 1,
           "type":"SIDE"
         },
@@ -322,12 +324,12 @@
       "unitPrice":10.50,
     },
     {
-      "Products": {
+      "product": {
         "name": "Milk Shake",
         "price": 15.99,
         "description": "Milk shake de chocolate",
-        "pictures": "http://linkdapimagem.com/imagem_atualizada.png",
-        "Categories": {
+        "pictures": ["http://linkdapimagem.com/imagem.png"],
+        "category": {
           "id": 1,
           "type":"SIDE"
         },
@@ -341,7 +343,7 @@
   - **404:** Pedido não encontrado
 ## Alterar o status de um pedido
 - **Método:** POST
-- **URL:** `/order/change-status/{id}`
+- **URL:** `/order/{id}/change-status/`
 - **Descrição:** Altera o status de um pedido com os dados fornecidos.
 - **Corpo da Requisição:**
   ```json
@@ -350,7 +352,5 @@
   }
   ```
 - **Respostas:**
-  - **201:** status alterado com sucesso
+  - **200:** status alterado com sucesso
   - **400:** Requisição inválida
-
-
