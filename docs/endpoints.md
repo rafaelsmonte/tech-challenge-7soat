@@ -1,3 +1,7 @@
+
+# Base URL
+ - A url base de todas a as APIS: <http://{ip}:{port}/api/{version}>
+
 # Documentação da API de Produtos
 ## Criar um novo produto
 - **Método:** POST
@@ -9,13 +13,14 @@
     "name": "Produto",
     "price": 10.99,
     "description": "Descrição do produto",
-    "pictures": "http://linkdapimagem.com/imagem.png",
-    "category": 1,
+    "pictures": ["http://linkdapimagem.com/imagem.png"],
+    "categoryId": 1,
   }
   ```
 - **Respostas:**
   - **201:** Produto criado com sucesso
   - **400:** Requisição inválida
+  - **500:** Erro interno
 ## Obter um produto por ID
 - **Método:** GET
 - **URL:** `/products/{id}`
@@ -35,15 +40,17 @@
     }
     ```
   - **404:** Produto não encontrado
+  - **500:** Erro interno
+
 ## Obter todos produtos
 - **Método:** GET
 - **URL:** `/products`
 - **Descrição:** Obtém todos produtos com base nos parametros.
 - **Query:**
   - `name` (string): ID do produto a ser obtido.
-  - `order-by`: name, createAt, price, category.
-  - `sort`: asc or desc.
-  - `category` (integer): ID da categoria a ser obtido.
+  - `orderBy`: name, createAt, price, category.
+  - `sort`: asc or desc. (default: asc)
+  - `categoryId` (integer): ID da categoria a ser obtido.
 - **Respostas:**
   - **200:** Produto obtido com sucesso
     ```json
@@ -59,6 +66,7 @@
     }]
     ```
   - **404:** Produto não encontrado
+  - **500:** Erro interno
 ## Atualizar um produto por ID
 - **Método:** PUT
 - **URL:** `/products/{id}`
@@ -71,13 +79,14 @@
     "price": 15.99,
     "description": "Descrição atualizada do produto",
     "pictures": ["http://linkdapimagem.com/imagem.png"],
-    "category": 1,
+    "categoryId": 1,
   }
   ```
 - **Respostas:**
   - **200:** Produto atualizado com sucesso
   - **400:** Requisição inválida
   - **404:** Produto não encontrado
+  - **500:** Erro interno
 ## Remover um produto por ID
 
 - **Método:** DELETE
@@ -101,9 +110,10 @@
   }
   ```
 - **Respostas:**
-  - **201:** customer criado com sucesso
+  - **201:** Cliente criado com sucesso
   - **400:** Requisição inválida
   - **409:** CPF ja registrado
+  - **500:** Erro interno
 ## Obter um cliente por ID
 - **Método:** GET
 - **URL:** `/customers/{id}`
@@ -116,12 +126,13 @@
       "id": 1,
       "createdAt": "2024-05-11T12:00:00Z",
       "updatedAt": "2024-05-11T12:00:00Z",
-      "name": "Nome da customer",
+      "name": "Nome da Cliente",
       "taxpayerRegistry": "123456789",
       "email": "email@example.com",
     }
     ```
   - **404:** cliente não encontrado
+  - **500:** Erro interno
 ## Obter todos clientes
 - **Método:** GET
 - **URL:** `/customers`
@@ -130,8 +141,8 @@
   - `name` (string): nome do cliente a ser obtido.
   - `taxpayerRegistry` (string): documento do cliente.
   - `email` (string): email do cliente.
-  - `order-by`: name, taxpayerRegistry e email.
-  - `sort`: asc or desc.
+  - `orderBy`: name, taxpayerRegistry e email.
+  - `sort`: asc or desc. (default: asc)
 - **Respostas:**
   - **200:** Cliente obtida com sucesso
     ```json
@@ -145,8 +156,9 @@
     }
     ```
   - **404:** Cliente não encontrado
+  - **500:** Erro interno
 ## Atualizar uma Cliente por ID
-- **Método:** PUT
+- **Método:** PATCH
 - **URL:** `/customers/{id}`
 - **Descrição:** Atualiza um cliente com base no ID fornecido.
 - **Parâmetros:** `id` (integer): ID do cliente a ser atualizado.
@@ -154,7 +166,6 @@
   ```json
   {
     "name": "Nome do cliente Atualizado",
-    "taxpayerRegistry": "987654321",
     "email": "novoemail@example.com",
   }
   ```
@@ -162,7 +173,7 @@
   - **200:** Cliente atualizado com sucesso
   - **400:** Requisição inválida
   - **404:** Cliente não encontrada
-  - **409:** CPF já cadastrado
+  - **500:** Erro interno
 ## Remover um Cliente por ID
 - **Método:** DELETE
 - **URL:** `/customers/{id}`
@@ -197,43 +208,42 @@
 
     }]
     ```
-  - **404:** customer não encontrada
+  - **404:** Cliente não encontrado
+  - **500:** Erro interno
 # Documentação da API de Pedido
 ## Criar um pedido
 - **Método:** POST
-- **URL:** `/order`
+- **URL:** `/orders`
 - **Descrição:** Cria um novo pedido com os dados fornecidos.
 - **Corpo da Requisição:**
   ```json
   {
-    "costumerId": 1,
+    "costumerId": 1, //optional
     "notes": "sem cebola",
-    "OrderProducts":[
+    "orderProducts":[
     {
       "productId": 1,
       "quantity":2,
-      "unitPrice":10.50,
     },
     {
       "productId": 25,
       "quantity":1,
-      "unitPrice":3.50,
     }]
   }
   ```
 - **Respostas:**
   - **201:** pedido criado com sucesso
   - **400:** Requisição inválida
+  - **500:** Erro interno
 ## Obter um Pedido por ID
 - **Método:** GET
-- **URL:** `/order/{id}`
+- **URL:** `/orders/{id}`
 - **Descrição:** Obtém um pedido com base no ID fornecido.
 - **Parâmetros:** `id` (integer): ID do pedido a ser obtida.
 - **Respostas:**
   - **200:** pedido obtido com sucesso
   ```json
   {
-    "id":1,
     "createdAt": "2024-05-11T12:00:00Z",
     "updatedAt": "2024-05-11T12:00:00Z",
     "customer":{
@@ -247,9 +257,10 @@
     "notes": "sem cebola",
     "trackingId": 111,
     "status":"DONE",
-    "OrderProducts":[
+    "totalPrice":123,
+    "products":[
     {
-      "product": {
+        "id":1,
         "name": "Batata",
         "price": 15.99,
         "description": "Batata 200gr",
@@ -258,12 +269,10 @@
           "id": 1,
           "type":"SIDE"
         },
-      },
-      "quantity":2,
-      "unitPrice":10.50,
+        "quantity":2,
     },
     {
-      "product": {
+        "id":2,
         "name": "Milk Shake",
         "price": 15.99,
         "description": "Milk shake de chocolate",
@@ -272,24 +281,23 @@
           "id": 1,
           "type":"SIDE"
         },
-      },
       "quantity":1,
-      "unitPrice":13.50,
     }]
   }
     ```
 
   - **404:** Pedido não encontrado
+  - **500:** Erro interno
 ## Obter todos Pedidos
 - **Método:** GET
-- **URL:** `/order`
+- **URL:** `/orders`
 - **Descrição:** Obtém todos os pedidos com base nos parametros.
 - **Query:**
-  - `customerID` (int): id do cliente a ser obtido.
+  - `customerId` (int): id do cliente a ser obtido.
   - `status` (string): Status do pedido.
   - `createdAt` (date): data do pedido.
-  - `order-by`: createdAt, status e customer.
-  - `sort`: asc or desc.
+  - `orderBy`: createdAt, status e customer.
+  - `sort`: asc or desc. (default: asc)
 - **Respostas:**
   - **200:** Pedidos obtidos com sucesso
   ```json
@@ -308,7 +316,8 @@
     "notes": "sem cebola",
     "trackingId": 111,
     "status":"DONE",
-    "OrderProducts":[
+    "totalPrice":100.00,
+    "orderProducts":[
     {
       "product": {
         "name": "Batata",
@@ -321,7 +330,6 @@
         },
       },
       "quantity":2,
-      "unitPrice":10.50,
     },
     {
       "product": {
@@ -335,15 +343,15 @@
         },
       },
       "quantity":1,
-      "unitPrice":13.50,
     }]
   }]
     ```
 
   - **404:** Pedido não encontrado
+  - **500:** Erro interno
 ## Alterar o status de um pedido
 - **Método:** POST
-- **URL:** `/order/{id}/change-status/`
+- **URL:** `/orders/{id}/change-status/`
 - **Descrição:** Altera o status de um pedido com os dados fornecidos.
 - **Corpo da Requisição:**
   ```json
@@ -354,3 +362,4 @@
 - **Respostas:**
   - **200:** status alterado com sucesso
   - **400:** Requisição inválida
+  - **500:** Erro interno
