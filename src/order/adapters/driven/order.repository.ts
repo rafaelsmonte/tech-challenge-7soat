@@ -11,49 +11,30 @@ export class OrderRepository implements IOrderRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(orderDTO: CreateOrderDTO): Promise<OrderEntity> {
-    try {
-      const orderData = {
-        costumerId: orderDTO.costumerId,
+    const createdOrder = await this.prisma.order.create({
+      data: {
+        costumer: {
+          connect: { id: orderDTO.costumerId },
+        },
         notes: orderDTO.notes,
-        trackingId: 1, // TODO generate a random int
-        status: OrderStatus.AWAITING,
-      };
+        trackingId: 1, // TODO generate random int
+        orderProducts: {
+          create: orderDTO.orderProducts.map((orderProduct) => ({
+            product: {
+              connect: { id: orderProduct.productId },
+            },
+            quantity: orderProduct.quantity,
+          })),
+        },
+      },
+    });
 
-      const createdOrder = await this.prisma.order.create({
-        data: orderData,
-      });
-
-      const orderEntity = new OrderEntity(createdOrder);
-
-      orderDTO.orderProducts.forEach(async (orderProduct) => {
-        const product = await this.prisma.product.findFirst({
-          where: { id: orderProduct.productId },
-        });
-
-        const orderProductData = {
-          orderId: createdOrder.id,
-          productId: orderProduct.productId,
-          quantity: orderProduct.quantity,
-          unitPrice: product.price,
-        };
-
-        const createdOrderProduct = await this.prisma.orderProduct.create({
-          data: orderProductData,
-        });
-
-        orderEntity.orderProducts.push(createdOrderProduct);
-      });
-
-      return orderEntity;
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
+    return new OrderEntity(createdOrder);
   }
 
-  async findAll(): Promise<OrderEntity[]> {
+  async list(): Promise<OrderEntity[]> {
     const rawOrders = await this.prisma.$queryRaw<any[]>`
-    SELECT o.id, c.id AS "clientId", c."name" AS "costumerName", p."id" AS "productId", p."name" AS "productName", op.quantity, op."unitPrice", o.status
+    SELECT o.id, c.id AS "clientId", c."name" AS "costumerName", p."id" AS "productId", p."name" AS "productName", op.quantity, o.status
     FROM orders o
     LEFT JOIN costumers c ON c.id = o."costumerId"
     INNER JOIN "orderProducts" op ON op."orderId" = o.id
@@ -82,13 +63,52 @@ export class OrderRepository implements IOrderRepository {
         productId: row.productId,
         productName: row.productName,
         quantity: row.quantity,
-        unitPrice: row.unitPrice,
       });
 
       return acc;
     }, []);
 
     return orders;
+  }
+
+  async retrieve(id: number): Promise<OrderEntity> {
+    const rawOrder = await this.prisma.$queryRaw<any>`
+      SELECT o.id, c.id AS "clientId", c."name" AS "costumerName", p."id" AS "productId", p."name" AS "productName", op.quantity, o.status
+      FROM orders o
+      LEFT JOIN costumers c ON c.id = o."costumerId"
+      INNER JOIN "orderProducts" op ON op."orderId" = o.id
+      INNER JOIN products p ON p.id = op."productId"
+      WHERE o.id = ${id}
+  `;
+
+    const order: OrderEntity[] = rawOrder.reduce((acc, row) => {
+      let order = acc.find((order) => order.id === row.id);
+
+      if (!order) {
+        const costumer = row.clientId
+          ? { id: row.clientId, name: row.costumerName }
+          : null;
+
+        order = {
+          id: row.id,
+          status: row.status,
+          costumer: costumer,
+          orderProducts: [],
+        };
+
+        acc.push(order);
+      }
+
+      order.orderProducts.push({
+        productId: row.productId,
+        productName: row.productName,
+        quantity: row.quantity,
+      });
+
+      return acc;
+    }, []);
+
+    return order[0];
   }
 
   async delete(id: number): Promise<void> {

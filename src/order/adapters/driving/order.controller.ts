@@ -25,8 +25,14 @@ export class OrderController {
 
   @Get()
   @ApiOkResponse({ type: OrderEntity, isArray: true })
-  async findAll(): Promise<OrderEntity[]> {
-    return await this.orderService.findAll();
+  async list(): Promise<OrderEntity[]> {
+    return await this.orderService.list();
+  }
+
+  @Get('id')
+  @ApiOkResponse({ type: OrderEntity })
+  async retrieve(@Param('id') id: number): Promise<OrderEntity> {
+    return await this.orderService.retrieve(id);
   }
 
   @Delete(':id')

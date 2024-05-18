@@ -15,8 +15,12 @@ export class ProductService implements IProductService {
     return await this.productRepository.create(productDTO);
   }
 
-  async findAll(): Promise<ProductEntity[]> {
-    return await this.productRepository.findAll();
+  async list(): Promise<ProductEntity[]> {
+    return await this.productRepository.list();
+  }
+
+  async retrieve(id: number): Promise<ProductEntity> {
+    return await this.productRepository.retrieve(id);
   }
 
   async delete(id: number): Promise<void> {

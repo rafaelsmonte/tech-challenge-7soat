@@ -9,7 +9,6 @@ import { AppLoggerMiddleware } from './app.logger.middleware';
 import { ProductModule } from './product/product.module';
 import { PrismaModule } from './infra/prisma/prisma.module';
 import { CategoryModule } from './category/category.module';
-import { OrderProductModule } from './order-product/order-product.module';
 
 @Module({
   imports: [
@@ -20,7 +19,6 @@ import { OrderProductModule } from './order-product/order-product.module';
     ProductModule,
     OrderModule,
     CategoryModule,
-    OrderProductModule,
   ],
   controllers: [AppController],
   providers: [AppService],

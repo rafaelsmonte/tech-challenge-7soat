@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsNotEmpty } from 'class-validator';
+import { IsArray, IsEnum, IsNotEmpty } from 'class-validator';
 import { CategoryType } from 'src/common/enum/category-type.enum';
 
 export class CreateProductDTO {
@@ -13,8 +13,9 @@ export class CreateProductDTO {
   @ApiProperty()
   description: string;
 
-  @ApiProperty()
-  pictures: string;
+  @ApiProperty({ type: Array })
+  @IsArray()
+  pictures: string[];
 
   @ApiProperty()
   @IsEnum(CategoryType)

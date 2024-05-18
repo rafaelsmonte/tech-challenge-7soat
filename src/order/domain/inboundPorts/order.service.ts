@@ -15,8 +15,12 @@ export class OrderService implements IOrderService {
     return await this.orderRepository.create(orderDTO);
   }
 
-  async findAll(): Promise<OrderEntity[]> {
-    return await this.orderRepository.findAll();
+  async list(): Promise<OrderEntity[]> {
+    return await this.orderRepository.list();
+  }
+
+  async retrieve(id: number): Promise<OrderEntity> {
+    return await this.orderRepository.retrieve(id);
   }
 
   async delete(id: number): Promise<void> {

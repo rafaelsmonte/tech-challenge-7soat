@@ -34,7 +34,7 @@ CREATE TABLE "products" (
     "name" VARCHAR(256) NOT NULL,
     "price" DECIMAL(10,2) NOT NULL,
     "description" VARCHAR(256) NOT NULL,
-    "pictures" VARCHAR(256) NOT NULL,
+    "pictures" VARCHAR(256)[],
     "categoryId" INTEGER NOT NULL,
 
     CONSTRAINT "products_pkey" PRIMARY KEY ("id")
@@ -61,10 +61,12 @@ CREATE TABLE "orderProducts" (
     "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMPTZ(3) NOT NULL,
     "quantity" INTEGER NOT NULL,
-    "unitPrice" DECIMAL(10,2) NOT NULL,
 
     CONSTRAINT "orderProducts_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "costumers_taxpayerRegistry_key" ON "costumers"("taxpayerRegistry");
 
 -- AddForeignKey
 ALTER TABLE "products" ADD CONSTRAINT "products_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "categories"("id") ON DELETE CASCADE ON UPDATE CASCADE;

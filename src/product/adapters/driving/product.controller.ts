@@ -25,8 +25,14 @@ export class ProductController {
 
   @Get()
   @ApiOkResponse({ type: ProductEntity, isArray: true })
-  async findAll(): Promise<ProductEntity[]> {
-    return await this.productService.findAll();
+  async list(): Promise<ProductEntity[]> {
+    return await this.productService.list();
+  }
+
+  @Get(':id')
+  @ApiOkResponse({ type: ProductEntity })
+  async retrieve(@Param('id') id: number): Promise<ProductEntity> {
+    return await this.productService.retrieve(id);
   }
 
   @Delete(':id')

@@ -25,8 +25,14 @@ export class CostumerController {
 
   @Get()
   @ApiOkResponse({ type: CostumerEntity, isArray: true })
-  async findAll(): Promise<CostumerEntity[]> {
-    return await this.costumerService.findAll();
+  async list(): Promise<CostumerEntity[]> {
+    return await this.costumerService.list();
+  }
+
+  @Get('id')
+  @ApiOkResponse({ type: CostumerEntity })
+  async retrieve(@Param('id') id: number): Promise<CostumerEntity> {
+    return await this.costumerService.retrieve(id);
   }
 
   @Delete(':id')

@@ -12,9 +12,9 @@ model Costumer {
   createdAt        DateTime @default(now()) @db.Timestamptz(3)
   updatedAt        DateTime @updatedAt @db.Timestamptz(3)
   name             String   @db.VarChar(256)
-  taxpayerRegistry String   @map("taxpayerRegistry") @db.VarChar(256)
+  taxpayerRegistry String   @unique @db.VarChar(256)
   email            String   @db.VarChar(256)
-  Order            Order[]
+  order            Order[]
 
   @@map("costumers")
 }
@@ -24,7 +24,7 @@ model Category {
   createdAt DateTime     @default(now()) @db.Timestamptz(3)
   updatedAt DateTime     @updatedAt @db.Timestamptz(3)
   type      CategoryType @default(MEAL)
-  Product   Product[]
+  product   Product[]
 
   @@map("categories")
 }
@@ -36,11 +36,11 @@ model Product {
   name        String   @db.VarChar(256)
   price       Decimal  @db.Decimal(10, 2)
   description String   @db.VarChar(256)
-  pictures    String   @db.VarChar(256)
+  pictures    String[] @db.VarChar(256)
   categoryId  Int
 
-  Category     Category       @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  OrderProduct OrderProduct[]
+  category      Category       @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  orderProducts OrderProduct[]
 
   @@map("products")
 }
@@ -54,8 +54,8 @@ model Order {
   trackingId Int
   status     OrderStatus @default(AWAITING)
 
-  Costumer     Costumer?      @relation(fields: [costumerId], references: [id], onDelete: Cascade)
-  OrderProduct OrderProduct[]
+  costumer      Costumer?      @relation(fields: [costumerId], references: [id], onDelete: Cascade)
+  orderProducts OrderProduct[]
 
   @@map("orders")
 }
@@ -67,10 +67,9 @@ model OrderProduct {
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   updatedAt DateTime @updatedAt @db.Timestamptz(3)
   quantity  Int
-  unitPrice Decimal  @db.Decimal(10, 2)
-  
-  Order     Order    @relation(fields: [orderId], references: [id])
-  Product   Product  @relation(fields: [productId], references: [id])
+
+  order   Order   @relation(fields: [orderId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
 
   @@map("orderProducts")
 }

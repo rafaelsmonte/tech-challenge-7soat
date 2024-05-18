@@ -13,9 +13,16 @@ export class CostumerRepository implements ICostumerRepository {
     return await this.prisma.costumer.create({ data: costumerDTO });
   }
 
-  async findAll(): Promise<CostumerEntity[]> {
+  async list(): Promise<CostumerEntity[]> {
     const costumers = await this.prisma.costumer.findMany();
     return costumers.map((costumer) => new CostumerEntity(costumer));
+  }
+
+  async retrieve(id: number): Promise<CostumerEntity> {
+    const costumer = await this.prisma.costumer.findUnique({
+      where: { id: id },
+    });
+    return new CostumerEntity(costumer);
   }
 
   async delete(id: number): Promise<void> {

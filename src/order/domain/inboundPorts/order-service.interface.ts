@@ -3,7 +3,8 @@ import { OrderEntity } from '../model/order.entity';
 import { UpdateOrderDTO } from 'src/order/adapters/model/update-order.dto';
 
 export interface IOrderService {
-  findAll(): Promise<OrderEntity[]>;
+  list(): Promise<OrderEntity[]>;
+  retrieve(id: number): Promise<OrderEntity>;
   create(costumerDTO: CreateOrderDTO): Promise<OrderEntity>;
   delete(id: number): Promise<void>;
   update(id: number, costumerDTO: UpdateOrderDTO): Promise<OrderEntity>;

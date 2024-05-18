@@ -16,8 +16,12 @@ export class CostumerService implements ICostumerService {
     return await this.costumerRepository.create(costumerDTO);
   }
 
-  async findAll(): Promise<CostumerEntity[]> {
-    return await this.costumerRepository.findAll();
+  async list(): Promise<CostumerEntity[]> {
+    return await this.costumerRepository.list();
+  }
+
+  async retrieve(id: number): Promise<CostumerEntity> {
+    return await this.costumerRepository.retrieve(id);
   }
 
   async delete(id: number): Promise<void> {
