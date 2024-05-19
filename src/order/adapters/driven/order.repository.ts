@@ -11,12 +11,33 @@ export class OrderRepository implements IOrderRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(orderDTO: CreateOrderDTO): Promise<OrderEntity> {
+    const productIds = orderDTO.orderProducts.map(
+      (orderProduct) => orderProduct.productId,
+    );
+
+    const products = await this.prisma.product.findMany({
+      where: { id: { in: productIds } },
+      select: { id: true, price: true },
+    });
+
+    const totalPrice = orderDTO.orderProducts.reduce((acc, orderProduct) => {
+      const product = products.find((p) => p.id === orderProduct.productId);
+      return acc + (product?.price?.toNumber() ?? 0) * orderProduct.quantity;
+    }, 0);
+
     const createdOrder = await this.prisma.order.create({
       data: {
         costumer: {
-          connect: { id: orderDTO.costumerId },
+          ...(orderDTO.costumerId !== undefined
+            ? {
+                connect: {
+                  id: orderDTO.costumerId,
+                },
+              }
+            : {}),
         },
         notes: orderDTO.notes,
+        totalPrice: totalPrice,
         trackingId: 1, // TODO generate random int
         status: OrderStatus.AWAITING,
         orderProducts: {
@@ -30,7 +51,7 @@ export class OrderRepository implements IOrderRepository {
       },
     });
 
-    return new OrderEntity(createdOrder);
+    return this.findOne(createdOrder.id);
   }
 
   async list(): Promise<OrderEntity[]> {
@@ -43,6 +64,7 @@ export class OrderRepository implements IOrderRepository {
         status: true,
         trackingId: true,
         costumer: true,
+        totalPrice: true,
         orderProducts: {
           select: {
             quantity: true,
@@ -69,6 +91,7 @@ export class OrderRepository implements IOrderRepository {
       updatedAt: order.updatedAt,
       status: order.status,
       notes: order.notes,
+      totalPrice: order.totalPrice,
       trackingId: order.trackingId,
       costumer: order.costumer,
       products: order.orderProducts.map(({ quantity, product }) => ({
@@ -154,6 +177,7 @@ export class OrderRepository implements IOrderRepository {
         createdAt: true,
         updatedAt: true,
         notes: true,
+        totalPrice: true,
         status: true,
         trackingId: true,
         costumer: true,
@@ -182,6 +206,7 @@ export class OrderRepository implements IOrderRepository {
       createdAt: order.createdAt,
       updatedAt: order.updatedAt,
       status: order.status,
+      totalPrice: order.totalPrice,
       notes: order.notes,
       trackingId: order.trackingId,
       costumer: order.costumer,

@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Prisma } from '@prisma/client';
-import { Transform } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
+import { ValidateNested } from 'class-validator';
 import { CategoryEntity } from 'src/category/domain/model/category.entity';
 
 export class ProductEntity {
@@ -13,20 +14,22 @@ export class ProductEntity {
   @ApiProperty()
   updatedAt: Date;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'product name' })
   name: string;
 
-  @Transform(({ value }) => value.toNumber)
-  @ApiProperty({ type: String })
+  @Transform(({ value }) => value.toNumber())
+  @ApiProperty({ type: Number })
   price: Prisma.Decimal;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'product description' })
   description: string;
 
   @ApiProperty({ type: Array })
   pictures: string[];
 
   @ApiProperty({ type: CategoryEntity })
+  @ValidateNested()
+  @Type(() => CategoryEntity)
   category: CategoryEntity;
 
   constructor(partial: Partial<ProductEntity>) {

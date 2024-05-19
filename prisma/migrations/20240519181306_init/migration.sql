@@ -46,9 +46,10 @@ CREATE TABLE "orders" (
     "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMPTZ(3) NOT NULL,
     "costumerId" INTEGER,
+    "totalPrice" DECIMAL(10,2) NOT NULL,
+    "status" "OrderStatus" NOT NULL DEFAULT 'AWAITING',
     "notes" TEXT NOT NULL DEFAULT '',
     "trackingId" INTEGER NOT NULL,
-    "status" "OrderStatus" NOT NULL DEFAULT 'AWAITING',
 
     CONSTRAINT "orders_pkey" PRIMARY KEY ("id")
 );

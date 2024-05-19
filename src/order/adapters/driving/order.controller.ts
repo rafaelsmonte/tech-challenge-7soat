@@ -7,12 +7,7 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import {
-  ApiBody,
-  ApiCreatedResponse,
-  ApiOkResponse,
-  ApiQuery,
-} from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
 import { OrderService } from 'src/order/domain/inboundPorts/order.service';
 import { CreateOrderDTO } from '../model/create-order.dto';
 import { OrderEntity } from 'src/order/domain/model/order.entity';
@@ -23,7 +18,7 @@ export class OrderController {
   constructor(private orderService: OrderService) {}
 
   @Post()
-  @ApiCreatedResponse()
+  @ApiCreatedResponse({ type: OrderEntity })
   async create(@Body() orderDTO: CreateOrderDTO) {
     return await this.orderService.create(orderDTO);
   }

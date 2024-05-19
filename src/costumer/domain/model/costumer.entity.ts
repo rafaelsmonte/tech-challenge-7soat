@@ -10,13 +10,13 @@ export class CostumerEntity {
   @ApiProperty()
   updatedAt: Date;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'costumer name' })
   name: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: '01234567890' })
   taxpayerRegistry: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'costumer@email.com' })
   email: string;
 
   constructor(partial: Partial<CostumerEntity>) {

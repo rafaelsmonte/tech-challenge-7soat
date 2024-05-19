@@ -50,9 +50,10 @@ model Order {
   createdAt  DateTime    @default(now()) @db.Timestamptz(3)
   updatedAt  DateTime    @updatedAt @db.Timestamptz(3)
   costumerId Int?
+  totalPrice Decimal     @db.Decimal(10, 2)
+  status     OrderStatus @default(AWAITING)
   notes      String      @default("")
   trackingId Int
-  status     OrderStatus @default(AWAITING)
 
   costumer      Costumer?      @relation(fields: [costumerId], references: [id], onDelete: Cascade)
   orderProducts OrderProduct[]

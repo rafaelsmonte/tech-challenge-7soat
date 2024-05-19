@@ -7,7 +7,7 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
+import { ApiBody, ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
 import { CostumerService } from 'src/costumer/domain/inboundPorts/costumer.service';
 import { CostumerEntity } from 'src/costumer/domain/model/costumer.entity';
 import { CreateCostumerDTO } from '../model/create-costumer.dto';
@@ -18,7 +18,7 @@ export class CostumerController {
   constructor(private costumerService: CostumerService) {}
 
   @Post()
-  @ApiCreatedResponse()
+  @ApiCreatedResponse({ type: CostumerEntity })
   async create(@Body() costumerDTO: CreateCostumerDTO) {
     return await this.costumerService.create(costumerDTO);
   }
@@ -42,7 +42,7 @@ export class CostumerController {
   }
 
   @Patch(':id')
-  @ApiCreatedResponse()
+  @ApiCreatedResponse({ type: CostumerEntity })
   async update(
     @Param('id') id: number,
     @Body() costumerDTO: UpdateCostumerDTO,
