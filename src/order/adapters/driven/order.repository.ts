@@ -4,7 +4,7 @@ import { OrderEntity } from 'src/order/domain/model/order.entity';
 import { IOrderRepository } from 'src/order/domain/outboundPorts/order-repository.interface';
 import { CreateOrderDTO } from '../model/create-order.dto';
 import { UpdateOrderDTO } from '../model/update-order.dto';
-import { OrderStatus } from '@prisma/client';
+import { OrderStatus } from 'src/common/enum/order-status.enum';
 
 @Injectable()
 export class OrderRepository implements IOrderRepository {
@@ -18,6 +18,7 @@ export class OrderRepository implements IOrderRepository {
         },
         notes: orderDTO.notes,
         trackingId: 1, // TODO generate random int
+        status: OrderStatus.AWAITING,
         orderProducts: {
           create: orderDTO.orderProducts.map((orderProduct) => ({
             product: {
@@ -33,94 +34,163 @@ export class OrderRepository implements IOrderRepository {
   }
 
   async list(): Promise<OrderEntity[]> {
-    const rawOrders = await this.prisma.$queryRaw<any[]>`
-    SELECT o.id, c.id AS "clientId", c."name" AS "costumerName", p."id" AS "productId", p."name" AS "productName", op.quantity, o.status
-    FROM orders o
-    LEFT JOIN costumers c ON c.id = o."costumerId"
-    INNER JOIN "orderProducts" op ON op."orderId" = o.id
-    INNER JOIN products p ON p.id = op."productId"
-  `;
+    const orders = await this.prisma.order.findMany({
+      select: {
+        id: true,
+        createdAt: true,
+        updatedAt: true,
+        notes: true,
+        status: true,
+        trackingId: true,
+        costumer: true,
+        orderProducts: {
+          select: {
+            quantity: true,
+            product: {
+              select: {
+                id: true,
+                createdAt: true,
+                updatedAt: true,
+                name: true,
+                price: true,
+                description: true,
+                pictures: true,
+                category: true,
+              },
+            },
+          },
+        },
+      },
+    });
 
-    const orders: OrderEntity[] = rawOrders.reduce((acc, row) => {
-      let order = acc.find((order) => order.id === row.id);
+    const formattedOrders = orders.map((order) => ({
+      id: order.id,
+      createdAt: order.createdAt,
+      updatedAt: order.updatedAt,
+      status: order.status,
+      notes: order.notes,
+      trackingId: order.trackingId,
+      costumer: order.costumer,
+      products: order.orderProducts.map(({ quantity, product }) => ({
+        ...product,
+        quantity,
+      })),
+    }));
 
-      if (!order) {
-        const costumer = row.clientId
-          ? { id: row.clientId, name: row.costumerName }
-          : null;
-
-        order = {
-          id: row.id,
-          status: row.status,
-          costumer: costumer,
-          orderProducts: [],
-        };
-
-        acc.push(order);
-      }
-
-      order.orderProducts.push({
-        productId: row.productId,
-        productName: row.productName,
-        quantity: row.quantity,
-      });
-
-      return acc;
-    }, []);
-
-    return orders;
+    return formattedOrders.map((order) => new OrderEntity(order));
   }
 
+  // async list(): Promise<OrderEntity[]> {
+  //   const rawOrders = await this.prisma.$queryRaw<any[]>`
+  //   SELECT o.id, c.id AS "clientId", c."name" AS "costumerName", p."id" AS "productId", p."name" AS "productName", op.quantity, o.status
+  //   FROM orders o
+  //   LEFT JOIN costumers c ON c.id = o."costumerId"
+  //   INNER JOIN "orderProducts" op ON op."orderId" = o.id
+  //   INNER JOIN products p ON p.id = op."productId"
+  // `;
+
+  //   const orders: OrderEntity[] = rawOrders.reduce((acc, row) => {
+  //     let order = acc.find((order) => order.id === row.id);
+
+  //     if (!order) {
+  //       const costumer = row.clientId
+  //         ? { id: row.clientId, name: row.costumerName }
+  //         : null;
+
+  //       order = {
+  //         id: row.id,
+  //         status: row.status,
+  //         costumer: costumer,
+  //         orderProducts: [],
+  //       };
+
+  //       acc.push(order);
+  //     }
+
+  //     order.orderProducts.push({
+  //       productId: row.productId,
+  //       productName: row.productName,
+  //       quantity: row.quantity,
+  //     });
+
+  //     return acc;
+  //   }, []);
+
+  //   return orders;
+  // }
+
   async retrieve(id: number): Promise<OrderEntity> {
-    const rawOrder = await this.prisma.$queryRaw<any>`
-      SELECT o.id, c.id AS "clientId", c."name" AS "costumerName", p."id" AS "productId", p."name" AS "productName", op.quantity, o.status
-      FROM orders o
-      LEFT JOIN costumers c ON c.id = o."costumerId"
-      INNER JOIN "orderProducts" op ON op."orderId" = o.id
-      INNER JOIN products p ON p.id = op."productId"
-      WHERE o.id = ${id}
-  `;
-
-    const order: OrderEntity[] = rawOrder.reduce((acc, row) => {
-      let order = acc.find((order) => order.id === row.id);
-
-      if (!order) {
-        const costumer = row.clientId
-          ? { id: row.clientId, name: row.costumerName }
-          : null;
-
-        order = {
-          id: row.id,
-          status: row.status,
-          costumer: costumer,
-          orderProducts: [],
-        };
-
-        acc.push(order);
-      }
-
-      order.orderProducts.push({
-        productId: row.productId,
-        productName: row.productName,
-        quantity: row.quantity,
-      });
-
-      return acc;
-    }, []);
-
-    return order[0];
+    return this.findOne(id);
   }
 
   async delete(id: number): Promise<void> {
-    await this.prisma.order.delete({ where: { id: id } });
+    await this.prisma.orderProduct.deleteMany({
+      where: {
+        orderId: id,
+      },
+    });
+
+    await this.prisma.order.delete({
+      where: {
+        id: id,
+      },
+    });
   }
 
   async update(id: number, orderDTO: UpdateOrderDTO): Promise<OrderEntity> {
-    // TOOD implement update logic
-    return new OrderEntity({});
-    // return await this.prisma.order.update({
-    //   where: { id: id },
-    //   data: orderDTO,
-    // });
+    await this.prisma.order.update({
+      where: { id: id },
+      data: orderDTO,
+    });
+
+    return this.findOne(id);
+  }
+
+  async findOne(id: number): Promise<OrderEntity> {
+    const order = await this.prisma.order.findUnique({
+      where: { id: id },
+      select: {
+        id: true,
+        createdAt: true,
+        updatedAt: true,
+        notes: true,
+        status: true,
+        trackingId: true,
+        costumer: true,
+        orderProducts: {
+          select: {
+            quantity: true,
+            product: {
+              select: {
+                id: true,
+                createdAt: true,
+                updatedAt: true,
+                name: true,
+                price: true,
+                description: true,
+                pictures: true,
+                category: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const formattedOrder = {
+      id: order.id,
+      createdAt: order.createdAt,
+      updatedAt: order.updatedAt,
+      status: order.status,
+      notes: order.notes,
+      trackingId: order.trackingId,
+      costumer: order.costumer,
+      products: order.orderProducts.map(({ quantity, product }) => ({
+        ...product,
+        quantity,
+      })),
+    };
+
+    return new OrderEntity(formattedOrder);
   }
 }

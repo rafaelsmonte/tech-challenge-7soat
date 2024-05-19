@@ -55,7 +55,10 @@ function handleException(exception: any): {
         exception = new ProductNotFoundHttpException();
         break;
       case 'Order':
-        if (exception.meta?.cause === 'Record to update not found.') {
+        if (
+          exception.meta?.cause === 'Record to update not found.' ||
+          exception.meta?.cause === 'Record to delete does not exist.'
+        ) {
           exception = new OrderNotFoundHttpException();
         } else if (
           exception.meta?.cause ===
@@ -67,16 +70,16 @@ function handleException(exception: any): {
           "No 'Product' record(s) (needed to inline the relation on 'OrderProduct' record(s)) was found for a nested connect on one-to-many relation 'OrderProductToProduct'."
         ) {
           exception = new ProductNotFoundHttpException();
+        } else {
+          console.error('Unexpected exception: ', exception);
         }
         break;
       default:
         console.error('Unexpected exception: ', exception);
-        exception = new InternalServerErrorException();
         break;
     }
   } else {
     console.error('Unexpected exception: ', exception);
-    exception = new InternalServerErrorException();
   }
 
   const message =

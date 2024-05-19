@@ -31,12 +31,12 @@ export class ProductRepository implements IProductRepository {
     id: number,
     productDTO: UpdateProductDTO,
   ): Promise<ProductEntity> {
-    const updatedProduct = await this.prisma.product.update({
+    await this.prisma.product.update({
       where: { id: id },
       data: productDTO,
     });
 
-    return this.findOne(updatedProduct.id);
+    return this.findOne(id);
   }
 
   async list(): Promise<ProductEntity[]> {
