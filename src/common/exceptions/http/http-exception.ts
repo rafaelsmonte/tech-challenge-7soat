@@ -1,15 +1,15 @@
 import { ConflictException, NotFoundException } from '@nestjs/common';
 import { ExceptionMessages } from 'src/common/enum/exception-message.enum';
 
-export class CostumerNotFoundHttpException extends NotFoundException {
+export class CustomerNotFoundHttpException extends NotFoundException {
   constructor() {
-    super(ExceptionMessages.COSTUMER_NOT_FOUND_EXCEPTION);
+    super(ExceptionMessages.CUSTOMER_NOT_FOUND_EXCEPTION);
   }
 }
 
-export class CostumerAlreadyRegisteredException extends ConflictException {
+export class CustomerAlreadyRegisteredException extends ConflictException {
   constructor() {
-    super(ExceptionMessages.COSTUMER_ALREADY_REGISTERED_EXCEPTION);
+    super(ExceptionMessages.CUSTOMER_ALREADY_REGISTERED_EXCEPTION);
   }
 }
 

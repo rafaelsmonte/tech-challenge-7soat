@@ -2,7 +2,7 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { OrderModule } from './order/order.module';
-import { CostumerModule } from './costumer/costumer.module';
+import { CustomerModule } from './customer/customer.module';
 import appConfig from './app.config';
 import logger from './app.logger';
 import { AppLoggerMiddleware } from './app.logger.middleware';
@@ -15,7 +15,7 @@ import { CategoryModule } from './category/category.module';
     logger,
     appConfig,
     PrismaModule,
-    CostumerModule,
+    CustomerModule,
     ProductModule,
     OrderModule,
     CategoryModule,

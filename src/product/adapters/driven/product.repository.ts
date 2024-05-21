@@ -4,6 +4,8 @@ import { IProductRepository } from 'src/product/domain/outboundPorts/product-rep
 import { CreateProductDTO } from '../model/create-product.dto';
 import { UpdateProductDTO } from '../model/update-product.dto';
 import { PrismaService } from 'src/infra/prisma/prisma.service';
+import { ProductNotFoundHttpException } from 'src/common/exceptions/http/http-exception';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class ProductRepository implements IProductRepository {
@@ -24,19 +26,43 @@ export class ProductRepository implements IProductRepository {
   }
 
   async delete(id: number): Promise<void> {
-    await this.prisma.product.delete({ where: { id: id } });
+    try {
+      await this.prisma.product.delete({ where: { id: id } });
+    } catch (exception) {
+      if (
+        exception instanceof Prisma.PrismaClientKnownRequestError &&
+        exception.code === 'P2025'
+      ) {
+        throw new ProductNotFoundHttpException();
+      } else {
+        console.error('Unexpected exception: ', exception);
+        throw exception;
+      }
+    }
   }
 
   async update(
     id: number,
     productDTO: UpdateProductDTO,
   ): Promise<ProductEntity> {
-    await this.prisma.product.update({
-      where: { id: id },
-      data: productDTO,
-    });
+    try {
+      await this.prisma.product.update({
+        where: { id: id },
+        data: productDTO,
+      });
 
-    return this.findOne(id);
+      return this.findOne(id);
+    } catch (exception) {
+      if (
+        exception instanceof Prisma.PrismaClientKnownRequestError &&
+        exception.code === 'P2025'
+      ) {
+        throw new ProductNotFoundHttpException();
+      } else {
+        console.error('Unexpected exception: ', exception);
+        throw exception;
+      }
+    }
   }
 
   async list(): Promise<ProductEntity[]> {
@@ -52,6 +78,11 @@ export class ProductRepository implements IProductRepository {
         category: true,
       },
     });
+
+    if (!products) {
+      throw new ProductNotFoundHttpException();
+    }
+
     return products.map((product) => new ProductEntity(product));
   }
 
@@ -73,6 +104,10 @@ export class ProductRepository implements IProductRepository {
         category: true,
       },
     });
+
+    if (!product) {
+      throw new ProductNotFoundHttpException();
+    }
 
     return new ProductEntity(product);
   }

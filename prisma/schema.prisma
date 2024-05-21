@@ -7,7 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Costumer {
+model Customer {
   id               Int      @id @default(autoincrement())
   createdAt        DateTime @default(now()) @db.Timestamptz(3)
   updatedAt        DateTime @updatedAt @db.Timestamptz(3)
@@ -16,7 +16,7 @@ model Costumer {
   email            String   @db.VarChar(256)
   order            Order[]
 
-  @@map("costumers")
+  @@map("customers")
 }
 
 model Category {
@@ -49,13 +49,13 @@ model Order {
   id         Int         @id @default(autoincrement())
   createdAt  DateTime    @default(now()) @db.Timestamptz(3)
   updatedAt  DateTime    @updatedAt @db.Timestamptz(3)
-  costumerId Int?
+  customerId Int?
   totalPrice Decimal     @db.Decimal(10, 2)
   status     OrderStatus @default(AWAITING)
   notes      String      @default("")
   trackingId Int
 
-  costumer      Costumer?      @relation(fields: [costumerId], references: [id], onDelete: Cascade)
+  customer      Customer?      @relation(fields: [customerId], references: [id], onDelete: Cascade)
   orderProducts OrderProduct[]
 
   @@map("orders")

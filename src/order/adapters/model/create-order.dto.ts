@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
   IsArray,
@@ -21,10 +21,8 @@ class OrderProductDTO {
 }
 
 export class CreateOrderDTO {
-  @ApiProperty()
-  @IsNumber()
-  @Min(1)
-  costumerId: number;
+  @ApiPropertyOptional()
+  customerId: number;
 
   @ApiProperty({ example: 'order notes' })
   @IsString()

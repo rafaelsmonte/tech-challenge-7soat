@@ -9,11 +9,12 @@ import {
 } from '@nestjs/common';
 import { ProductService } from 'src/product/domain/inboundPorts/product.service';
 import { CreateProductDTO } from '../model/create-product.dto';
-import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { ProductEntity } from 'src/product/domain/model/product.entity';
 import { UpdateProductDTO } from '../model/update-product.dto';
 
 @Controller('product')
+@ApiTags('Product')
 export class ProductController {
   constructor(private productService: ProductService) {}
 
@@ -43,7 +44,7 @@ export class ProductController {
 
   @Patch(':id')
   @ApiCreatedResponse()
-  async update(@Param('id') id: number, @Body() costumerDTO: UpdateProductDTO) {
-    return await this.productService.update(id, costumerDTO);
+  async update(@Param('id') id: number, @Body() customerDTO: UpdateProductDTO) {
+    return await this.productService.update(id, customerDTO);
   }
 }

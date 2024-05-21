@@ -218,7 +218,7 @@
 - **Corpo da Requisição:**
   ```json
   {
-    "costumerId": 1, //optional
+    "customerId": 1, //optional
     "notes": "sem cebola",
     "orderProducts":[
     {

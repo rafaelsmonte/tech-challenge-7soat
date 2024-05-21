@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CostumerEntity {
+export class CustomerEntity {
   @ApiProperty()
   id: number;
 
@@ -10,16 +10,16 @@ export class CostumerEntity {
   @ApiProperty()
   updatedAt: Date;
 
-  @ApiProperty({ example: 'costumer name' })
+  @ApiProperty({ example: 'customer name' })
   name: string;
 
   @ApiProperty({ example: '01234567890' })
   taxpayerRegistry: string;
 
-  @ApiProperty({ example: 'costumer@email.com' })
+  @ApiProperty({ example: 'customer@email.com' })
   email: string;
 
-  constructor(partial: Partial<CostumerEntity>) {
+  constructor(partial: Partial<CustomerEntity>) {
     Object.assign(this, partial);
   }
 }

@@ -3,7 +3,7 @@ import { Prisma } from '@prisma/client';
 import { Transform, Type } from 'class-transformer';
 import { ValidateNested } from 'class-validator';
 import { OrderStatus } from 'src/common/enum/order-status.enum';
-import { CostumerEntity } from 'src/costumer/domain/model/costumer.entity';
+import { CustomerEntity } from 'src/customer/domain/model/customer.entity';
 import { ProductEntity } from 'src/product/domain/model/product.entity';
 
 export class OrderEntity {
@@ -29,10 +29,10 @@ export class OrderEntity {
   @ApiProperty({ enum: OrderStatus })
   status: string;
 
-  @ApiPropertyOptional({ type: CostumerEntity })
+  @ApiPropertyOptional({ type: CustomerEntity })
   @ValidateNested()
-  @Type(() => CostumerEntity)
-  costumer?: CostumerEntity;
+  @Type(() => CustomerEntity)
+  customer?: CustomerEntity;
 
   @ApiProperty({ type: ProductEntity, isArray: true })
   @ValidateNested({ each: true })
