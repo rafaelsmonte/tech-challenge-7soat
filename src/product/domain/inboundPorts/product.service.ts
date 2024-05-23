@@ -4,6 +4,7 @@ import { IProductRepository } from '../outboundPorts/product-repository.interfac
 import { ProductEntity } from '../model/product.entity';
 import { CreateProductDTO } from 'src/product/adapters/model/create-product.dto';
 import { UpdateProductDTO } from 'src/product/adapters/model/update-product.dto';
+import { ProductFiltersDTO } from 'src/product/adapters/model/product-filters.dto';
 
 @Injectable()
 export class ProductService implements IProductService {
@@ -15,8 +16,8 @@ export class ProductService implements IProductService {
     return await this.productRepository.create(productDTO);
   }
 
-  async list(): Promise<ProductEntity[]> {
-    return await this.productRepository.list();
+  async list(productFiltersDTO: ProductFiltersDTO): Promise<ProductEntity[]> {
+    return await this.productRepository.list(productFiltersDTO);
   }
 
   async retrieve(id: number): Promise<ProductEntity> {

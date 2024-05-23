@@ -6,12 +6,14 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { CustomerService } from 'src/customer/domain/inboundPorts/customer.service';
 import { CustomerEntity } from 'src/customer/domain/model/customer.entity';
 import { CreateCustomerDTO } from '../model/create-customer.dto';
 import { UpdateCustomerDTO } from '../model/update-customer.dto';
+import { CustomerFiltersDTO } from '../model/customer-filters.dto';
 
 @Controller('customer')
 @ApiTags('Customer')
@@ -26,14 +28,15 @@ export class CustomerController {
 
   @Get()
   @ApiOkResponse({ type: CustomerEntity, isArray: true })
-  async list(): Promise<CustomerEntity[]> {
-    return await this.customerService.list();
+  async list(
+    @Query() customerFiltersDTO: CustomerFiltersDTO,
+  ): Promise<CustomerEntity[]> {
+    return await this.customerService.list(customerFiltersDTO);
   }
 
   @Get(':id')
   @ApiOkResponse({ type: CustomerEntity })
   async retrieve(@Param('id') id: number): Promise<CustomerEntity> {
-    console.log('search for id');
     return await this.customerService.retrieve(id);
   }
 
@@ -42,7 +45,6 @@ export class CustomerController {
   async retrieveByTaxpayerRegistry(
     @Param('taxpayerRegistry') taxpayerRegistry: string,
   ): Promise<CustomerEntity> {
-    console.log('search for taxpayer');
     return await this.customerService.retrieveByTaxpayerRegistry(
       taxpayerRegistry,
     );

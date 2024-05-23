@@ -4,6 +4,7 @@ import { ICustomerRepository } from '../outboundPorts/customer-repository.interf
 import { CustomerEntity } from '../model/customer.entity';
 import { CreateCustomerDTO } from 'src/customer/adapters/model/create-customer.dto';
 import { UpdateCustomerDTO } from 'src/customer/adapters/model/update-customer.dto';
+import { CustomerFiltersDTO } from 'src/customer/adapters/model/customer-filters.dto';
 
 @Injectable()
 export class CustomerService implements ICustomerService {
@@ -16,8 +17,10 @@ export class CustomerService implements ICustomerService {
     return await this.customerRepository.create(customerDTO);
   }
 
-  async list(): Promise<CustomerEntity[]> {
-    return await this.customerRepository.list();
+  async list(
+    customerFiltersDTO: CustomerFiltersDTO,
+  ): Promise<CustomerEntity[]> {
+    return await this.customerRepository.list(customerFiltersDTO);
   }
 
   async retrieve(id: number): Promise<CustomerEntity> {

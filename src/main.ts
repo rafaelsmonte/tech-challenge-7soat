@@ -11,8 +11,9 @@ async function bootstrap() {
 
   const configService = app.get(ConfigService);
 
-  app.setGlobalPrefix('/v1');
+  app.enableShutdownHooks();
 
+  app.setGlobalPrefix('/api/v1');
   app.useGlobalPipes(new ValidationPipe({ whitelist: false, transform: true }));
   app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { CustomerEntity } from 'src/customer/domain/model/customer.entity';
 import { ICustomerRepository } from 'src/customer/domain/outboundPorts/customer-repository.interface';
 import { PrismaService } from 'src/infra/prisma/prisma.service';
@@ -9,10 +9,15 @@ import {
   CustomerAlreadyRegisteredException,
   CustomerNotFoundHttpException,
 } from 'src/common/exceptions/http/http-exception';
+import { CustomerFiltersDTO } from '../model/customer-filters.dto';
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 
 @Injectable()
 export class CustomerRepository implements ICustomerRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
+  ) {}
 
   async create(customerDTO: CreateCustomerDTO): Promise<CustomerEntity> {
     try {
@@ -24,16 +29,33 @@ export class CustomerRepository implements ICustomerRepository {
       ) {
         throw new CustomerAlreadyRegisteredException();
       } else {
-        console.error('Unexpected exception: ', exception);
+        this.logger.error('Unexpected exception: ', exception);
         throw exception;
       }
     }
   }
 
-  async list(): Promise<CustomerEntity[]> {
-    const customers = await this.prisma.customer.findMany();
+  async list(
+    customerFiltersDTO: CustomerFiltersDTO,
+  ): Promise<CustomerEntity[]> {
+    const { name, email, taxpayerRegistry } = customerFiltersDTO;
 
-    if (!customers) {
+    const customers = await this.prisma.customer.findMany({
+      where: {
+        ...(name ? { name: { contains: name, mode: 'insensitive' } } : {}),
+        ...(email ? { email: { contains: email, mode: 'insensitive' } } : {}),
+        ...(taxpayerRegistry
+          ? {
+              taxpayerRegistry: {
+                contains: taxpayerRegistry,
+                mode: 'insensitive',
+              },
+            }
+          : {}),
+      },
+    });
+
+    if (!customers || customers.length === 0) {
       throw new CustomerNotFoundHttpException();
     }
 
@@ -76,7 +98,7 @@ export class CustomerRepository implements ICustomerRepository {
       ) {
         throw new CustomerNotFoundHttpException();
       } else {
-        console.log(exception);
+        this.logger.error(exception);
         throw exception;
       }
     }
@@ -98,7 +120,7 @@ export class CustomerRepository implements ICustomerRepository {
       ) {
         throw new CustomerNotFoundHttpException();
       } else {
-        console.error('Unexpected exception: ', exception);
+        this.logger.error('Unexpected exception: ', exception);
         throw exception;
       }
     }

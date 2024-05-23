@@ -6,12 +6,14 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { ProductService } from 'src/product/domain/inboundPorts/product.service';
 import { CreateProductDTO } from '../model/create-product.dto';
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { ProductEntity } from 'src/product/domain/model/product.entity';
 import { UpdateProductDTO } from '../model/update-product.dto';
+import { ProductFiltersDTO } from '../model/product-filters.dto';
 
 @Controller('product')
 @ApiTags('Product')
@@ -26,8 +28,10 @@ export class ProductController {
 
   @Get()
   @ApiOkResponse({ type: ProductEntity, isArray: true })
-  async list(): Promise<ProductEntity[]> {
-    return await this.productService.list();
+  async list(
+    @Query() productFiltersDTO: ProductFiltersDTO,
+  ): Promise<ProductEntity[]> {
+    return await this.productService.list(productFiltersDTO);
   }
 
   @Get(':id')

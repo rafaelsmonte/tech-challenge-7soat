@@ -3,6 +3,7 @@ import { Type } from 'class-transformer';
 import {
   IsArray,
   IsNumber,
+  IsOptional,
   IsString,
   Min,
   ValidateNested,
@@ -22,6 +23,7 @@ class OrderProductDTO {
 
 export class CreateOrderDTO {
   @ApiPropertyOptional()
+  @IsOptional()
   customerId: number;
 
   @ApiProperty({ example: 'order notes' })

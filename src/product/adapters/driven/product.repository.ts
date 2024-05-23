@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ProductEntity } from 'src/product/domain/model/product.entity';
 import { IProductRepository } from 'src/product/domain/outboundPorts/product-repository.interface';
 import { CreateProductDTO } from '../model/create-product.dto';
@@ -6,10 +6,15 @@ import { UpdateProductDTO } from '../model/update-product.dto';
 import { PrismaService } from 'src/infra/prisma/prisma.service';
 import { ProductNotFoundHttpException } from 'src/common/exceptions/http/http-exception';
 import { Prisma } from '@prisma/client';
+import { ProductFiltersDTO } from '../model/product-filters.dto';
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 
 @Injectable()
 export class ProductRepository implements IProductRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
+  ) {}
 
   async create(productDTO: CreateProductDTO): Promise<ProductEntity> {
     const createdProduct = await this.prisma.product.create({
@@ -35,7 +40,7 @@ export class ProductRepository implements IProductRepository {
       ) {
         throw new ProductNotFoundHttpException();
       } else {
-        console.error('Unexpected exception: ', exception);
+        this.logger.error('Unexpected exception: ', exception);
         throw exception;
       }
     }
@@ -59,14 +64,20 @@ export class ProductRepository implements IProductRepository {
       ) {
         throw new ProductNotFoundHttpException();
       } else {
-        console.error('Unexpected exception: ', exception);
+        this.logger.error('Unexpected exception: ', exception);
         throw exception;
       }
     }
   }
 
-  async list(): Promise<ProductEntity[]> {
+  async list(productFiltersDTO: ProductFiltersDTO): Promise<ProductEntity[]> {
+    const { categoryId, name } = productFiltersDTO;
+
     const products = await this.prisma.product.findMany({
+      where: {
+        ...(categoryId ? { categoryId: categoryId } : {}),
+        ...(name ? { name: { contains: name, mode: 'insensitive' } } : {}),
+      },
       select: {
         id: true,
         createdAt: true,
@@ -79,7 +90,7 @@ export class ProductRepository implements IProductRepository {
       },
     });
 
-    if (!products) {
+    if (!products || products.length === 0) {
       throw new ProductNotFoundHttpException();
     }
 

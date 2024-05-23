@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from 'src/infra/prisma/prisma.service';
 import { OrderEntity } from 'src/order/domain/model/order.entity';
 import { IOrderRepository } from 'src/order/domain/outboundPorts/order-repository.interface';
@@ -11,10 +11,14 @@ import {
   ProductNotFoundHttpException,
 } from 'src/common/exceptions/http/http-exception';
 import { Prisma } from '@prisma/client';
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 
 @Injectable()
 export class OrderRepository implements IOrderRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
+  ) {}
 
   async create(orderDTO: CreateOrderDTO): Promise<OrderEntity> {
     // TODO move totalPrice to service
@@ -76,11 +80,11 @@ export class OrderRepository implements IOrderRepository {
         ) {
           throw new ProductNotFoundHttpException();
         } else {
-          console.error('Unexpected exception: ', exception);
+          this.logger.error('Unexpected exception: ', exception);
           throw exception;
         }
       } else {
-        console.error('Unexpected exception: ', exception);
+        this.logger.error('Unexpected exception: ', exception);
         throw exception;
       }
     }
@@ -117,7 +121,7 @@ export class OrderRepository implements IOrderRepository {
       },
     });
 
-    if (!orders) {
+    if (!orders || orders.length === 0) {
       throw new OrderNotFoundHttpException();
     }
 
@@ -163,7 +167,7 @@ export class OrderRepository implements IOrderRepository {
       ) {
         throw new OrderNotFoundHttpException();
       } else {
-        console.error('Unexpected exception: ', exception);
+        this.logger.error('Unexpected exception: ', exception);
         throw exception;
       }
     }
@@ -184,7 +188,7 @@ export class OrderRepository implements IOrderRepository {
       ) {
         throw new OrderNotFoundHttpException();
       } else {
-        console.error('Unexpected exception: ', exception);
+        this.logger.error('Unexpected exception: ', exception);
         throw exception;
       }
     }
