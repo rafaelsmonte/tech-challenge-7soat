@@ -6,6 +6,11 @@ import { OrderStatus } from 'src/common/enum/order-status.enum';
 import { CustomerEntity } from 'src/customer/domain/model/customer.entity';
 import { ProductEntity } from 'src/product/domain/model/product.entity';
 
+class ProductWithQuantityEntity extends ProductEntity {
+  @ApiProperty()
+  quantity: number;
+}
+
 export class OrderEntity {
   @ApiProperty()
   id: number;
@@ -30,14 +35,12 @@ export class OrderEntity {
   status: string;
 
   @ApiPropertyOptional({ type: CustomerEntity })
-  @ValidateNested()
-  @Type(() => CustomerEntity)
   customer?: CustomerEntity;
 
-  @ApiProperty({ type: ProductEntity, isArray: true })
+  @ApiProperty({ type: ProductWithQuantityEntity, isArray: true })
   @ValidateNested({ each: true })
-  @Type(() => ProductEntity)
-  products: ProductEntity[];
+  @Type(() => ProductWithQuantityEntity)
+  products: ProductWithQuantityEntity[];
 
   constructor(partial: Partial<OrderEntity>) {
     Object.assign(this, partial);

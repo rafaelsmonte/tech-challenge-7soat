@@ -71,12 +71,13 @@ export class ProductRepository implements IProductRepository {
   }
 
   async list(productFiltersDTO: ProductFiltersDTO): Promise<ProductEntity[]> {
-    const { categoryId, name } = productFiltersDTO;
+    const { categoryId, name, ids } = productFiltersDTO;
 
     const products = await this.prisma.product.findMany({
       where: {
         ...(categoryId ? { categoryId: categoryId } : {}),
         ...(name ? { name: { contains: name, mode: 'insensitive' } } : {}),
+        ...(ids ? { id: { in: ids } } : {}),
       },
       select: {
         id: true,

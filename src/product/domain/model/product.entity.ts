@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Prisma } from '@prisma/client';
-import { Transform, Type } from 'class-transformer';
-import { ValidateNested } from 'class-validator';
+import { Transform } from 'class-transformer';
 import { CategoryEntity } from 'src/category/domain/model/category.entity';
 
 export class ProductEntity {
@@ -28,8 +27,6 @@ export class ProductEntity {
   pictures: string[];
 
   @ApiProperty({ type: CategoryEntity })
-  @ValidateNested()
-  @Type(() => CategoryEntity)
   category: CategoryEntity;
 
   constructor(partial: Partial<ProductEntity>) {
