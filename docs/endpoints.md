@@ -1,194 +1,202 @@
 
 # Base URL
- - A url base de todas a as APIS: <http://{ip}:{port}/api/{version}>
+ - The base URL for all the APIs: <http://{ip}:{port}/api/{version}>
 
-# Documentação da API de Produtos
-## Criar um novo produto
-- **Método:** POST
-- **URL:** `/products`
-- **Descrição:** Cria um novo produto com os dados fornecidos.
-- **Corpo da Requisição:**
+# Products API
+## Create a new product
+- **Method**: POST
+- **URL**: /products
+- **Description**: Creates a new product.
+- **Request Body**:
   ```json
   {
-    "name": "Produto",
+    "name": "Product",
     "price": 10.99,
-    "description": "Descrição do produto",
-    "pictures": ["http://linkdapimagem.com/imagem.png"],
-    "categoryId": 1,
+    "description": "Product description",
+    "pictures": ["http://image-link.com/image.png"],
+    "categoryId": 1
   }
   ```
-- **Respostas:**
-  - **201:** Produto criado com sucesso
-  - **400:** Requisição inválida
-  - **500:** Erro interno
-## Obter um produto por ID
-- **Método:** GET
-- **URL:** `/products/{id}`
-- **Descrição:** Obtém um produto com base no ID fornecido.
-- **Parâmetros:** `id` (integer): ID do produto a ser obtido.
-- **Respostas:**
-  - **200:** Produto obtido com sucesso
-    ```json
-    {
-      "createdAt": "2024-05-11T12:00:00Z",
-      "updatedAt": "2024-05-11T12:00:00Z",
-      "name": "Produto",
-      "price": 10.99,
-      "description": "Descrição do produto",
-      "pictures": ["http://linkdapimagem.com/imagem.png"],
-      "category": {"id": 1, "name": "Categoria"},
-    }
-    ```
-  - **404:** Produto não encontrado
-  - **500:** Erro interno
+- **Responses:**
+  - **201**: Product created successfully
+  - **400**: Invalid request
+  - **500**: Internal error
 
-## Obter todos produtos
-- **Método:** GET
+## Get a product by ID
+  - **Method**: GET
+  - **URL**: /products/{id}
+  - **Description**: Retrieves a product based on the provided ID.
+  - **Parameters**: id (integer): ID of the product to be obtained.
+  - **Responses**:
+    - **200:** Product retrieved successfully
+      ```json
+      {
+        "createdAt": "2024-05-11T12:00:00Z",
+        "updatedAt": "2024-05-11T12:00:00Z",
+        "name": "Product",
+        "price": 10.99,
+        "description": "Product description",
+        "pictures": ["http://image-link.com/image.png"],
+        "category": {"id": 1, "name": "Category"}
+      }
+      ```
+    - **404:** Product not found
+    - **500:** Internal error
+
+## Get all products
+- **Method:** GET
 - **URL:** `/products`
-- **Descrição:** Obtém todos produtos com base nos parametros.
+- **Description:** Retrieves all products based on the parameters.
 - **Query:**
-  - `name` (string): ID do produto a ser obtido.
-  - `orderBy`: name, createAt, price, category.
+  - `name` (string): Name of the product to be obtained.
   - `sort`: asc or desc. (default: asc)
-  - `categoryId` (integer): ID da categoria a ser obtido.
-- **Respostas:**
-  - **200:** Produto obtido com sucesso
+  - `categoryId` (integer): ID of the category to be obtained.
+- **Responses:**
+  - **200:** Products retrieved successfully
     ```json
     [{
       "id": 1,
       "createdAt": "2024-05-11T12:00:00Z",
       "updatedAt": "2024-05-11T12:00:00Z",
-      "name": "Produto",
+      "name": "Product",
       "price": 10.99,
-      "description": "Descrição do produto",
-      "pictures": ["http://linkdapimagem.com/imagem.png"],
-      "category": {"id": 1, "name": "Categoria"},
+      "description": "Product description",
+      "pictures": ["http://image-link.com/image.png"],
+      "category": {"id": 1, "name": "Category"}
     }]
     ```
-  - **404:** Produto não encontrado
-  - **500:** Erro interno
-## Atualizar um produto por ID
-- **Método:** PUT
-- **URL:** `/products/{id}`
-- **Descrição:** Atualiza um produto com base no ID fornecido.
-- **Parâmetros:** `id` (integer): ID do produto a ser atualizado.
-- **Corpo da Requisição:**
-  ```json
-  {
-    "name": "Produto Atualizado",
-    "price": 15.99,
-    "description": "Descrição atualizada do produto",
-    "pictures": ["http://linkdapimagem.com/imagem.png"],
-    "categoryId": 1,
-  }
-  ```
-- **Respostas:**
-  - **200:** Produto atualizado com sucesso
-  - **400:** Requisição inválida
-  - **404:** Produto não encontrado
-  - **500:** Erro interno
-## Remover um produto por ID
+  - **404:** Product not found
+  - **500:** Internal error
 
-- **Método:** DELETE
+## Update a product by ID
+- **Method:** PUT
 - **URL:** `/products/{id}`
-- **Descrição:** Remove um produto com base no ID fornecido.
-- **Parâmetros:** `id` (integer): ID do produto a ser removido.
-- **Respostas:**
-  - **204:** Produto removido com sucesso
-  - **404:** Produto não encontrado
-# Documentação da API de Cliente
-## Criar um novo cliente
-- **Método:** POST
+- **Description:** Updates a product based on the provided ID.
+- **Parameters:** `id` (integer): ID of the product to be updated.
+- **Request Body:**
+  ```json
+    {
+      "name": "Updated Product",
+      "price": 15.99,
+      "description": "Updated product description",
+      "pictures": ["http://image-link.com/image.png"],
+      "categoryId": 1
+    }
+  ```
+- **Responses:**
+  - **200:** Product updated successfully
+  - **400:** Invalid request
+  - **404:** Product not found
+  - **500:** Internal error
+
+## Remove a product by ID
+
+- **Method:** DELETE
+- **URL:** `/products/{id}`
+- **Description:** Removes a product based on the provided ID.
+- **Parameters:** `id` (integer): ID of the product to be removed.
+- **Responses:**
+  - **204:** Product removed successfully
+  - **404:** Product not found
+
+# Customer API Documentation
+
+## Create a new customer
+- **Method:** POST
 - **URL:** `/customers`
-- **Descrição:** Cria um novo cliente com os dados fornecidos.
-- **Corpo da Requisição:**
+- **Description:** Cria um novo cliente com os dados fornecidos.
+- **Request Body:**
   ```json
   {
-    "name": "Nome do Cliente",
+    "name": "Customer Name",
     "taxpayerRegistry": "123456789",
-    "email": "email@example.com",
+    "email": "email@example.com"
   }
   ```
-- **Respostas:**
-  - **201:** Cliente criado com sucesso
-  - **400:** Requisição inválida
-  - **409:** CPF ja registrado
-  - **500:** Erro interno
-## Obter um cliente por ID
-- **Método:** GET
+- **Responses:**
+  - **201:** Customer created successfully
+  - **400:** Invalid request
+  - **409:** Taxpayer ID already registered
+  - **500:** Internal error
+
+## Get a customer by ID
+- **Method:** GET
 - **URL:** `/customers/{id}`
-- **Descrição:** Obtém um cliente com base no ID fornecido.
-- **Parâmetros:** `id` (integer): ID do cliente a ser obtida.
-- **Respostas:**
-  - **200:** cliente obtido com sucesso
+- **Description:** Retrieves a customer based on the provided ID.
+- **Parameters:** `id` (integer): ID of the customer to be obtained.
+- **Responses:**
+  - **200:** Customer retrieved successfully
     ```json
     {
       "id": 1,
       "createdAt": "2024-05-11T12:00:00Z",
       "updatedAt": "2024-05-11T12:00:00Z",
-      "name": "Nome da Cliente",
+      "name": "Customer Name",
       "taxpayerRegistry": "123456789",
-      "email": "email@example.com",
+      "email": "email@example.com"
     }
     ```
-  - **404:** cliente não encontrado
-  - **500:** Erro interno
-## Obter todos clientes
-- **Método:** GET
+  - **404:** Customer not found
+  - **500:** Internal error
+
+## Get all customers
+- **Method:** GET
 - **URL:** `/customers`
-- **Descrição:** Obtém todos os clientes com base nos parametros.
+- **Description:** Retrieves all customers based on the parameters.
 - **Query:**
-  - `name` (string): nome do cliente a ser obtido.
-  - `taxpayerRegistry` (string): documento do cliente.
-  - `email` (string): email do cliente.
-  - `orderBy`: name, taxpayerRegistry e email.
+  - `name` (string): Name of the customer to be obtained.
+  - `taxpayerRegistry` (string): Customer's taxpayer ID.
+  - `email` (string): Customer's email.
   - `sort`: asc or desc. (default: asc)
-- **Respostas:**
-  - **200:** Cliente obtida com sucesso
+- **Responses:**
+  - **200:** Customers retrieved successfully
     ```json
     {
       "id": 1,
       "createdAt": "2024-05-11T12:00:00Z",
       "updatedAt": "2024-05-11T12:00:00Z",
-      "name": "Nome do Cliente",
+      "name": "Customer Name",
       "taxpayerRegistry": "123456789",
-      "email": "email@example.com",
+      "email": "email@example.com"
     }
     ```
-  - **404:** Cliente não encontrado
-  - **500:** Erro interno
-## Atualizar uma Cliente por ID
-- **Método:** PATCH
+  - **404:** Customer not found
+  - **500:** Internal error
+
+## Update a customer by ID
+- **Method:** PATCH
 - **URL:** `/customers/{id}`
-- **Descrição:** Atualiza um cliente com base no ID fornecido.
-- **Parâmetros:** `id` (integer): ID do cliente a ser atualizado.
-- **Corpo da Requisição:**
+- **Description:** Atualiza um cliente com base no ID fornecido.
+- **Parameters:** `id` (integer): ID do cliente a ser atualizado.
+- **Request Body:**
   ```json
   {
-    "name": "Nome do cliente Atualizado",
-    "email": "novoemail@example.com",
+    "name": "Updated Customer Name",
+    "email": "newemail@example.com"
   }
   ```
-- **Respostas:**
-  - **200:** Cliente atualizado com sucesso
-  - **400:** Requisição inválida
-  - **404:** Cliente não encontrada
-  - **500:** Erro interno
-## Remover um Cliente por ID
-- **Método:** DELETE
+- **Responses:**
+  - **200:** Customer updated successfully
+  - **400:** Invalid request
+  - **404:** Customer not found
+  - **500:** Internal error
+
+## Remove a customer by ID
+- **Method:** DELETE
 - **URL:** `/customers/{id}`
-- **Descrição:** Remove um cliente com base no ID fornecido.
-- **Parâmetros:** `id` (integer): ID do cliente a ser removida.
-- **Respostas:**
-  - **204:** Cliente removido com sucesso
-  - **404:** Cliente não encontrada
-# Documentação da API de Categoria
-## Obter todas categorias
-- **Método:** GET
+- **Description:** Removes a customer based on the provided ID.
+- **Parameters:** `id` (integer): ID of the customer to be removed.
+- **Responses:**
+  - **204:** Customer removed successfully
+  - **404:** Customer not found
+
+# Category API Documentation
+## Get all categories
+- **Method:** GET
 - **URL:** `/category`
-- **Descrição:** Obtém todas as categorias.
+- **Description:** Retrieves all categories.
 - **Respostas:**
-  - **200:** categorias obtidas com sucesso
+  - **200:** Categories retrieved successfully
     ```json
     [{
       "id": 1,
@@ -208,158 +216,159 @@
 
     }]
     ```
-  - **404:** Cliente não encontrado
-  - **500:** Erro interno
-# Documentação da API de Pedido
-## Criar um pedido
-- **Método:** POST
+  - **404:** CLient not found
+  - **500:** Internal error
+
+# Order API Documentation
+## Create an Order
+- **Method:** POST
 - **URL:** `/orders`
-- **Descrição:** Cria um novo pedido com os dados fornecidos.
-- **Corpo da Requisição:**
+- **Description:** Creates a new order with the provided data.
+- **Request Body:**
   ```json
   {
     "customerId": 1, //optional
-    "notes": "sem cebola",
+    "notes": "no onions",
     "orderProducts":[
     {
       "productId": 1,
-      "quantity":2,
+      "quantity":2
     },
     {
       "productId": 25,
-      "quantity":1,
+      "quantity":1
     }]
   }
   ```
-- **Respostas:**
-  - **201:** pedido criado com sucesso
-  - **400:** Requisição inválida
-  - **500:** Erro interno
-## Obter um Pedido por ID
-- **Método:** GET
+- **Responses:**
+  - **201:** Order created successfully
+  - **400:** Invalid request
+  - **500:** Internal error
+
+## Get an Order by ID
+- **Method:** GET
 - **URL:** `/orders/{id}`
-- **Descrição:** Obtém um pedido com base no ID fornecido.
-- **Parâmetros:** `id` (integer): ID do pedido a ser obtida.
-- **Respostas:**
-  - **200:** pedido obtido com sucesso
+- **Description:** Retrieves an order based on the provided ID.
+- **Parameters:** `id` (integer): ID of the order to be obtained.
+- **Responses:**
+  - **200:** Order retrieved successfully
   ```json
-  {
-    "createdAt": "2024-05-11T12:00:00Z",
-    "updatedAt": "2024-05-11T12:00:00Z",
-    "customer":{
-        "id": 1,
-        "createdAt": "2024-05-11T12:00:00Z",
-        "updatedAt": "2024-05-11T12:00:00Z",
-        "name": "Nome do Cliente",
-        "taxpayerRegistry": "123456789",
-        "email": "email@example.com",
-    },
-    "notes": "sem cebola",
-    "trackingId": 111,
-    "status":"DONE",
-    "totalPrice":123,
-    "products":[
     {
-        "id":1,
-        "name": "Batata",
-        "price": 15.99,
-        "description": "Batata 200gr",
-        "pictures": ["http://linkdapimagem.com/imagem.png"],
-        "category": {
+      "createdAt": "2024-05-11T12:00:00Z",
+      "updatedAt": "2024-05-11T12:00:00Z",
+      "customer":{
           "id": 1,
-          "type":"SIDE"
-        },
-        "quantity":2,
-    },
-    {
-        "id":2,
-        "name": "Milk Shake",
-        "price": 15.99,
-        "description": "Milk shake de chocolate",
-        "pictures": ["http://linkdapimagem.com/imagem.png"],
-        "category": {
-          "id": 1,
-          "type":"SIDE"
-        },
-      "quantity":1,
-    }]
-  }
+          "createdAt": "2024-05-11T12:00:00Z",
+          "updatedAt": "2024-05-11T12:00:00Z",
+          "name": "Customer Name",
+          "taxpayerRegistry": "123456789",
+          "email": "email@example.com"
+      },
+      "notes": "no onions",
+      "trackingId": 111,
+      "status":"DONE",
+      "totalPrice":123,
+      "products":[
+      {
+          "id":1,
+          "name": "Potato",
+          "price": 15.99,
+          "description": "200g Potato",
+          "pictures": ["http://image-link.com/image.png"],
+          "category": {
+            "id": 1,
+            "type":"SIDE"
+          },
+          "quantity":2
+      },
+      {
+          "id":2,
+          "name": "Milk Shake",
+          "price": 15.99,
+          "description": "Chocolate Milk Shake",
+          "pictures": ["http://image-link.com/image.png"],
+          "category": {
+            "id": 1,
+            "type":"SIDE"
+          },
+        "quantity":1
+      }]
+    }
     ```
+  - **404:** Order not found
+  - **500:** Internal error
 
-  - **404:** Pedido não encontrado
-  - **500:** Erro interno
-## Obter todos Pedidos
-- **Método:** GET
+## Get all Orders
+- **Method:** GET
 - **URL:** `/orders`
-- **Descrição:** Obtém todos os pedidos com base nos parametros.
+- **Description:** Retrieves all orders based on the parameters.
 - **Query:**
-  - `customerId` (int): id do cliente a ser obtido.
-  - `status` (string): Status do pedido.
-  - `createdAt` (date): data do pedido.
-  - `orderBy`: createdAt, status e customer.
+  - `customerId` (int): customer's ID to be obtained.
+  - `status` (string): Order status.
+  - `createdAt` (date): order date.
   - `sort`: asc or desc. (default: asc)
-- **Respostas:**
-  - **200:** Pedidos obtidos com sucesso
+- **Responses:**
+  - **200:** Orders retrieved successfully
   ```json
-  [{
-    "id":1,
-    "createdAt": "2024-05-11T12:00:00Z",
-    "updatedAt": "2024-05-11T12:00:00Z",
-    "customer":{
-        "id": 1,
-        "createdAt": "2024-05-11T12:00:00Z",
-        "updatedAt": "2024-05-11T12:00:00Z",
-        "name": "Nome do Cliente",
-        "taxpayerRegistry": "123456789",
-        "email": "email@example.com",
-    },
-    "notes": "sem cebola",
-    "trackingId": 111,
-    "status":"DONE",
-    "totalPrice":100.00,
-    "orderProducts":[
-    {
-      "product": {
-        "name": "Batata",
-        "price": 15.99,
-        "description": "Batata 200gr",
-        "pictures": ["http://linkdapimagem.com/imagem.png"],
-        "category": {
+    [{
+      "id":1,
+      "createdAt": "2024-05-11T12:00:00Z",
+      "updatedAt": "2024-05-11T12:00:00Z",
+      "customer":{
           "id": 1,
-          "type":"SIDE"
-        },
+          "createdAt": "2024-05-11T12:00:00Z",
+          "updatedAt": "2024-05-11T12:00:00Z",
+          "name": "Customer Name",
+          "taxpayerRegistry": "123456789",
+          "email": "email@example.com"
       },
-      "quantity":2,
-    },
-    {
-      "product": {
-        "name": "Milk Shake",
-        "price": 15.99,
-        "description": "Milk shake de chocolate",
-        "pictures": ["http://linkdapimagem.com/imagem.png"],
-        "category": {
-          "id": 1,
-          "type":"SIDE"
+      "notes": "no onions",
+      "trackingId": 111,
+      "status":"DONE",
+      "totalPrice":100.00,
+      "orderProducts":[
+      {
+        "product": {
+          "name": "Potato",
+          "price": 15.99,
+          "description": "200g Potato",
+          "pictures": ["http://image-link.com/image.png"],
+          "category": {
+            "id": 1,
+            "type":"SIDE"
+          }
         },
+        "quantity":2
       },
-      "quantity":1,
+      {
+        "product": {
+          "name": "Milk Shake",
+          "price": 15.99,
+          "description": "Chocolate Milk Shake",
+          "pictures": ["http://image-link.com/image.png"],
+          "category": {
+            "id": 1,
+            "type":"SIDE"
+          }
+        },
+        "quantity":1
+      }]
     }]
-  }]
     ```
+  - **404:** Order not found
+  - **500:** Internal error
 
-  - **404:** Pedido não encontrado
-  - **500:** Erro interno
-## Alterar o status de um pedido
-- **Método:** POST
+## Change the status of an Order
+- **Method:** POST
 - **URL:** `/orders/{id}/change-status/`
-- **Descrição:** Altera o status de um pedido com os dados fornecidos.
-- **Corpo da Requisição:**
+- **Description:** Changes the status of an order with the provided data.
+- **Request Body:**
   ```json
   {
     "status":"DONE",
   }
   ```
-- **Respostas:**
-  - **200:** status alterado com sucesso
-  - **400:** Requisição inválida
-  - **500:** Erro interno
+- **Responses:**
+  - **200:** Status changed successfully
+  - **400:** Invalid request
+  - **500:** Internal error
