@@ -4,7 +4,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { INestApplication } from '@nestjs/common';
 import { AppModule } from 'src/app.module';
-import { v4 as uuidv4 } from 'uuid';
+import {newCustomer} from '../../mocks/customer.mocks'
 describe('Customer (e2e)', () => {
   let app: INestApplication;
 
@@ -23,11 +23,7 @@ describe('Customer (e2e)', () => {
     await app.close();
   });
   
-  const newCustomer = {
-    "name": "customer name",
-    "email": "customer@email.com",
-    "taxpayerRegistry": uuidv4()
-  };
+
   let CustomerId: number
 
   it('(POST) /customer', async () => {

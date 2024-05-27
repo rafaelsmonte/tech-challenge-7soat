@@ -5,6 +5,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { INestApplication } from '@nestjs/common';
 import { AppModule } from 'src/app.module';
+import {newProduct} from '../../mocks/product.mocks'
 
 describe('Product (e2e)', () => {
   let app: INestApplication;
@@ -24,13 +25,7 @@ describe('Product (e2e)', () => {
     await app.close();
   });
   
-  const newProduct = {
-    name: 'Test Product',
-    price: 100.0,
-    description: "Product description",
-    pictures: ['url_picture_one','url_picture_two'],
-    categoryId:1
-  };
+ 
   let productId: number
 
   it('(POST) /product', async () => {

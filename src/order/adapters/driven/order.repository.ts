@@ -151,13 +151,13 @@ export class OrderRepository implements IOrderRepository {
     try {
       await this.prisma.orderProduct.deleteMany({
         where: {
-          orderId: id,
+          orderId: Number(id),
         },
       });
 
       await this.prisma.order.delete({
         where: {
-          id: id,
+          id: Number(id),
         },
       });
     } catch (exception) {
@@ -176,7 +176,7 @@ export class OrderRepository implements IOrderRepository {
   async update(id: number, orderDTO: UpdateOrderDTO): Promise<OrderEntity> {
     try {
       await this.prisma.order.update({
-        where: { id: id },
+        where: { id: Number(id) },
         data: orderDTO,
       });
 
@@ -196,7 +196,7 @@ export class OrderRepository implements IOrderRepository {
 
   async findOne(id: number): Promise<OrderEntity> {
     const order = await this.prisma.order.findUnique({
-      where: { id: id },
+      where: { id: Number(id) },
       select: {
         id: true,
         createdAt: true,
