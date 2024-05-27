@@ -64,7 +64,7 @@ export class CustomerRepository implements ICustomerRepository {
 
   async retrieve(id: number): Promise<CustomerEntity> {
     const customer = await this.prisma.customer.findUnique({
-      where: { id: id },
+      where: { id: Number(id) },
     });
 
     if (!customer) {
@@ -90,7 +90,7 @@ export class CustomerRepository implements ICustomerRepository {
 
   async delete(id: number): Promise<void> {
     try {
-      await this.prisma.customer.delete({ where: { id: id } });
+      await this.prisma.customer.delete({ where: { id: Number(id) } });
     } catch (exception) {
       if (
         exception instanceof Prisma.PrismaClientKnownRequestError &&
@@ -110,7 +110,7 @@ export class CustomerRepository implements ICustomerRepository {
   ): Promise<CustomerEntity> {
     try {
       return await this.prisma.customer.update({
-        where: { id: id },
+        where: { id: Number(id) },
         data: customerDTO,
       });
     } catch (exception) {
