@@ -20,23 +20,11 @@ export class OrderRepository implements IOrderRepository {
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async create(orderDTO: CreateOrderDTO): Promise<OrderEntity> {
-    // TODO move totalPrice to service
+  async create(
+    orderDTO: CreateOrderDTO,
+    totalPrice: number,
+  ): Promise<OrderEntity> {
     try {
-      const productIds = orderDTO.orderProducts.map(
-        (orderProduct) => orderProduct.productId,
-      );
-
-      const products = await this.prisma.product.findMany({
-        where: { id: { in: productIds } },
-        select: { id: true, price: true },
-      });
-
-      const totalPrice = orderDTO.orderProducts.reduce((acc, orderProduct) => {
-        const product = products.find((p) => p.id === orderProduct.productId);
-        return acc + (product?.price?.toNumber() ?? 0) * orderProduct.quantity;
-      }, 0);
-
       const createdOrder = await this.prisma.order.create({
         data: {
           customer: {
@@ -151,13 +139,13 @@ export class OrderRepository implements IOrderRepository {
     try {
       await this.prisma.orderProduct.deleteMany({
         where: {
-          orderId: id,
+          orderId: Number(id),
         },
       });
 
       await this.prisma.order.delete({
         where: {
-          id: id,
+          id: Number(id),
         },
       });
     } catch (exception) {
@@ -176,7 +164,7 @@ export class OrderRepository implements IOrderRepository {
   async update(id: number, orderDTO: UpdateOrderDTO): Promise<OrderEntity> {
     try {
       await this.prisma.order.update({
-        where: { id: id },
+        where: { id: Number(id) },
         data: orderDTO,
       });
 
@@ -196,7 +184,7 @@ export class OrderRepository implements IOrderRepository {
 
   async findOne(id: number): Promise<OrderEntity> {
     const order = await this.prisma.order.findUnique({
-      where: { id: id },
+      where: { id: Number(id) },
       select: {
         id: true,
         createdAt: true,

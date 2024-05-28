@@ -32,7 +32,7 @@ export class ProductRepository implements IProductRepository {
 
   async delete(id: number): Promise<void> {
     try {
-      await this.prisma.product.delete({ where: { id: id } });
+      await this.prisma.product.delete({ where: { id: Number(id) } });
     } catch (exception) {
       if (
         exception instanceof Prisma.PrismaClientKnownRequestError &&
@@ -52,7 +52,7 @@ export class ProductRepository implements IProductRepository {
   ): Promise<ProductEntity> {
     try {
       await this.prisma.product.update({
-        where: { id: id },
+        where: { id:  Number(id) },
         data: productDTO,
       });
 
@@ -71,12 +71,13 @@ export class ProductRepository implements IProductRepository {
   }
 
   async list(productFiltersDTO: ProductFiltersDTO): Promise<ProductEntity[]> {
-    const { categoryId, name } = productFiltersDTO;
+    const { categoryId, name, ids } = productFiltersDTO;
 
     const products = await this.prisma.product.findMany({
       where: {
         ...(categoryId ? { categoryId: categoryId } : {}),
         ...(name ? { name: { contains: name, mode: 'insensitive' } } : {}),
+        ...(ids ? { id: { in: ids } } : {}),
       },
       select: {
         id: true,
@@ -103,7 +104,7 @@ export class ProductRepository implements IProductRepository {
 
   async findOne(id: number): Promise<ProductEntity> {
     const product = await this.prisma.product.findUnique({
-      where: { id: id },
+      where: { id:  Number(id) },
       select: {
         id: true,
         createdAt: true,
