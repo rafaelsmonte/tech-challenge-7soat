@@ -36,7 +36,7 @@ case "$1" in
                 echo "E2E Tests ..."
                 DUID=$(id -u) DGID=$(id -g) docker compose -f $BASEDIR/docker/docker-compose-test.yml up \
                 --abort-on-container-exit  --exit-code-from tech-challenge-test; \
-                DUID=$(id -u) DGID=$(id -g) docker compose -f $BASEDIR/docker/docker-compose-test.yml down
+                DUID=$(id -u) DGID=$(id -g) docker compose -f $BASEDIR/docker/docker-compose-test.yml down -v
                 ;;
         *)
                 echo $"Usage: $0 {upd|up|down|down-volume|restart|logs|test}"

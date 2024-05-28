@@ -14,12 +14,12 @@ These instructions will get you a copy of the project up and running on your loc
 
  - **Setup Environment Variables**
 ```
-You can edit the environment valriables for testing environment at: docker/dev-local.env
+You can edit the environment variables for testing environment at: docker/dev-local.env
 ```
 
  - **Run the application on docker environment**
 ```
-./scripts/run-dev.sh up
+./scripts/run-dev.sh up // it is recommended to run ./scripts/run-dev.sh down after stopping the container execution.
 
 # Daemon mode
 ./scripts/run-dev.sh upd
