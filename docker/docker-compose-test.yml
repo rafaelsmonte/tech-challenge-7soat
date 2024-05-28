@@ -1,0 +1,51 @@
+#==============================================================================
+# Requirements
+# * Docker installed
+# * docker-compose installed
+#----------------------------------------------------------------------
+# Use
+# UID=${UID} GID=${GID} docker-compose -f docker-compose-dev.yml up -d
+#----------------------------------------------------------------------
+version: '3.8'
+#----------------------------------------------------------------------
+# Networks
+#----------------------------------------------------------------------
+networks:
+  tech-challenge-net:
+    driver: bridge
+#----------------------------------------------------------------------
+# Volumes
+#----------------------------------------------------------------------
+volumes:
+  tech-challenge-db-data: {}
+#----------------------------------------------------------------------
+# Services:
+#----------------------------------------------------------------------
+services:
+  tech-challenge:
+    image: node:16-bullseye
+    container_name: tech-challenge
+    working_dir: /usr/src/app
+    command: /usr/src/app/docker/docker-run-test.sh
+    user: '${DUID}:${DGID}'
+    volumes:
+      - '..:/usr/src/app:Z'
+    ports:
+      - '3000:3000'
+    networks:
+      - tech-challenge-net
+    env_file:
+      - ./dev-local.env
+    depends_on:
+      - tech-challenge-db
+  tech-challenge-db:
+    image: postgres:latest
+    container_name: tech-challenge-db
+    ports:
+      - 5432:5432
+    networks:
+      - tech-challenge-net
+    env_file:
+      - ./dev-local.env
+    volumes:
+      - tech-challenge-db-data:/var/lib/postgresql/data

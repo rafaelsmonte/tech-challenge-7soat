@@ -32,8 +32,12 @@ case "$1" in
                 echo "Logs ..."
                 DUID=$(id -u) DGID=$(id -g) docker compose -f $BASEDIR/docker/docker-compose-dev.yml logs -f
                 ;;
+        test)
+                echo "E2E Tests ..."
+                DUID=$(id -u) DGID=$(id -g) docker compose -f $BASEDIR/docker/docker-compose-test.yml up -f
+                ;;
         *)
-                echo $"Usage: $0 {upd|up|down|down-volume|restart|logs}"
+                echo $"Usage: $0 {upd|up|down|down-volume|restart|logs|test}"
                 RETVAL=2
 
 esac
