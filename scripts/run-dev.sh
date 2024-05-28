@@ -34,7 +34,7 @@ case "$1" in
                 ;;
         test)
                 echo "E2E Tests ..."
-                DUID=$(id -u) DGID=$(id -g) docker compose -f $BASEDIR/docker/docker-compose-test.yml up -f
+                DUID=$(id -u) DGID=$(id -g) docker compose -f $BASEDIR/docker/docker-compose-test.yml up
                 ;;
         *)
                 echo $"Usage: $0 {upd|up|down|down-volume|restart|logs|test}"
