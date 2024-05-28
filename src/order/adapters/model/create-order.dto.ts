@@ -12,7 +12,6 @@ import {
 class OrderProductDTO {
   @ApiProperty()
   @IsNumber()
-  @Min(1)
   productId: number;
 
   @ApiProperty()

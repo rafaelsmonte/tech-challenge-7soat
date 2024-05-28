@@ -42,3 +42,8 @@ You can edit the environment valriables for testing environment at: docker/dev-l
 ```
 ./scripts/run-dev.sh logs
 ```
+
+ - **Run tests e2e**
+```
+./scripts/run-dev.sh test
+```

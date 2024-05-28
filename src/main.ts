@@ -27,16 +27,6 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
 
-  app.use(
-    ['/docs'],
-    basicAuth({
-      challenge: true,
-      users: {
-        ['admin']: 'admin',
-      },
-    }),
-  );
-
   SwaggerModule.setup('docs', app, document);
 
   const servicePort = configService.get<number>('SERVICE_PORT') || 3000;
