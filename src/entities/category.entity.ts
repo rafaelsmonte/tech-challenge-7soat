@@ -10,4 +10,20 @@ export class Category {
     this._updatedAt = updatedAt;
     this._type = type;
   }
+
+  public get id(): number {
+    return this._id;
+  }
+
+  public get createdAt(): Date {
+    return this._createdAt;
+  }
+
+  public get updatedAt(): Date {
+    return this._updatedAt;
+  }
+
+  public get type(): string {
+    return this._type;
+  }
 }

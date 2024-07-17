@@ -27,4 +27,32 @@ export class Product {
     this._pictures = pictures;
     this._categoryId = categoryId;
   }
+
+  public get id(): number {
+    return this._id;
+  }
+
+  public get createdAt(): Date {
+    return this._createdAt;
+  }
+
+  public get updatedAt(): Date {
+    return this._updatedAt;
+  }
+
+  public get name(): string {
+    return this._name;
+  }
+
+  public get price(): number {
+    return this._price;
+  }
+
+  public get description(): string {
+    return this._description;
+  }
+
+  public get pictures(): string[] {
+    return this._pictures;
+  }
 }

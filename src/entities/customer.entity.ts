@@ -21,4 +21,28 @@ export class Customer {
     this._taxpayerRegistry = taxpayerRegistry;
     this._email = email;
   }
+
+  public get id(): number {
+    return this._id;
+  }
+
+  public get createdAt(): Date {
+    return this._createdAt;
+  }
+
+  public get updatedAt(): Date {
+    return this._updatedAt;
+  }
+
+  public get name(): string {
+    return this._name;
+  }
+
+  public get taxpayerRegistry(): string {
+    return this._taxpayerRegistry;
+  }
+
+  public get email(): string {
+    return this._email;
+  }
 }
