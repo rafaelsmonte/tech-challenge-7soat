@@ -9,7 +9,7 @@ export class CustomerGateway implements ICustomerGateway {
     this._database = database;
   }
 
-  public async findAll(): Promise<Customer[] | null> {
+  public async findAll(): Promise<Customer[]> {
     throw new Error('Method not implemented.'); // TODO implement
   }
 

@@ -9,7 +9,25 @@ export class ProductGateway implements IProductGateway {
     this._database = database;
   }
 
-  public async findAll(): Promise<Product | null> {
-    return null; // TODO implement
+  public async findAll(): Promise<Product[]> {
+    throw new Error('Method not implemented.'); // TODO implement
+  }
+
+  public findById(id: number): Promise<Product> {
+    throw new Error('Method not implemented.');
+  }
+
+  public save(
+    name: string,
+    price: number,
+    description: string,
+    pictures: string[],
+    categoryId: number,
+  ): Promise<Product> {
+    throw new Error('Method not implemented.');
+  }
+
+  public delete(id: number): Promise<void> {
+    throw new Error('Method not implemented.');
   }
 }

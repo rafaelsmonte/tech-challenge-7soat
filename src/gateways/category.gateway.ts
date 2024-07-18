@@ -9,7 +9,11 @@ export class CategoryGateway implements ICategoryGateway {
     this._database = database;
   }
 
-  public async findAll(): Promise<Category[] | null> {
-    return null; // TODO implement
+  public async findAll(): Promise<Category[]> {
+    throw new Error('Method not implemented.'); // TODO implement
+  }
+
+  public async findById(id: number): Promise<Category> {
+    throw new Error('Method not implemented.'); // TODO implement
   }
 }

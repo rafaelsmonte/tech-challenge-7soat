@@ -1,11 +1,8 @@
 import { Customer } from '@entities/customer.entity';
 import { ICustomerGateway } from '@interfaces/customer.gateway.interface';
-import { CustomerGateway } from 'src/gateways/customer.gateway';
 
 export class CustomerUseCases {
-  static async findAll(
-    customerGateway: ICustomerGateway,
-  ): Promise<Customer[] | null> {
+  static async findAll(customerGateway: ICustomerGateway): Promise<Customer[]> {
     const customers = await customerGateway.findAll();
     return customers;
   }
@@ -13,7 +10,7 @@ export class CustomerUseCases {
   static async findById(
     customerGateway: ICustomerGateway,
     id: number,
-  ): Promise<Customer | null> {
+  ): Promise<Customer> {
     const customer = await customerGateway.findById(id);
     return customer;
   }
@@ -21,7 +18,7 @@ export class CustomerUseCases {
   static async findByTaxpayerRegistry(
     customerGateway: ICustomerGateway,
     taxpayerRegistry: string,
-  ): Promise<Customer | null> {
+  ): Promise<Customer> {
     const customer = await customerGateway.findByTaxpayerRegistry(
       taxpayerRegistry,
     );
