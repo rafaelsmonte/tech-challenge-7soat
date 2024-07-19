@@ -1,14 +1,14 @@
 import { Customer } from '@entities/customer.entity';
-import { ICustomerGateway } from '@interfaces/customer.gateway.interface';
+import { CustomerGateway } from '@interfaces/customer.gateway.interface';
 
 export class CustomerUseCases {
-  static async findAll(customerGateway: ICustomerGateway): Promise<Customer[]> {
+  static async findAll(customerGateway: CustomerGateway): Promise<Customer[]> {
     const customers = await customerGateway.findAll();
     return customers;
   }
 
   static async findById(
-    customerGateway: ICustomerGateway,
+    customerGateway: CustomerGateway,
     id: number,
   ): Promise<Customer> {
     const customer = await customerGateway.findById(id);
@@ -16,7 +16,7 @@ export class CustomerUseCases {
   }
 
   static async findByTaxpayerRegistry(
-    customerGateway: ICustomerGateway,
+    customerGateway: CustomerGateway,
     taxpayerRegistry: string,
   ): Promise<Customer> {
     const customer = await customerGateway.findByTaxpayerRegistry(
@@ -26,7 +26,7 @@ export class CustomerUseCases {
   }
 
   static async create(
-    customerGateway: ICustomerGateway,
+    customerGateway: CustomerGateway,
     name: string,
     email: string,
     taxpayerRegistry: string,
@@ -41,7 +41,7 @@ export class CustomerUseCases {
   }
 
   static async delete(
-    customerGateway: ICustomerGateway,
+    customerGateway: CustomerGateway,
     id: number,
   ): Promise<void> {
     await customerGateway.delete(id);

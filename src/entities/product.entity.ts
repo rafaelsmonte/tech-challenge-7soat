@@ -1,12 +1,12 @@
 export class Product {
-  private _id: number;
-  private _createdAt: Date;
-  private _updatedAt: Date;
-  private _name: string;
-  private _price: number;
-  private _description: string;
-  private _pictures: string[];
-  private _categoryId: number;
+  public readonly id: number;
+  public readonly createdAt: Date;
+  public readonly updatedAt: Date;
+  public readonly name: string;
+  public readonly price: number;
+  public readonly description: string;
+  public readonly pictures: string[];
+  public readonly categoryId: number;
 
   constructor(
     id: number,
@@ -18,41 +18,13 @@ export class Product {
     pictures: string[],
     categoryId: number,
   ) {
-    this._id = id;
-    this._createdAt = createdAt;
-    this._updatedAt = updatedAt;
-    this._name = name;
-    this._price = price;
-    this._description = description;
-    this._pictures = pictures;
-    this._categoryId = categoryId;
-  }
-
-  public get id(): number {
-    return this._id;
-  }
-
-  public get createdAt(): Date {
-    return this._createdAt;
-  }
-
-  public get updatedAt(): Date {
-    return this._updatedAt;
-  }
-
-  public get name(): string {
-    return this._name;
-  }
-
-  public get price(): number {
-    return this._price;
-  }
-
-  public get description(): string {
-    return this._description;
-  }
-
-  public get pictures(): string[] {
-    return this._pictures;
+    this.id = id;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
+    this.name = name;
+    this.price = price;
+    this.description = description;
+    this.pictures = pictures;
+    this.categoryId = categoryId;
   }
 }

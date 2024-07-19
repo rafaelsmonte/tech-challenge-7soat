@@ -1,8 +1,8 @@
 import { Product } from '@entities/product.entity';
 import { IDatabase } from '@interfaces/database.interface';
-import { IProductGateway } from '@interfaces/product.gateway.interface';
+import { ProductGateway } from '@interfaces/product.gateway.interface';
 
-export class ProductGateway implements IProductGateway {
+export class PrismaProductGateway implements ProductGateway {
   private _database: IDatabase;
 
   constructor(database: IDatabase) {

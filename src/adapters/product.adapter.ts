@@ -1,4 +1,4 @@
-import { ProductAndCategory } from 'src/types/product-and-category.interface';
+import { ProductAndCategory } from 'src/types/product-and-category.type';
 
 export const ProductAdapter = {
   adaptArrayJson: (

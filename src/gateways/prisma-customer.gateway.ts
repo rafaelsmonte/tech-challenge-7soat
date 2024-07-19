@@ -1,8 +1,8 @@
 import { Customer } from '@entities/customer.entity';
-import { ICustomerGateway } from '@interfaces/customer.gateway.interface';
+import { CustomerGateway } from '@interfaces/customer.gateway.interface';
 import { IDatabase } from '@interfaces/database.interface';
 
-export class CustomerGateway implements ICustomerGateway {
+export class PrismaCustomerGateway implements CustomerGateway {
   private _database: IDatabase;
 
   constructor(database: IDatabase) {

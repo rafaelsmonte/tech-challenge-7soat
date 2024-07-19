@@ -1,5 +1,7 @@
 import { CategoryController } from '@controllers/category.controller';
 import { CustomerController } from '@controllers/customer.controller';
+import { OrderController } from '@controllers/order.controller';
+import { ProductController } from '@controllers/product.controller';
 import { IDatabase } from '@interfaces/database.interface';
 
 import { Request, Response } from 'express';
@@ -85,10 +87,82 @@ export class TechChallengeApp {
     });
 
     // Product endpoints
-    // TODO implement product endpoints
+    app.get('/product', async (request: Request, response: Response) => {
+      const products = await ProductController.findAll(this._database);
+      response
+        .setHeader('Content-type', 'application/json')
+        .status(200)
+        .send(products);
+    });
+
+    app.get('/product/:id', async (request: Request, response: Response) => {
+      const id = request.params.id;
+      const product = await ProductController.findById(this._database, id);
+      response
+        .setHeader('Content-type', 'application/json')
+        .status(200)
+        .send(product);
+    });
+
+    app.post('/product', async (request: Request, response: Response) => {
+      const { name, price, description, pictures, categoryId } = request.body;
+      const newProduct = await ProductController.create(
+        this._database,
+        name,
+        price,
+        description,
+        pictures,
+        categoryId,
+      );
+      response
+        .setHeader('Content-type', 'application/json')
+        .status(200)
+        .send(newProduct);
+    });
+
+    app.delete('/product/:id', async (request: Request, response: Response) => {
+      const id = request.params.id;
+      await ProductController.delete(this._database, id);
+      response.status(204).send();
+    });
 
     // Order endpoints
-    // TODO implement order endpoints
+    app.get('/order', async (request: Request, response: Response) => {
+      const orders = await OrderController.findAll(this._database);
+      response
+        .setHeader('Content-type', 'application/json')
+        .status(200)
+        .send(orders);
+    });
+
+    app.get('/order/:id', async (request: Request, response: Response) => {
+      const id = request.params.id;
+      const order = await OrderController.findById(this._database, id);
+      response
+        .setHeader('Content-type', 'application/json')
+        .status(200)
+        .send(order);
+    });
+
+    app.post('/order', async (request: Request, response: Response) => {
+      const { customerId, notes, productsAndQuantity } = request.body;
+      const newOrder = await OrderController.create(
+        this._database,
+        notes,
+        productsAndQuantity,
+        customerId,
+      );
+      response
+        .setHeader('Content-type', 'application/json')
+        .status(200)
+        .send(newOrder);
+    });
+
+    app.delete('/order/:id', async (request: Request, response: Response) => {
+      const id = request.params.id;
+      await OrderController.delete(this._database, id);
+      response.status(204).send();
+    });
 
     app.listen(port, () => {
       console.log(`Tech challenge app listening on port ${port}`);

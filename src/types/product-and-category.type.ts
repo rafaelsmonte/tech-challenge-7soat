@@ -1,7 +1,7 @@
 import { Category } from '@entities/category.entity';
 import { Product } from '@entities/product.entity';
 
-export interface ProductAndCategory {
+export type ProductAndCategory = {
   product: Product;
   category: Category;
-}
+};

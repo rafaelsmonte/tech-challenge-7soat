@@ -1,6 +1,6 @@
 import { Product } from '@entities/product.entity';
 
-export interface IProductGateway {
+export interface ProductGateway {
   findAll(): Promise<Product[]>;
   findById(id: number): Promise<Product>;
   save(

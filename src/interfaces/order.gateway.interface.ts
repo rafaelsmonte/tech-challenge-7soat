@@ -1,11 +1,11 @@
 import { Order } from '@entities/order.entity';
-import { OrderProduct } from 'src/types/order-product.type';
+import { ProductAndQuantity } from 'src/types/product-and-quantity.type';
 
-export interface IOrderGateway {
+export interface OrderGateway {
   findAll(): Promise<Order[]>;
   findById(id: number): Promise<Order>;
   create(
-    orderProducts: OrderProduct[],
+    productsAndQuantity: ProductAndQuantity[],
     notes: string,
     totalPrice: number,
     trackingId: string,

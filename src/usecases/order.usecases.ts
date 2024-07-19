@@ -1,37 +1,73 @@
 import { Customer } from '@entities/customer.entity';
 import { Order } from '@entities/order.entity';
 import { Product } from '@entities/product.entity';
-import { ICustomerGateway } from '@interfaces/customer.gateway.interface';
-import { IOrderGateway } from '@interfaces/order.gateway.interface';
-import { IProductGateway } from '@interfaces/product.gateway.interface';
-import { OrderProduct } from 'src/types/order-product.type';
+import { CustomerGateway } from '@interfaces/customer.gateway.interface';
+import { OrderProductGateway } from '@interfaces/order-product.gateway.interface';
+import { OrderGateway } from '@interfaces/order.gateway.interface';
+import { ProductGateway } from '@interfaces/product.gateway.interface';
+import { OrderAndProducts } from 'src/types/order-and-products.type';
+import { ProductAndQuantity } from 'src/types/product-and-quantity.type';
 
 // TODO handle errors
 
 export class OrderUseCases {
   static async findAll(
-    orderGateway: IOrderGateway,
-    productGateway: IProductGateway,
-    customerGateway: ICustomerGateway,
-  ): Promise<Order[]> {
-    return await orderGateway.findAll();
+    orderGateway: OrderGateway,
+    productGateway: ProductGateway,
+    customerGateway: CustomerGateway,
+    orderProductGateway: OrderProductGateway,
+  ): Promise<OrderAndProducts[]> {
+    const orderAndProducts: OrderAndProducts[] = [];
+    const productsAndQuantity: ProductAndQuantity[] = [];
+
+    const orders = await orderGateway.findAll();
+
+    orders.forEach(async (order) => {
+      const orderProducts = await orderProductGateway.findByOrderId(order.id);
+
+      orderProducts.forEach(async (orderProduct) => {
+        productsAndQuantity.push({
+          productId: orderProduct.productId,
+          quantity: orderProduct.quantity,
+        });
+      });
+
+      orderAndProducts.push({ order, productsAndQuantity });
+    });
+
+    return orderAndProducts;
   }
 
   static async findById(
-    orderGateway: IOrderGateway,
-    productGateway: IProductGateway,
-    customerGateway: ICustomerGateway,
+    orderGateway: OrderGateway,
+    productGateway: ProductGateway,
+    customerGateway: CustomerGateway,
+    orderProductGateway: OrderProductGateway,
     id: number,
-  ): Promise<Order> {
-    return await orderGateway.findById(id);
+  ): Promise<OrderAndProducts> {
+    const productsAndQuantity: ProductAndQuantity[] = [];
+
+    const order = await orderGateway.findById(id);
+
+    const orderProducts = await orderProductGateway.findByOrderId(order.id);
+
+    orderProducts.forEach(async (orderProduct) => {
+      productsAndQuantity.push({
+        productId: orderProduct.productId,
+        quantity: orderProduct.quantity,
+      });
+    });
+
+    return { order, productsAndQuantity };
   }
 
   // TODO use a transaction
   static async create(
-    orderGateway: IOrderGateway,
-    productGateway: IProductGateway,
-    customerGateway: ICustomerGateway,
-    orderProducts: OrderProduct[],
+    orderGateway: OrderGateway,
+    productGateway: ProductGateway,
+    customerGateway: CustomerGateway,
+    orderProductGateway: OrderProductGateway,
+    productsAndQuantity: ProductAndQuantity[],
     notes: string,
     customerId?: number,
   ): Promise<Order> {
@@ -45,18 +81,20 @@ export class OrderUseCases {
       if (!customer) throw Error('Customer not found!');
     }
 
-    orderProducts.forEach(async (orderProduct) => {
-      const product = await productGateway.findById(orderProduct.productId);
+    productsAndQuantity.forEach(async (productAndQuantity) => {
+      const product = await productGateway.findById(
+        productAndQuantity.productId,
+      );
 
       if (!product) throw Error('Product not found!');
 
       products.push(product);
 
-      totalPrice += product.price * orderProduct.quantity;
+      totalPrice += product.price * productAndQuantity.quantity;
     });
 
     const order = await orderGateway.create(
-      orderProducts,
+      productsAndQuantity,
       notes,
       totalPrice,
       'trackingId',
@@ -65,12 +103,16 @@ export class OrderUseCases {
     );
 
     // TODO how is the better way to interact with OrderProduct table?
-    orderProducts.forEach((orderProduct) => {});
+    productsAndQuantity.forEach((productAndQuantity) => {});
 
     return order;
   }
 
-  static async delete(orderGateway: IOrderGateway, id: number): Promise<void> {
+  static async delete(
+    orderGateway: OrderGateway,
+    orderProductGateway: OrderProductGateway,
+    id: number,
+  ): Promise<void> {
     await orderGateway.delete(id);
   }
 }

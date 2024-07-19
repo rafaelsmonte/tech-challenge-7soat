@@ -1,10 +1,10 @@
 import { Order } from '@entities/order.entity';
 import { IDatabase } from '@interfaces/database.interface';
-import { IOrderGateway } from '@interfaces/order.gateway.interface';
-import { OrderProduct } from 'src/types/order-product.type';
+import { OrderGateway } from '@interfaces/order.gateway.interface';
+import { ProductAndQuantity } from 'src/types/product-and-quantity.type';
 
 // TODO implement
-export class OrderGateway implements IOrderGateway {
+export class PrismaOrderGateway implements OrderGateway {
   private _database: IDatabase;
 
   constructor(database: IDatabase) {
@@ -20,11 +20,14 @@ export class OrderGateway implements IOrderGateway {
   }
 
   create(
-    orderProducts: OrderProduct[],
+    productsAndQuantity: ProductAndQuantity[],
     notes: string,
     totalPrice: number,
+    trackingId: string,
+    status: string,
     customerId?: number,
   ): Promise<Order> {
+    // TODO return object, void or id
     throw new Error('Method not implemented.');
   }
 

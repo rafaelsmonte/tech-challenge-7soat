@@ -1,13 +1,13 @@
 import { IDatabase } from '@interfaces/database.interface';
 import { ProductUseCases } from '@usecases/product.usecases';
 import { ProductAdapter } from 'src/adapters/product.adapter';
-import { CategoryGateway } from 'src/gateways/category.gateway';
-import { ProductGateway } from 'src/gateways/product.gateway';
+import { PrismaCategoryGateway } from 'src/gateways/prisma-category.gateway';
+import { PrismaProductGateway } from 'src/gateways/prisma-product.gateway';
 
 export class ProductController {
   static async findAll(database: IDatabase): Promise<string> {
-    const productGateway = new ProductGateway(database);
-    const categoryGateway = new CategoryGateway(database);
+    const productGateway = new PrismaProductGateway(database);
+    const categoryGateway = new PrismaCategoryGateway(database);
 
     const productsAndCategory = await ProductUseCases.findAll(
       productGateway,
@@ -18,8 +18,8 @@ export class ProductController {
   }
 
   static async findById(database: IDatabase, id: number): Promise<string> {
-    const productGateway = new ProductGateway(database);
-    const categoryGateway = new CategoryGateway(database);
+    const productGateway = new PrismaProductGateway(database);
+    const categoryGateway = new PrismaCategoryGateway(database);
 
     const productAndCategory = await ProductUseCases.findById(
       productGateway,
@@ -38,8 +38,8 @@ export class ProductController {
     pictures: string[],
     categoryId: number,
   ): Promise<string> {
-    const productGateway = new ProductGateway(database);
-    const categoryGateway = new CategoryGateway(database);
+    const productGateway = new PrismaProductGateway(database);
+    const categoryGateway = new PrismaCategoryGateway(database);
 
     const productAndCategory = await ProductUseCases.create(
       productGateway,
@@ -55,7 +55,7 @@ export class ProductController {
   }
 
   static async delete(database: IDatabase, id: number): Promise<void> {
-    const productGateway = new ProductGateway(database);
+    const productGateway = new PrismaProductGateway(database);
     await ProductUseCases.delete(productGateway, id);
   }
 

@@ -1,6 +1,6 @@
 import { Customer } from '@entities/customer.entity';
 
-export interface ICustomerGateway {
+export interface CustomerGateway {
   findAll(): Promise<Customer[]>;
   findByTaxpayerRegistry(taxpayerRegistry: string): Promise<Customer>;
   findById(id: number): Promise<Customer>;

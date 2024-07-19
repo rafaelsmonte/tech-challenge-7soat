@@ -1,12 +1,12 @@
 export class Order {
-  private _id: number;
-  private _createdAt: Date;
-  private _updatedAt: Date;
-  private _notes: string;
-  private _trackingId: number;
-  private _totalPrice: number;
-  private _status: string;
-  private _customerId: number;
+  public readonly id: number;
+  public readonly createdAt: Date;
+  public readonly updatedAt: Date;
+  public readonly notes: string;
+  public readonly trackingId: number;
+  public readonly totalPrice: number;
+  public readonly status: string;
+  public readonly customerId: number;
 
   constructor(
     id: number,
@@ -18,13 +18,13 @@ export class Order {
     status: string,
     customerId: number,
   ) {
-    this._id = id;
-    this._createdAt = createdAt;
-    this._updatedAt = updatedAt;
-    this._notes = notes;
-    this._trackingId = trackingId;
-    this._totalPrice = totalPrice;
-    this._status = status;
-    this._customerId = customerId;
+    this.id = id;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
+    this.notes = notes;
+    this.trackingId = trackingId;
+    this.totalPrice = totalPrice;
+    this.status = status;
+    this.customerId = customerId;
   }
 }

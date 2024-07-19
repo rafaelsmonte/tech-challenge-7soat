@@ -1,8 +1,8 @@
 import { Category } from '@entities/category.entity';
-import { ICategoryGateway } from '@interfaces/category.gateway.interface';
+import { CategoryGateway } from '@interfaces/category.gateway.interface';
 import { IDatabase } from '@interfaces/database.interface';
 
-export class CategoryGateway implements ICategoryGateway {
+export class PrismaCategoryGateway implements CategoryGateway {
   private _database: IDatabase;
 
   constructor(database: IDatabase) {

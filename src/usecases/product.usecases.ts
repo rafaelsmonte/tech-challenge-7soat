@@ -1,13 +1,13 @@
-import { ICategoryGateway } from '@interfaces/category.gateway.interface';
-import { IProductGateway } from '@interfaces/product.gateway.interface';
-import { ProductAndCategory } from 'src/types/product-and-category.interface';
+import { CategoryGateway } from '@interfaces/category.gateway.interface';
+import { ProductGateway } from '@interfaces/product.gateway.interface';
+import { ProductAndCategory } from 'src/types/product-and-category.type';
 
 // TODO handle errors
 
 export class ProductUseCases {
   static async findAll(
-    productGateway: IProductGateway,
-    categoryGateway: ICategoryGateway,
+    productGateway: ProductGateway,
+    categoryGateway: CategoryGateway,
   ): Promise<ProductAndCategory[]> {
     const productsAndCategory: ProductAndCategory[] = [];
 
@@ -22,8 +22,8 @@ export class ProductUseCases {
   }
 
   static async findById(
-    productGateway: IProductGateway,
-    categoryGateway: ICategoryGateway,
+    productGateway: ProductGateway,
+    categoryGateway: CategoryGateway,
     id: number,
   ): Promise<ProductAndCategory> {
     const product = await productGateway.findById(id);
@@ -34,8 +34,8 @@ export class ProductUseCases {
   }
 
   static async create(
-    productGateway: IProductGateway,
-    categoryGateway: ICategoryGateway,
+    productGateway: ProductGateway,
+    categoryGateway: CategoryGateway,
     name: string,
     price: number,
     description: string,
@@ -56,7 +56,7 @@ export class ProductUseCases {
   }
 
   static async delete(
-    productGateway: IProductGateway,
+    productGateway: ProductGateway,
     id: number,
   ): Promise<void> {
     await productGateway.delete(id);
