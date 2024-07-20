@@ -1,27 +1,50 @@
 import { OrderProduct } from '@entities/order-product.entity';
-import { IDatabase } from '@interfaces/database.interface';
 import { OrderProductGateway } from '@interfaces/order-product.gateway.interface';
+import { PrismaClient } from '@prisma/client';
+
+// TODO implement
 
 export class PrismaOrderProductGateway implements OrderProductGateway {
-  private _database: IDatabase;
+  constructor(private prisma: PrismaClient) {}
 
-  constructor(database: IDatabase) {
-    this._database = database;
+  async findByOrderId(orderId: number): Promise<OrderProduct[]> {
+    const orderProducts = await this.prisma.orderProduct.findMany({
+      where: { orderId },
+    });
+
+    return orderProducts.map(
+      (orderProduct) =>
+        new OrderProduct(
+          orderProduct.id,
+          orderProduct.createdAt,
+          orderProduct.updatedAt,
+          orderProduct.orderId,
+          orderProduct.productId,
+          orderProduct.quantity,
+        ),
+    );
   }
 
-  findByOrderId(id: number): Promise<OrderProduct[]> {
-    throw new Error('Method not implemented.');
+  async create(orderProduct: OrderProduct): Promise<OrderProduct> {
+    const createdOrderProduct = await this.prisma.orderProduct.create({
+      data: {
+        orderId: orderProduct.orderId,
+        productId: orderProduct.productId,
+        quantity: orderProduct.quantity,
+      },
+    });
+
+    return new OrderProduct(
+      createdOrderProduct.id,
+      createdOrderProduct.createdAt,
+      createdOrderProduct.updatedAt,
+      createdOrderProduct.orderId,
+      createdOrderProduct.productId,
+      createdOrderProduct.quantity,
+    );
   }
 
-  create(
-    orderId: number,
-    productId: number,
-    quantity: number,
-  ): Promise<OrderProduct> {
-    throw new Error('Method not implemented.');
-  }
-
-  delete(id: number): Promise<void> {
-    throw new Error('Method not implemented.');
+  async delete(id: number): Promise<void> {
+    await this.prisma.orderProduct.delete({ where: { id } });
   }
 }

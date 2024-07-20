@@ -21,4 +21,15 @@ export class OrderProduct {
     this.productId = productId;
     this.quantity = quantity;
   }
+
+  // TODO validate fields
+
+  static new(
+    orderId: number,
+    productId: number,
+    quantity: number,
+  ): OrderProduct {
+    const now = new Date();
+    return new OrderProduct(0, now, now, orderId, productId, quantity);
+  }
 }

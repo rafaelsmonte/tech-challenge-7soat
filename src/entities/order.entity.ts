@@ -1,3 +1,5 @@
+import { OrderStatus } from 'src/enum/order-status.enum';
+
 export class Order {
   public readonly id: number;
   public readonly createdAt: Date;
@@ -6,7 +8,7 @@ export class Order {
   public readonly trackingId: number;
   public readonly totalPrice: number;
   public readonly status: string;
-  public readonly customerId: number;
+  public readonly customerId?: number;
 
   constructor(
     id: number,
@@ -16,7 +18,7 @@ export class Order {
     trackingId: number,
     totalPrice: number,
     status: string,
-    customerId: number,
+    customerId?: number,
   ) {
     this.id = id;
     this.createdAt = createdAt;
@@ -26,5 +28,27 @@ export class Order {
     this.totalPrice = totalPrice;
     this.status = status;
     this.customerId = customerId;
+  }
+
+  // TODO validate fields
+
+  static new(
+    notes: string,
+    trackingId: number,
+    totalPrice: number,
+    status: OrderStatus,
+    customerId?: number,
+  ): Order {
+    const now = new Date();
+    return new Order(
+      0,
+      now,
+      now,
+      notes,
+      trackingId,
+      totalPrice,
+      status,
+      customerId,
+    );
   }
 }

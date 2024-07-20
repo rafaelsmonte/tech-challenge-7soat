@@ -21,4 +21,11 @@ export class Customer {
     this.taxpayerRegistry = taxpayerRegistry;
     this.email = email;
   }
+
+  // TODO validate fields
+
+  static new(name: string, taxpayerRegistry: string, email: string): Customer {
+    const now = new Date();
+    return new Customer(0, now, now, name, taxpayerRegistry, email);
+  }
 }

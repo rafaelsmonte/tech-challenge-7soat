@@ -1,6 +1,8 @@
 import { Customer } from '@entities/customer.entity';
 import { CustomerGateway } from '@interfaces/customer.gateway.interface';
 
+// TODO handle errors
+
 export class CustomerUseCases {
   static async findAll(customerGateway: CustomerGateway): Promise<Customer[]> {
     const customers = await customerGateway.findAll();
@@ -12,6 +14,9 @@ export class CustomerUseCases {
     id: number,
   ): Promise<Customer> {
     const customer = await customerGateway.findById(id);
+
+    if (!customer) throw Error('Customer not found');
+
     return customer;
   }
 
@@ -22,6 +27,9 @@ export class CustomerUseCases {
     const customer = await customerGateway.findByTaxpayerRegistry(
       taxpayerRegistry,
     );
+
+    if (!customer) throw Error('Customer not found');
+
     return customer;
   }
 
@@ -35,9 +43,11 @@ export class CustomerUseCases {
       taxpayerRegistry,
     );
 
-    if (customer !== null) return Promise.reject('Customer already registered'); // TODO handle error
+    if (customer) throw Error('Customer already registered');
 
-    return await customerGateway.save(name, taxpayerRegistry, email);
+    return await customerGateway.save(
+      Customer.new(name, email, taxpayerRegistry),
+    );
   }
 
   static async delete(

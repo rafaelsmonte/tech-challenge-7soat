@@ -27,4 +27,26 @@ export class Product {
     this.pictures = pictures;
     this.categoryId = categoryId;
   }
+
+  // TODO validate fields
+
+  static new(
+    name: string,
+    price: number,
+    description: string,
+    pictures: string[],
+    categoryId: number,
+  ): Product {
+    const now = new Date();
+    return new Product(
+      0,
+      now,
+      now,
+      name,
+      price,
+      description,
+      pictures,
+      categoryId,
+    );
+  }
 }

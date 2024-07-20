@@ -1,33 +1,69 @@
 import { Product } from '@entities/product.entity';
-import { IDatabase } from '@interfaces/database.interface';
 import { ProductGateway } from '@interfaces/product.gateway.interface';
+import { PrismaClient } from '@prisma/client';
 
 export class PrismaProductGateway implements ProductGateway {
-  private _database: IDatabase;
-
-  constructor(database: IDatabase) {
-    this._database = database;
-  }
+  constructor(private prisma: PrismaClient) {}
 
   public async findAll(): Promise<Product[]> {
-    throw new Error('Method not implemented.'); // TODO implement
+    const products = await this.prisma.product.findMany();
+
+    return products.map(
+      (product) =>
+        new Product(
+          product.id,
+          product.createdAt,
+          product.updatedAt,
+          product.name,
+          product.price,
+          product.description,
+          product.pictures,
+          product.categoryId,
+        ),
+    );
   }
 
-  public findById(id: number): Promise<Product> {
-    throw new Error('Method not implemented.');
+  public async findById(id: number): Promise<Product | null> {
+    const product = await this.prisma.product.findUnique({ where: { id } });
+
+    if (!product) return null;
+
+    return new Product(
+      product.id,
+      product.createdAt,
+      product.updatedAt,
+      product.name,
+      product.price,
+      product.description,
+      product.pictures,
+      product.categoryId,
+    );
   }
 
-  public save(
-    name: string,
-    price: number,
-    description: string,
-    pictures: string[],
-    categoryId: number,
-  ): Promise<Product> {
-    throw new Error('Method not implemented.');
+  public async save(product: Product): Promise<Product> {
+    const createdProduct = await this.prisma.product.create({
+      data: {
+        name: product.name,
+        price: product.price,
+        description: product.description,
+        pictures: product.pictures,
+        categoryId: product.categoryId,
+      },
+    });
+
+    return new Product(
+      createdProduct.id,
+      createdProduct.createdAt,
+      createdProduct.updatedAt,
+      createdProduct.name,
+      createdProduct.price,
+      createdProduct.description,
+      createdProduct.pictures,
+      createdProduct.categoryId,
+    );
   }
 
-  public delete(id: number): Promise<void> {
-    throw new Error('Method not implemented.');
+  public async delete(id: number): Promise<void> {
+    await this.prisma.product.delete({ where: { id } });
   }
 }
