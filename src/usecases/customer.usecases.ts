@@ -1,5 +1,5 @@
-import { Customer } from '@entities/customer.entity';
-import { CustomerGateway } from '@interfaces/customer.gateway.interface';
+import { Customer } from 'src/entities/customer.entity';
+import { CustomerGateway } from 'src/interfaces/customer.gateway.interface';
 
 // TODO handle errors
 

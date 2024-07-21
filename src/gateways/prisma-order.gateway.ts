@@ -1,14 +1,14 @@
-import { Order } from '@entities/order.entity';
-import { OrderGateway } from '@interfaces/order.gateway.interface';
-import { PrismaClient } from '@prisma/client';
-
-// TODO implement
+import { OrderStatus, Prisma, Order as PrismaOrder } from '@prisma/client';
+import Decimal from 'decimal.js';
+import { Order } from 'src/entities/order.entity';
+import { Database } from 'src/interfaces/database.interface';
+import { OrderGateway } from 'src/interfaces/order.gateway.interface';
 
 export class PrismaOrderGateway implements OrderGateway {
-  constructor(private prisma: PrismaClient) {}
+  constructor(private database: Database) {}
 
   async findAll(): Promise<Order[]> {
-    const orders = await this.prisma.order.findMany();
+    const orders: PrismaOrder[] = await this.database.order.findMany();
 
     return orders.map(
       (order) =>
@@ -18,7 +18,7 @@ export class PrismaOrderGateway implements OrderGateway {
           order.updatedAt,
           order.notes,
           order.trackingId,
-          order.totalPrice,
+          new Decimal(order.totalPrice).toNumber(),
           order.status,
           order.customerId,
         ),
@@ -26,7 +26,9 @@ export class PrismaOrderGateway implements OrderGateway {
   }
 
   async findById(id: number): Promise<Order | null> {
-    const order = await this.prisma.order.findUnique({ where: { id } });
+    const order: PrismaOrder = await this.database.order.findUnique({
+      where: { id },
+    });
 
     if (!order) return null;
 
@@ -36,19 +38,19 @@ export class PrismaOrderGateway implements OrderGateway {
       order.updatedAt,
       order.notes,
       order.trackingId,
-      order.totalPrice,
+      new Decimal(order.totalPrice).toNumber(),
       order.status,
       order.customerId,
     );
   }
 
   async create(order: Order): Promise<Order> {
-    const createdOrder = await this.prisma.order.create({
+    const createdOrder: PrismaOrder = await this.database.order.create({
       data: {
         notes: order.notes,
         trackingId: order.trackingId,
-        totalPrice: order.totalPrice,
-        status: order.status,
+        totalPrice: new Prisma.Decimal(order.totalPrice),
+        status: OrderStatus.AWAITING,
         customerId: order.customerId,
       },
     });
@@ -59,13 +61,13 @@ export class PrismaOrderGateway implements OrderGateway {
       createdOrder.updatedAt,
       createdOrder.notes,
       createdOrder.trackingId,
-      createdOrder.totalPrice,
+      new Decimal(order.totalPrice).toNumber(),
       createdOrder.status,
       createdOrder.customerId,
     );
   }
 
   async delete(id: number): Promise<void> {
-    await this.prisma.order.delete({ where: { id } });
+    await this.database.order.delete({ where: { id } });
   }
 }

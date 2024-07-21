@@ -1,14 +1,14 @@
-import { Category } from '@entities/category.entity';
-import { CategoryGateway } from '@interfaces/category.gateway.interface';
-import { PrismaClient } from '@prisma/client';
-
-// TODO implement
+import { PrismaClient, Category as PrismaCategory } from '@prisma/client';
+import { Category } from 'src/entities/category.entity';
+import { CategoryGateway } from 'src/interfaces/category.gateway.interface';
+import { Database } from 'src/interfaces/database.interface';
 
 export class PrismaCategoryGateway implements CategoryGateway {
-  constructor(private prisma: PrismaClient) {}
+  constructor(private database: Database) {}
 
   public async findAll(): Promise<Category[]> {
-    const categories = await this.prisma.category.findMany();
+    const categories: PrismaCategory[] =
+      await this.database.category.findMany();
 
     return categories.map(
       (category) =>
@@ -22,7 +22,9 @@ export class PrismaCategoryGateway implements CategoryGateway {
   }
 
   public async findById(id: number): Promise<Category | null> {
-    const category = await this.prisma.category.findUnique({ where: { id } });
+    const category: PrismaCategory = await this.database.category.findUnique({
+      where: { id },
+    });
 
     if (!category) return null;
 

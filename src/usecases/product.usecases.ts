@@ -1,11 +1,10 @@
-import { Product } from '@entities/product.entity';
-import { CategoryGateway } from '@interfaces/category.gateway.interface';
-import { ProductGateway } from '@interfaces/product.gateway.interface';
+import { Product } from 'src/entities/product.entity';
+import { CategoryGateway } from 'src/interfaces/category.gateway.interface';
+import { ProductGateway } from 'src/interfaces/product.gateway.interface';
 import { ProductAndCategory } from 'src/types/product-and-category.type';
 
-// TODO handle errors
-
 // TODO return the associated entities or just their ids?
+// TODO handle errors
 
 export class ProductUseCases {
   static async findAll(

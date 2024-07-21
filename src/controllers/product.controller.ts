@@ -1,11 +1,11 @@
-import { IDatabase } from '@interfaces/database.interface';
-import { ProductUseCases } from '@usecases/product.usecases';
 import { ProductAdapter } from 'src/adapters/product.adapter';
 import { PrismaCategoryGateway } from 'src/gateways/prisma-category.gateway';
 import { PrismaProductGateway } from 'src/gateways/prisma-product.gateway';
+import { Database } from 'src/interfaces/database.interface';
+import { ProductUseCases } from 'src/usecases/product.usecases';
 
 export class ProductController {
-  static async findAll(database: IDatabase): Promise<string> {
+  static async findAll(database: Database): Promise<string> {
     const productGateway = new PrismaProductGateway(database);
     const categoryGateway = new PrismaCategoryGateway(database);
 
@@ -17,7 +17,7 @@ export class ProductController {
     return ProductAdapter.adaptArrayJson(productsAndCategory);
   }
 
-  static async findById(database: IDatabase, id: number): Promise<string> {
+  static async findById(database: Database, id: number): Promise<string> {
     const productGateway = new PrismaProductGateway(database);
     const categoryGateway = new PrismaCategoryGateway(database);
 
@@ -31,7 +31,7 @@ export class ProductController {
   }
 
   static async create(
-    database: IDatabase,
+    database: Database,
     name: string,
     price: number,
     description: string,
@@ -54,7 +54,7 @@ export class ProductController {
     return ProductAdapter.adaptJson(productAndCategory);
   }
 
-  static async delete(database: IDatabase, id: number): Promise<void> {
+  static async delete(database: Database, id: number): Promise<void> {
     const productGateway = new PrismaProductGateway(database);
     await ProductUseCases.delete(productGateway, id);
   }

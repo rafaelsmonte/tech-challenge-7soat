@@ -1,12 +1,12 @@
-import { Customer } from '@entities/customer.entity';
-import { OrderProduct } from '@entities/order-product.entity';
-import { Order } from '@entities/order.entity';
-import { Product } from '@entities/product.entity';
-import { CustomerGateway } from '@interfaces/customer.gateway.interface';
-import { OrderProductGateway } from '@interfaces/order-product.gateway.interface';
-import { OrderGateway } from '@interfaces/order.gateway.interface';
-import { ProductGateway } from '@interfaces/product.gateway.interface';
+import { Customer } from 'src/entities/customer.entity';
+import { OrderProduct } from 'src/entities/order-product.entity';
+import { Order } from 'src/entities/order.entity';
+import { Product } from 'src/entities/product.entity';
 import { OrderStatus } from 'src/enum/order-status.enum';
+import { CustomerGateway } from 'src/interfaces/customer.gateway.interface';
+import { OrderProductGateway } from 'src/interfaces/order-product.gateway.interface';
+import { OrderGateway } from 'src/interfaces/order.gateway.interface';
+import { ProductGateway } from 'src/interfaces/product.gateway.interface';
 import { OrderAndProducts } from 'src/types/order-and-products.type';
 import { ProductAndQuantity } from 'src/types/product-and-quantity.type';
 
@@ -76,7 +76,7 @@ export class OrderUseCases {
     productsAndQuantity: ProductAndQuantity[],
     notes: string,
     customerId?: number,
-  ): Promise<Order> {
+  ): Promise<OrderAndProducts> {
     let customer: Customer | null;
     let products: Product[];
     let totalPrice = 0;
@@ -107,7 +107,7 @@ export class OrderUseCases {
       );
     });
 
-    return newOrder;
+    return { order: newOrder, productsAndQuantity };
   }
 
   static async delete(

@@ -1,12 +1,14 @@
-import { Product } from '@entities/product.entity';
-import { ProductGateway } from '@interfaces/product.gateway.interface';
-import { PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient, Product as PrismaProduct } from '@prisma/client';
+import Decimal from 'decimal.js';
+import { Product } from 'src/entities/product.entity';
+import { Database } from 'src/interfaces/database.interface';
+import { ProductGateway } from 'src/interfaces/product.gateway.interface';
 
 export class PrismaProductGateway implements ProductGateway {
-  constructor(private prisma: PrismaClient) {}
+  constructor(private database: Database) {}
 
   public async findAll(): Promise<Product[]> {
-    const products = await this.prisma.product.findMany();
+    const products: PrismaProduct[] = await this.database.product.findMany();
 
     return products.map(
       (product) =>
@@ -15,7 +17,7 @@ export class PrismaProductGateway implements ProductGateway {
           product.createdAt,
           product.updatedAt,
           product.name,
-          product.price,
+          new Decimal(product.price).toNumber(),
           product.description,
           product.pictures,
           product.categoryId,
@@ -24,7 +26,9 @@ export class PrismaProductGateway implements ProductGateway {
   }
 
   public async findById(id: number): Promise<Product | null> {
-    const product = await this.prisma.product.findUnique({ where: { id } });
+    const product: PrismaProduct = await this.database.product.findUnique({
+      where: { id },
+    });
 
     if (!product) return null;
 
@@ -33,7 +37,7 @@ export class PrismaProductGateway implements ProductGateway {
       product.createdAt,
       product.updatedAt,
       product.name,
-      product.price,
+      new Decimal(product.price).toNumber(),
       product.description,
       product.pictures,
       product.categoryId,
@@ -41,10 +45,10 @@ export class PrismaProductGateway implements ProductGateway {
   }
 
   public async save(product: Product): Promise<Product> {
-    const createdProduct = await this.prisma.product.create({
+    const createdProduct: PrismaProduct = await this.database.product.create({
       data: {
         name: product.name,
-        price: product.price,
+        price: new Prisma.Decimal(product.price),
         description: product.description,
         pictures: product.pictures,
         categoryId: product.categoryId,
@@ -56,7 +60,7 @@ export class PrismaProductGateway implements ProductGateway {
       createdProduct.createdAt,
       createdProduct.updatedAt,
       createdProduct.name,
-      createdProduct.price,
+      new Decimal(product.price).toNumber(),
       createdProduct.description,
       createdProduct.pictures,
       createdProduct.categoryId,
@@ -64,6 +68,6 @@ export class PrismaProductGateway implements ProductGateway {
   }
 
   public async delete(id: number): Promise<void> {
-    await this.prisma.product.delete({ where: { id } });
+    await this.database.product.delete({ where: { id } });
   }
 }

@@ -1,4 +1,3 @@
-import { Order } from '@entities/order.entity';
 import { OrderAndProducts } from 'src/types/order-and-products.type';
 
 // TODO should return product and customer objects instead of only its id?

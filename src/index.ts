@@ -1,7 +1,7 @@
-import { Database } from '@external/database.external';
 import { TechChallengeApp } from './api';
+import { PrismaDatabase } from './external/database.external';
 
-const database = new Database(); // TODO implement database
+const database = new PrismaDatabase();
 const app = new TechChallengeApp(database);
 
 app.start();

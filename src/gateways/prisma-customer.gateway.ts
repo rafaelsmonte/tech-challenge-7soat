@@ -1,12 +1,13 @@
-import { Customer } from '@entities/customer.entity';
-import { CustomerGateway } from '@interfaces/customer.gateway.interface';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Customer as PrismaCustomer } from '@prisma/client';
+import { Customer } from 'src/entities/customer.entity';
+import { CustomerGateway } from 'src/interfaces/customer.gateway.interface';
+import { Database } from 'src/interfaces/database.interface';
 
 export class PrismaCustomerGateway implements CustomerGateway {
-  constructor(private prisma: PrismaClient) {}
+  constructor(private database: Database) {}
 
   public async findAll(): Promise<Customer[]> {
-    const customers = await this.prisma.customer.findMany();
+    const customers: PrismaCustomer[] = await this.database.customer.findMany();
 
     return customers.map(
       (customer) =>
@@ -24,7 +25,7 @@ export class PrismaCustomerGateway implements CustomerGateway {
   public async findByTaxpayerRegistry(
     taxpayerRegistry: string,
   ): Promise<Customer | null> {
-    const customer = await this.prisma.customer.findUnique({
+    const customer: PrismaCustomer = await this.database.customer.findUnique({
       where: { taxpayerRegistry },
     });
 
@@ -41,7 +42,9 @@ export class PrismaCustomerGateway implements CustomerGateway {
   }
 
   public async findById(id: number): Promise<Customer | null> {
-    const customer = await this.prisma.customer.findUnique({ where: { id } });
+    const customer: PrismaCustomer = await this.database.customer.findUnique({
+      where: { id },
+    });
 
     if (!customer) return null;
 
@@ -56,13 +59,15 @@ export class PrismaCustomerGateway implements CustomerGateway {
   }
 
   public async save(customer: Customer): Promise<Customer> {
-    const createdCustomer = await this.prisma.customer.create({
-      data: {
-        name: customer.name,
-        taxpayerRegistry: customer.taxpayerRegistry,
-        email: customer.email,
+    const createdCustomer: PrismaCustomer = await this.database.customer.create(
+      {
+        data: {
+          name: customer.name,
+          taxpayerRegistry: customer.taxpayerRegistry,
+          email: customer.email,
+        },
       },
-    });
+    );
 
     return new Customer(
       createdCustomer.id,
@@ -75,6 +80,6 @@ export class PrismaCustomerGateway implements CustomerGateway {
   }
 
   public async delete(id: number): Promise<void> {
-    await this.prisma.customer.delete({ where: { id } });
+    await this.database.customer.delete({ where: { id } });
   }
 }

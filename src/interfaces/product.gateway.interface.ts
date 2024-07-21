@@ -1,4 +1,4 @@
-import { Product } from '@entities/product.entity';
+import { Product } from 'src/entities/product.entity';
 
 export interface ProductGateway {
   findAll(): Promise<Product[]>;

@@ -1,4 +1,4 @@
-import { Order } from '@entities/order.entity';
+import { Order } from 'src/entities/order.entity';
 
 export interface OrderGateway {
   findAll(): Promise<Order[]>;

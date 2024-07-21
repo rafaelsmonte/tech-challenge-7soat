@@ -1,17 +1,17 @@
-import { IDatabase } from '@interfaces/database.interface';
-import { CustomerUseCases } from '@usecases/customer.usecases';
 import { CustomerAdapter } from 'src/adapters/customer.adapter';
 import { PrismaCustomerGateway } from 'src/gateways/prisma-customer.gateway';
+import { Database } from 'src/interfaces/database.interface';
+import { CustomerUseCases } from 'src/usecases/customer.usecases';
 
 export class CustomerController {
-  static async findAll(database: IDatabase): Promise<string> {
+  static async findAll(database: Database): Promise<string> {
     const customerGateway = new PrismaCustomerGateway(database);
     const customers = await CustomerUseCases.findAll(customerGateway);
     const customersJson = CustomerAdapter.adaptArrayJson(customers);
     return customersJson;
   }
 
-  static async findById(database: IDatabase, id: number): Promise<string> {
+  static async findById(database: Database, id: number): Promise<string> {
     const customerGateway = new PrismaCustomerGateway(database);
     const customer = await CustomerUseCases.findById(customerGateway, id);
     const customerJson = CustomerAdapter.adaptJson(customer);
@@ -19,7 +19,7 @@ export class CustomerController {
   }
 
   static async findByTaxpayerRegistry(
-    database: IDatabase,
+    database: Database,
     taxpayerRegistry: string,
   ): Promise<string> {
     const customerGateway = new PrismaCustomerGateway(database);
@@ -32,7 +32,7 @@ export class CustomerController {
   }
 
   static async create(
-    database: IDatabase,
+    database: Database,
     name: string,
     taxpayerRegistry: string,
     email: string,
@@ -48,7 +48,7 @@ export class CustomerController {
     return customerJson;
   }
 
-  static async delete(database: IDatabase, id: number): Promise<void> {
+  static async delete(database: Database, id: number): Promise<void> {
     const customerGateway = new PrismaCustomerGateway(database);
     await CustomerUseCases.delete(customerGateway, id);
   }

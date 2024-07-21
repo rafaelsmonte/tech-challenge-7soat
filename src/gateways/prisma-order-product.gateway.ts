@@ -1,16 +1,19 @@
-import { OrderProduct } from '@entities/order-product.entity';
-import { OrderProductGateway } from '@interfaces/order-product.gateway.interface';
-import { PrismaClient } from '@prisma/client';
-
-// TODO implement
+import {
+  PrismaClient,
+  OrderProduct as PrismaOrderProduct,
+} from '@prisma/client';
+import { OrderProduct } from 'src/entities/order-product.entity';
+import { Database } from 'src/interfaces/database.interface';
+import { OrderProductGateway } from 'src/interfaces/order-product.gateway.interface';
 
 export class PrismaOrderProductGateway implements OrderProductGateway {
-  constructor(private prisma: PrismaClient) {}
+  constructor(private database: Database) {}
 
   async findByOrderId(orderId: number): Promise<OrderProduct[]> {
-    const orderProducts = await this.prisma.orderProduct.findMany({
-      where: { orderId },
-    });
+    const orderProducts: PrismaOrderProduct[] =
+      await this.database.orderProduct.findMany({
+        where: { orderId },
+      });
 
     return orderProducts.map(
       (orderProduct) =>
@@ -26,13 +29,14 @@ export class PrismaOrderProductGateway implements OrderProductGateway {
   }
 
   async create(orderProduct: OrderProduct): Promise<OrderProduct> {
-    const createdOrderProduct = await this.prisma.orderProduct.create({
-      data: {
-        orderId: orderProduct.orderId,
-        productId: orderProduct.productId,
-        quantity: orderProduct.quantity,
-      },
-    });
+    const createdOrderProduct: PrismaOrderProduct =
+      await this.database.orderProduct.create({
+        data: {
+          orderId: orderProduct.orderId,
+          productId: orderProduct.productId,
+          quantity: orderProduct.quantity,
+        },
+      });
 
     return new OrderProduct(
       createdOrderProduct.id,
@@ -45,6 +49,6 @@ export class PrismaOrderProductGateway implements OrderProductGateway {
   }
 
   async delete(id: number): Promise<void> {
-    await this.prisma.orderProduct.delete({ where: { id } });
+    await this.database.orderProduct.delete({ where: { id } });
   }
 }

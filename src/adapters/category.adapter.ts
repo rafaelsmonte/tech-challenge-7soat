@@ -1,4 +1,4 @@
-import { Category } from '@entities/category.entity';
+import { Category } from 'src/entities/category.entity';
 
 export const CategoryAdapter = {
   adaptArrayJson: (categories: Category[] | null): string => {
