@@ -3,6 +3,10 @@ import { OrderProduct } from 'src/entities/order-product.entity';
 import { Order } from 'src/entities/order.entity';
 import { Product } from 'src/entities/product.entity';
 import { OrderStatus } from 'src/enum/order-status.enum';
+import { CustomerNotFoundError } from 'src/errors/customer-not-found.error';
+import { OrderNotFoundError } from 'src/errors/order-not-found.error';
+import { OrderProductNotFoundError } from 'src/errors/order-product-not-found.error';
+import { ProductNotFoundError } from 'src/errors/product-not-found.error';
 import { CustomerGateway } from 'src/interfaces/customer.gateway.interface';
 import { OrderProductGateway } from 'src/interfaces/order-product.gateway.interface';
 import { OrderGateway } from 'src/interfaces/order.gateway.interface';
@@ -10,9 +14,8 @@ import { ProductGateway } from 'src/interfaces/product.gateway.interface';
 import { OrderAndProducts } from 'src/types/order-and-products.type';
 import { ProductAndQuantity } from 'src/types/product-and-quantity.type';
 
-// TODO handle errors
-
-// TODO return the associated entities or just their ids?
+// TODO retornar todas as entidades associadas ou apenas seus IDs?
+// TODO como utilizar transaction nesse cenário de queries encadeadas?
 
 export class OrderUseCases {
   static async findAll(
@@ -28,6 +31,11 @@ export class OrderUseCases {
 
     orders.forEach(async (order) => {
       const orderProducts = await orderProductGateway.findByOrderId(order.id);
+
+      if (orderProducts.length === 0)
+        throw new OrderProductNotFoundError('OrderProduct not found');
+      // TODO devemos retornar erro específico quando não
+      // houver entidade de relacionamento?
 
       orderProducts.forEach(async (orderProduct) => {
         productsAndQuantity.push({
@@ -53,9 +61,12 @@ export class OrderUseCases {
 
     const order = await orderGateway.findById(id);
 
-    if (!order) throw Error('Order not found');
+    if (!order) throw new OrderNotFoundError('Order not found');
 
     const orderProducts = await orderProductGateway.findByOrderId(order.id);
+
+    if (orderProducts.length === 0)
+      throw new OrderProductNotFoundError('OrderProduct not found');
 
     orderProducts.forEach(({ productId, quantity }) => {
       productsAndQuantity.push({
@@ -67,7 +78,6 @@ export class OrderUseCases {
     return { order, productsAndQuantity };
   }
 
-  // TODO use a transaction
   static async create(
     orderGateway: OrderGateway,
     productGateway: ProductGateway,
@@ -84,13 +94,13 @@ export class OrderUseCases {
     if (customerId) {
       customer = await customerGateway.findById(customerId);
 
-      if (!customer) throw Error('Customer not found!');
+      if (!customer) throw new CustomerNotFoundError('Customer not found!');
     }
 
     productsAndQuantity.forEach(async ({ productId, quantity }) => {
       const product = await productGateway.findById(productId);
 
-      if (!product) throw Error('Product not found!');
+      if (!product) throw new ProductNotFoundError('Product not found!');
 
       products.push(product);
 
@@ -110,11 +120,52 @@ export class OrderUseCases {
     return { order: newOrder, productsAndQuantity };
   }
 
+  static async update(
+    orderGateway: OrderGateway,
+    productGateway: ProductGateway,
+    customerGateway: CustomerGateway,
+    orderProductGateway: OrderProductGateway,
+    id: number,
+    status: string,
+  ): Promise<OrderAndProducts> {
+    const productsAndQuantity: ProductAndQuantity[] = [];
+
+    const order = await orderGateway.findById(id);
+
+    if (!order) throw new OrderNotFoundError('Order not found');
+
+    const orderProducts = await orderProductGateway.findByOrderId(order.id);
+
+    if (orderProducts.length === 0)
+      throw new OrderProductNotFoundError('OrderProduct not found');
+
+    orderProducts.forEach(({ productId, quantity }) => {
+      productsAndQuantity.push({
+        productId: productId,
+        quantity: quantity,
+      });
+    });
+
+    const updatedOrder = Order.new(
+      order.notes,
+      order.trackingId,
+      order.totalPrice,
+      status,
+      order.customerId,
+    );
+
+    return { order: updatedOrder, productsAndQuantity };
+  }
+
   static async delete(
     orderGateway: OrderGateway,
     orderProductGateway: OrderProductGateway,
     id: number,
   ): Promise<void> {
+    const order = await orderGateway.findById(id);
+
+    if (!order) throw new OrderNotFoundError('Order not found');
+
     await orderGateway.delete(id);
   }
 }

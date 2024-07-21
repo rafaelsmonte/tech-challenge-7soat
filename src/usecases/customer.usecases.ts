@@ -1,7 +1,7 @@
 import { Customer } from 'src/entities/customer.entity';
+import { CustomerAlreadyRegisteredError } from 'src/errors/customer-already-registered.error';
+import { CustomerNotFoundError } from 'src/errors/customer-not-found.error';
 import { CustomerGateway } from 'src/interfaces/customer.gateway.interface';
-
-// TODO handle errors
 
 export class CustomerUseCases {
   static async findAll(customerGateway: CustomerGateway): Promise<Customer[]> {
@@ -15,7 +15,7 @@ export class CustomerUseCases {
   ): Promise<Customer> {
     const customer = await customerGateway.findById(id);
 
-    if (!customer) throw Error('Customer not found');
+    if (!customer) throw new CustomerNotFoundError('Customer not found');
 
     return customer;
   }
@@ -28,7 +28,7 @@ export class CustomerUseCases {
       taxpayerRegistry,
     );
 
-    if (!customer) throw Error('Customer not found');
+    if (!customer) throw new CustomerNotFoundError('Customer not found');
 
     return customer;
   }
@@ -43,7 +43,8 @@ export class CustomerUseCases {
       taxpayerRegistry,
     );
 
-    if (customer) throw Error('Customer already registered');
+    if (!customer)
+      throw new CustomerAlreadyRegisteredError('Customer already registered');
 
     return await customerGateway.save(
       Customer.new(name, email, taxpayerRegistry),
@@ -54,6 +55,10 @@ export class CustomerUseCases {
     customerGateway: CustomerGateway,
     id: number,
   ): Promise<void> {
+    const customer = await customerGateway.findById(id);
+
+    if (!customer) throw new CustomerNotFoundError('Customer not found');
+
     await customerGateway.delete(id);
   }
 }

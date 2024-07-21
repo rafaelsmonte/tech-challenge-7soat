@@ -1,4 +1,5 @@
 import { OrderStatus } from 'src/enum/order-status.enum';
+import { InvalidOrderError } from 'src/errors/invalid-order.error';
 
 export class Order {
   public readonly id: number;
@@ -7,7 +8,7 @@ export class Order {
   public readonly notes: string;
   public readonly trackingId: number;
   public readonly totalPrice: number;
-  public readonly status: string;
+  public readonly status: OrderStatus;
   public readonly customerId?: number;
 
   constructor(
@@ -26,17 +27,17 @@ export class Order {
     this.notes = notes;
     this.trackingId = trackingId;
     this.totalPrice = totalPrice;
-    this.status = status;
+    this.status = OrderStatus[status];
     this.customerId = customerId;
-  }
 
-  // TODO validate fields
+    this.validate();
+  }
 
   static new(
     notes: string,
     trackingId: number,
     totalPrice: number,
-    status: OrderStatus,
+    status: string,
     customerId?: number,
   ): Order {
     const now = new Date();
@@ -50,5 +51,19 @@ export class Order {
       status,
       customerId,
     );
+  }
+
+  // TODO improve validations
+
+  validate() {
+    if (this.notes.length > 50) {
+      throw new InvalidOrderError('Notes size must be lesser than 50');
+    }
+
+    if (!this.status) {
+      throw new InvalidOrderError(
+        'Status must be AWAITING, IN_PROGRESS, DONE or CANCELLED',
+      );
+    }
   }
 }

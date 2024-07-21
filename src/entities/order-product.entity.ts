@@ -1,3 +1,5 @@
+import { InvalidOrderProductError } from 'src/errors/invalid-order-product.error';
+
 export class OrderProduct {
   public readonly id: number;
   public readonly createdAt: Date;
@@ -20,9 +22,11 @@ export class OrderProduct {
     this.orderId = orderId;
     this.productId = productId;
     this.quantity = quantity;
+
+    this.validate();
   }
 
-  // TODO validate fields
+  // TODO improve validations
 
   static new(
     orderId: number,
@@ -31,5 +35,15 @@ export class OrderProduct {
   ): OrderProduct {
     const now = new Date();
     return new OrderProduct(0, now, now, orderId, productId, quantity);
+  }
+
+  validate() {
+    if (this.quantity <= 0) {
+      throw new InvalidOrderProductError('Quantity must be greater than 0');
+    }
+
+    if (this.quantity > 10) {
+      throw new InvalidOrderProductError('Quantity must be lesser than 10');
+    }
   }
 }

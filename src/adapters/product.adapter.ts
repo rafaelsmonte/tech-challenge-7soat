@@ -1,9 +1,10 @@
+import { CategoryNotFoundError } from 'src/errors/category-not-found.error';
+import { DatabaseError } from 'src/errors/database.error';
+import { InvalidProductError } from 'src/errors/invalid-product.error';
 import { ProductAndCategory } from 'src/types/product-and-category.type';
 
 export const ProductAdapter = {
-  adaptArrayJson: (
-    productsAndCategory: ProductAndCategory[] | null,
-  ): string => {
+  adaptArrayJson: (productsAndCategory: ProductAndCategory[]): string => {
     if (productsAndCategory === null) {
       return JSON.stringify({});
     }
@@ -51,5 +52,17 @@ export const ProductAdapter = {
     };
 
     return JSON.stringify(mappedProduct);
+  },
+
+  adaptError(error: Error): { code: number; message: string } {
+    if (error instanceof InvalidProductError) {
+      return { code: 400, message: error.message };
+    } else if (error instanceof CategoryNotFoundError) {
+      return { code: 404, message: error.message };
+    } else if (error instanceof DatabaseError) {
+      return { code: 500, message: error.message };
+    } else {
+      return { code: 500, message: 'Internal server error' };
+    }
   },
 };

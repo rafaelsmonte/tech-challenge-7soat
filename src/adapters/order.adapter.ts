@@ -1,8 +1,14 @@
+import { CustomerNotFoundError } from 'src/errors/customer-not-found.error';
+import { DatabaseError } from 'src/errors/database.error';
+import { InvalidOrderError } from 'src/errors/invalid-order.error';
+import { OrderNotFoundError } from 'src/errors/order-not-found.error';
+import { OrderProductNotFoundError } from 'src/errors/order-product-not-found.error';
+import { ProductNotFoundError } from 'src/errors/product-not-found.error';
 import { OrderAndProducts } from 'src/types/order-and-products.type';
 
 // TODO should return product and customer objects instead of only its id?
 export const OrderAdapter = {
-  adaptArrayJson: (ordersAndProducts: OrderAndProducts[] | null): string => {
+  adaptArrayJson: (ordersAndProducts: OrderAndProducts[]): string => {
     if (ordersAndProducts === null) {
       return JSON.stringify({});
     }
@@ -42,5 +48,23 @@ export const OrderAdapter = {
     };
 
     return JSON.stringify(mappedOrder);
+  },
+
+  adaptError(error: Error): { code: number; message: string } {
+    if (error instanceof InvalidOrderError) {
+      return { code: 400, message: error.message };
+    } else if (error instanceof OrderNotFoundError) {
+      return { code: 404, message: error.message };
+    } else if (error instanceof ProductNotFoundError) {
+      return { code: 404, message: error.message };
+    } else if (error instanceof CustomerNotFoundError) {
+      return { code: 404, message: error.message };
+    } else if (error instanceof OrderProductNotFoundError) {
+      return { code: 404, message: error.message };
+    } else if (error instanceof DatabaseError) {
+      return { code: 500, message: error.message };
+    } else {
+      return { code: 500, message: 'Internal server error' };
+    }
   },
 };

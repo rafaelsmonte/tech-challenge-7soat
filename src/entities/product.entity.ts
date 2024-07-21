@@ -1,3 +1,5 @@
+import { InvalidProductError } from 'src/errors/invalid-product.error';
+
 export class Product {
   public readonly id: number;
   public readonly createdAt: Date;
@@ -26,9 +28,9 @@ export class Product {
     this.description = description;
     this.pictures = pictures;
     this.categoryId = categoryId;
-  }
 
-  // TODO validate fields
+    this.validate();
+  }
 
   static new(
     name: string,
@@ -48,5 +50,21 @@ export class Product {
       pictures,
       categoryId,
     );
+  }
+
+  // TODO improve validations
+
+  validate() {
+    if (this.price <= 0) {
+      throw new InvalidProductError('Price must be greater than 0');
+    }
+
+    if (this.name.length > 50) {
+      throw new InvalidProductError('Name size must be lesser than 50');
+    }
+
+    if (this.description.length > 50) {
+      throw new InvalidProductError('Description size must be lesser than 50');
+    }
   }
 }

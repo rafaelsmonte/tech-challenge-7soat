@@ -154,6 +154,21 @@ export class TechChallengeApp {
         .send(newOrder);
     });
 
+    app.patch('/order/:id/change-status'),
+      async (request: Request, response: Response) => {
+        const id = Number(request.params.id);
+        const status = request.body.status;
+        const updatedOrder = await OrderController.update(
+          this.database,
+          id,
+          status,
+        );
+        response
+          .setHeader('Content-type', 'application/json')
+          .status(200)
+          .send(updatedOrder);
+      };
+
     app.delete('/order/:id', async (request: Request, response: Response) => {
       const id = Number(request.params.id);
       await OrderController.delete(this.database, id);
