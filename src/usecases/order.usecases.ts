@@ -154,6 +154,8 @@ export class OrderUseCases {
       order.customerId,
     );
 
+    // TODO call order gateway update
+
     return { order: updatedOrder, productsAndQuantity };
   }
 
