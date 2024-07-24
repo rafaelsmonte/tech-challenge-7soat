@@ -35,9 +35,9 @@ export class PrismaOrderProductGateway implements OrderProductGateway {
       const createdOrderProduct: PrismaOrderProduct =
         await this.database.orderProduct.create({
           data: {
-            orderId: orderProduct.orderId,
-            productId: orderProduct.productId,
-            quantity: orderProduct.quantity,
+            orderId: orderProduct.getOrderId(),
+            productId: orderProduct.getProductId(),
+            quantity: orderProduct.getQuantity(),
           },
         });
 

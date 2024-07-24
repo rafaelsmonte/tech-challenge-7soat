@@ -8,6 +8,7 @@ export class CategoryController {
     const categoryGateway = new PrismaCategoryGateway(database);
     const categories = await CategoryUseCases.findAll(categoryGateway);
     const categoriesJson = CategoryAdapter.adaptArrayJson(categories);
+
     return categoriesJson;
   }
 }
