@@ -31,7 +31,7 @@ services:
     volumes:
       - '..:/usr/src/app:Z'
     ports:
-      - '3000:3000'
+      - '3001:3000'
     networks:
       - tech-challenge-net
     env_file:
