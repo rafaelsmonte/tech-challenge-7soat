@@ -103,7 +103,7 @@ export class OrderUseCases {
     
       products.push(product);
     
-      return product.price * quantity;
+      return product.getPrice() * quantity;
     });
     
     const prices = await Promise.all(productPromises);
@@ -119,7 +119,7 @@ export class OrderUseCases {
       );
     });
 
-     paymentGateway.create(Payment.new(newOrder.paymentId,customer.email,newOrder.totalPrice))
+     paymentGateway.create(Payment.new(newOrder.getPaymentId(),customer.getEmail(),newOrder.getTotalPrice()))
 
     return { order: newOrder, productsAndQuantity };
   }

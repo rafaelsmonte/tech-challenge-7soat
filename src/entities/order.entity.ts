@@ -11,7 +11,7 @@ export class Order {
   private totalPrice: number;
   private status: OrderStatus;
   private customerId?: number;
-  private paymentId?: number;
+  private paymentId?: string;
 
   constructor(
     id: number,
