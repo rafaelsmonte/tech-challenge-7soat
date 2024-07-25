@@ -4,9 +4,10 @@ import { CustomerController } from 'src/controllers/customer.controller';
 import { OrderController } from 'src/controllers/order.controller';
 import { ProductController } from 'src/controllers/product.controller';
 import { Database } from 'src/interfaces/database.interface';
+import { PaymentInterface } from 'src/interfaces/payment.interface';
 
 export class TechChallengeApp {
-  constructor(private database: Database) {}
+  constructor(private database: Database, private payment: PaymentInterface) {}
 
   start() {
     const express = require('express');
@@ -141,9 +142,11 @@ export class TechChallengeApp {
     });
 
     app.post('/order', async (request: Request, response: Response) => {
+      
       const { customerId, notes, productsAndQuantity } = request.body;
       const newOrder = await OrderController.create(
         this.database,
+        this.payment,
         notes,
         productsAndQuantity,
         customerId,

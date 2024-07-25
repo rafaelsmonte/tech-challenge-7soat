@@ -66,9 +66,9 @@ export class PrismaOrderGateway implements OrderGateway {
           totalPrice: new Prisma.Decimal(order.totalPrice),
           status: PrismaOrderStatus.AWAITING,
           customerId: order.customerId,
+          paymentId: order.paymentId,
         },
       });
-
       return new Order(
         createdOrder.id,
         createdOrder.createdAt,
@@ -78,6 +78,7 @@ export class PrismaOrderGateway implements OrderGateway {
         new Decimal(order.totalPrice).toNumber(),
         createdOrder.status,
         createdOrder.customerId,
+        createdOrder.paymentId,
       );
     } catch (error) {
       throw new DatabaseError('Failed to save order');

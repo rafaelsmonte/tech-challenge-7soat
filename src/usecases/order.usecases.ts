@@ -1,18 +1,21 @@
 import { Customer } from 'src/entities/customer.entity';
 import { OrderProduct } from 'src/entities/order-product.entity';
 import { Order } from 'src/entities/order.entity';
+import { Payment } from 'src/entities/payment.entity';
 import { Product } from 'src/entities/product.entity';
 import { OrderStatus } from 'src/enum/order-status.enum';
 import { CustomerNotFoundError } from 'src/errors/customer-not-found.error';
 import { OrderNotFoundError } from 'src/errors/order-not-found.error';
 import { OrderProductNotFoundError } from 'src/errors/order-product-not-found.error';
 import { ProductNotFoundError } from 'src/errors/product-not-found.error';
+import { PaymentGateway } from 'src/gateways/payment.gateway';
 import { CustomerGateway } from 'src/interfaces/customer.gateway.interface';
 import { OrderProductGateway } from 'src/interfaces/order-product.gateway.interface';
 import { OrderGateway } from 'src/interfaces/order.gateway.interface';
 import { ProductGateway } from 'src/interfaces/product.gateway.interface';
 import { OrderAndProducts } from 'src/types/order-and-products.type';
 import { ProductAndQuantity } from 'src/types/product-and-quantity.type';
+import { v4 as uuidv4 } from 'uuid';
 
 // TODO retornar todas as entidades associadas ou apenas seus IDs?
 // TODO como utilizar transaction nesse cenário de queries encadeadas?
@@ -79,6 +82,7 @@ export class OrderUseCases {
   }
 
   static async create(
+    paymentGateway: PaymentGateway,
     orderGateway: OrderGateway,
     productGateway: ProductGateway,
     customerGateway: CustomerGateway,
@@ -88,27 +92,29 @@ export class OrderUseCases {
     customerId?: number,
   ): Promise<OrderAndProducts> {
     let customer: Customer | null;
-    let products: Product[];
+    let products: Product[] = [];
     let totalPrice = 0;
-
+    const paymentId = uuidv4();
     if (customerId) {
       customer = await customerGateway.findById(customerId);
 
       if (!customer) throw new CustomerNotFoundError('Customer not found!');
     }
 
-    productsAndQuantity.forEach(async ({ productId, quantity }) => {
+    const productPromises = productsAndQuantity.map(async ({ productId, quantity }) => {
       const product = await productGateway.findById(productId);
-
+    
       if (!product) throw new ProductNotFoundError('Product not found!');
-
+    
       products.push(product);
-
-      totalPrice += product.price * quantity;
+    
+      return product.price * quantity;
     });
-
+    
+    const prices = await Promise.all(productPromises);
+    totalPrice = prices.reduce((sum, price) => sum + price, 0);
     const newOrder = await orderGateway.create(
-      Order.new(notes, 0, totalPrice, OrderStatus.AWAITING, customerId),
+      Order.new(notes, 0, totalPrice, OrderStatus.AWAITING, customerId,paymentId),
     );
 
     productsAndQuantity.forEach(async ({ productId, quantity }) => {
@@ -116,6 +122,8 @@ export class OrderUseCases {
         OrderProduct.new(newOrder.id, productId, quantity),
       );
     });
+
+     paymentGateway.create(Payment.new(newOrder.paymentId,customer.email,newOrder.totalPrice))
 
     return { order: newOrder, productsAndQuantity };
   }

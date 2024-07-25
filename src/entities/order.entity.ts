@@ -10,6 +10,7 @@ export class Order {
   public readonly totalPrice: number;
   public readonly status: OrderStatus;
   public readonly customerId?: number;
+  public readonly paymentId: string;
 
   constructor(
     id: number,
@@ -20,6 +21,7 @@ export class Order {
     totalPrice: number,
     status: string,
     customerId?: number,
+    paymentId?: string,
   ) {
     this.id = id;
     this.createdAt = createdAt;
@@ -29,6 +31,7 @@ export class Order {
     this.totalPrice = totalPrice;
     this.status = OrderStatus[status];
     this.customerId = customerId;
+    this.paymentId = paymentId;
 
     this.validate();
   }
@@ -39,6 +42,8 @@ export class Order {
     totalPrice: number,
     status: string,
     customerId?: number,
+    paymentId?: string,
+
   ): Order {
     const now = new Date();
     return new Order(
@@ -50,6 +55,7 @@ export class Order {
       totalPrice,
       status,
       customerId,
+      paymentId,
     );
   }
 
@@ -66,4 +72,5 @@ export class Order {
       );
     }
   }
+ 
 }

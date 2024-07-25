@@ -1,9 +1,11 @@
 import { OrderAdapter } from 'src/adapters/order.adapter';
 import { PrismaCustomerGateway } from 'src/gateways/prisma-customer.gateway';
 import { PrismaOrderProductGateway } from 'src/gateways/prisma-order-product.gateway';
+import { PaymentGateway } from 'src/gateways/payment.gateway';
 import { PrismaOrderGateway } from 'src/gateways/prisma-order.gateway';
 import { PrismaProductGateway } from 'src/gateways/prisma-product.gateway';
 import { Database } from 'src/interfaces/database.interface';
+import { PaymentInterface } from 'src/interfaces/payment.interface';
 import { ProductAndQuantity } from 'src/types/product-and-quantity.type';
 import { OrderUseCases } from 'src/usecases/order.usecases';
 
@@ -43,6 +45,7 @@ export class OrderController {
 
   static async create(
     database: Database,
+    payment: PaymentInterface,
     notes: string,
     productsAndQuantity: ProductAndQuantity[],
     customerId?: number,
@@ -51,16 +54,19 @@ export class OrderController {
     const productGateway = new PrismaProductGateway(database);
     const customerGateway = new PrismaCustomerGateway(database);
     const orderProductGateway = new PrismaOrderProductGateway(database);
-
+    const paymentGateway = new PaymentGateway(payment)
     const orderAndProducts = await OrderUseCases.create(
+      paymentGateway,
       orderGateway,
       productGateway,
-      customerGateway,
+      customerGateway, 
       orderProductGateway,
       productsAndQuantity,
       notes,
       customerId,
     );
+
+    //create payment
 
     return OrderAdapter.adaptJson(orderAndProducts);
   }

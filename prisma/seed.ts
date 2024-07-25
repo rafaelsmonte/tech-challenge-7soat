@@ -2,11 +2,43 @@ import { CategoryType, PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-async function main() {
+async function main() { 
+  // await prisma.customer.upsert({
+  //   where: { id: 1 },
+  //   update: {
+  //     email:"rsmonte@hotmail.com",
+  //     name:"rafael",
+  //     taxpayerRegistry:"123",
+  //   },
+  //   create: {
+  //     email:"rsmonte@hotmail.com",
+  //     name:"rafael",
+  //     taxpayerRegistry:"123",
+  //   },
+  // });
+  // await prisma.product.upsert({
+  //   where: { id: 1 },
+  //   update: {
+  //     categoryId:1,
+  //     name:"abc123",
+  //     price:123,
+  //     description:"123",
+  //   },
+  //   create: {
+  //     categoryId:1,
+  //     description:"123",
+  //     name:"abc123",
+  //     price:123,
+  //   },
+  // });
+
+  
+
+
   const mealCategory = await prisma.category.upsert({
     where: { id: 1 },
     update: {
-      type: CategoryType.MEAL,
+      type: CategoryType.MEAL, 
     },
     create: {
       type: CategoryType.MEAL,
