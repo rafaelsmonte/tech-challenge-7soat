@@ -36,18 +36,18 @@ export class CustomerUseCases {
   static async create(
     customerGateway: CustomerGateway,
     name: string,
-    email: string,
     taxpayerRegistry: string,
+    email: string,
   ): Promise<Customer> {
     const customer = await customerGateway.findByTaxpayerRegistry(
       taxpayerRegistry,
     );
 
-    if (!customer)
+    if (customer)
       throw new CustomerAlreadyRegisteredError('Customer already registered');
 
     return await customerGateway.save(
-      Customer.new(name, email, taxpayerRegistry),
+      Customer.new(name, taxpayerRegistry, email),
     );
   }
 

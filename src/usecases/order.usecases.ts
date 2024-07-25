@@ -24,14 +24,15 @@ export class OrderUseCases {
     orderProductGateway: OrderProductGateway,
   ): Promise<OrderAndProducts[]> {
     const orderAndProducts: OrderAndProducts[] = [];
-    const productsAndQuantity: ProductAndQuantity[] = [];
 
     const orders = await orderGateway.findAll();
 
-    orders.forEach(async (order) => {
+    for (const order of orders) {
       const orderProducts = await orderProductGateway.findByOrderId(
         order.getId(),
       );
+
+      const productsAndQuantity: ProductAndQuantity[] = [];
 
       orderProducts.forEach((orderProduct) => {
         productsAndQuantity.push({
@@ -41,7 +42,7 @@ export class OrderUseCases {
       });
 
       orderAndProducts.push({ order, productsAndQuantity });
-    });
+    }
 
     return orderAndProducts;
   }
@@ -82,8 +83,8 @@ export class OrderUseCases {
     notes: string,
     customerId?: number,
   ): Promise<OrderAndProducts> {
-    let customer: Customer | null;
-    let products: Product[];
+    let customer: Customer | null = null;
+    let products: Product[] = [];
     let totalPrice = 0;
 
     if (customerId) {
@@ -92,7 +93,7 @@ export class OrderUseCases {
       if (!customer) throw new CustomerNotFoundError('Customer not found!');
     }
 
-    productsAndQuantity.forEach(async ({ productId, quantity }) => {
+    for (const { productId, quantity } of productsAndQuantity) {
       const product = await productGateway.findById(productId);
 
       if (!product) throw new ProductNotFoundError('Product not found!');
@@ -100,7 +101,7 @@ export class OrderUseCases {
       products.push(product);
 
       totalPrice += product.getPrice() * quantity;
-    });
+    }
 
     // TODO create payment
 
@@ -108,11 +109,11 @@ export class OrderUseCases {
       Order.new(notes, 0, totalPrice, OrderStatus.AWAITING, customerId),
     );
 
-    productsAndQuantity.forEach(async ({ productId, quantity }) => {
+    for (const { productId, quantity } of productsAndQuantity) {
       await orderProductGateway.create(
         OrderProduct.new(newOrder.getId(), productId, quantity),
       );
-    });
+    }
 
     return { order: newOrder, productsAndQuantity };
   }

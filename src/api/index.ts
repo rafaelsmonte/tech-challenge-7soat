@@ -198,7 +198,8 @@ export class TechChallengeApp {
         .catch((error) => this.handleError(error, response));
     });
 
-    app.patch('/order/:id/change-status'),
+    app.patch(
+      '/order/:id/change-status',
       async (request: Request, response: Response) => {
         const id = Number(request.params.id);
         const status = request.body.status;
@@ -210,7 +211,8 @@ export class TechChallengeApp {
               .send(order);
           })
           .catch((error) => this.handleError(error, response));
-      };
+      },
+    );
 
     // add new route to payment webhook
 
@@ -246,6 +248,7 @@ export class TechChallengeApp {
     } else if (error instanceof DatabaseError) {
       response.status(500).json({ message: error.message });
     } else {
+      // console.log(error);
       response.status(500).json({ message: 'Internal Server Error' });
     }
   }

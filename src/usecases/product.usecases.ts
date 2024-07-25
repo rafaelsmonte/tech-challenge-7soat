@@ -12,17 +12,19 @@ export class ProductUseCases {
     productGateway: ProductGateway,
     categoryGateway: CategoryGateway,
   ): Promise<ProductAndCategory[]> {
-    const productsAndCategory: ProductAndCategory[] = [];
+    let productsAndCategory: ProductAndCategory[] = [];
 
     const products = await productGateway.findAll();
 
-    products.forEach(async (product) => {
+    for (const product of products) {
       const category = await categoryGateway.findById(product.getCategoryId());
 
       if (!category) throw new CategoryNotFoundError('Category not found');
 
-      productsAndCategory.push({ product, category });
-    });
+      const productAndCategory: ProductAndCategory = { product, category };
+
+      productsAndCategory.push(productAndCategory);
+    }
 
     return productsAndCategory;
   }
