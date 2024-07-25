@@ -55,6 +55,7 @@ export class OrderController {
     const customerGateway = new PrismaCustomerGateway(database);
     const orderProductGateway = new PrismaOrderProductGateway(database);
     const paymentGateway = new PaymentGateway(payment)
+
     const orderAndProducts = await OrderUseCases.create(
       paymentGateway,
       orderGateway,

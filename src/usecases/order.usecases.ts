@@ -6,7 +6,6 @@ import { Product } from 'src/entities/product.entity';
 import { OrderStatus } from 'src/enum/order-status.enum';
 import { CustomerNotFoundError } from 'src/errors/customer-not-found.error';
 import { OrderNotFoundError } from 'src/errors/order-not-found.error';
-import { OrderProductNotFoundError } from 'src/errors/order-product-not-found.error';
 import { ProductNotFoundError } from 'src/errors/product-not-found.error';
 import { PaymentGateway } from 'src/gateways/payment.gateway';
 import { CustomerGateway } from 'src/interfaces/customer.gateway.interface';
@@ -33,17 +32,14 @@ export class OrderUseCases {
     const orders = await orderGateway.findAll();
 
     orders.forEach(async (order) => {
-      const orderProducts = await orderProductGateway.findByOrderId(order.id);
+      const orderProducts = await orderProductGateway.findByOrderId(
+        order.getId(),
+      );
 
-      if (orderProducts.length === 0)
-        throw new OrderProductNotFoundError('OrderProduct not found');
-      // TODO devemos retornar erro específico quando não
-      // houver entidade de relacionamento?
-
-      orderProducts.forEach(async (orderProduct) => {
+      orderProducts.forEach((orderProduct) => {
         productsAndQuantity.push({
-          productId: orderProduct.productId,
-          quantity: orderProduct.quantity,
+          productId: orderProduct.getProductId(),
+          quantity: orderProduct.getQuantity(),
         });
       });
 
@@ -66,15 +62,14 @@ export class OrderUseCases {
 
     if (!order) throw new OrderNotFoundError('Order not found');
 
-    const orderProducts = await orderProductGateway.findByOrderId(order.id);
+    const orderProducts = await orderProductGateway.findByOrderId(
+      order.getId(),
+    );
 
-    if (orderProducts.length === 0)
-      throw new OrderProductNotFoundError('OrderProduct not found');
-
-    orderProducts.forEach(({ productId, quantity }) => {
+    orderProducts.forEach((orderProduct) => {
       productsAndQuantity.push({
-        productId: productId,
-        quantity: quantity,
+        productId: orderProduct.getProductId(),
+        quantity: orderProduct.getQuantity(),
       });
     });
 
@@ -113,13 +108,14 @@ export class OrderUseCases {
     
     const prices = await Promise.all(productPromises);
     totalPrice = prices.reduce((sum, price) => sum + price, 0);
+
     const newOrder = await orderGateway.create(
       Order.new(notes, 0, totalPrice, OrderStatus.AWAITING, customerId,paymentId),
     );
 
     productsAndQuantity.forEach(async ({ productId, quantity }) => {
       await orderProductGateway.create(
-        OrderProduct.new(newOrder.id, productId, quantity),
+        OrderProduct.new(newOrder.getId(), productId, quantity),
       );
     });
 
@@ -142,27 +138,20 @@ export class OrderUseCases {
 
     if (!order) throw new OrderNotFoundError('Order not found');
 
-    const orderProducts = await orderProductGateway.findByOrderId(order.id);
+    const orderProducts = await orderProductGateway.findByOrderId(
+      order.getId(),
+    );
 
-    if (orderProducts.length === 0)
-      throw new OrderProductNotFoundError('OrderProduct not found');
-
-    orderProducts.forEach(({ productId, quantity }) => {
+    orderProducts.forEach((orderProduct) => {
       productsAndQuantity.push({
-        productId: productId,
-        quantity: quantity,
+        productId: orderProduct.getProductId(),
+        quantity: orderProduct.getQuantity(),
       });
     });
 
-    const updatedOrder = Order.new(
-      order.notes,
-      order.trackingId,
-      order.totalPrice,
-      status,
-      order.customerId,
-    );
+    order.setStatus(status);
 
-    // TODO call order gateway update
+    const updatedOrder = await orderGateway.updateStatus(order);
 
     return { order: updatedOrder, productsAndQuantity };
   }

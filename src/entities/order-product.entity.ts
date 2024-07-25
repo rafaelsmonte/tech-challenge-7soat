@@ -1,12 +1,12 @@
 import { InvalidOrderProductError } from 'src/errors/invalid-order-product.error';
 
 export class OrderProduct {
-  public readonly id: number;
-  public readonly createdAt: Date;
-  public readonly updatedAt: Date;
-  public readonly orderId: number;
-  public readonly productId: number;
-  public readonly quantity: number;
+  private id: number;
+  private createdAt: Date;
+  private updatedAt: Date;
+  private orderId: number;
+  private productId: number;
+  private quantity: number;
 
   constructor(
     id: number,
@@ -16,17 +16,13 @@ export class OrderProduct {
     productId: number,
     quantity: number,
   ) {
-    this.id = id;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
-    this.orderId = orderId;
-    this.productId = productId;
-    this.quantity = quantity;
-
-    this.validate();
+    this.setId(id);
+    this.setCreatedAt(createdAt);
+    this.setUpdatedAt(updatedAt);
+    this.setOrderId(orderId);
+    this.setProductId(productId);
+    this.setQuantity(quantity);
   }
-
-  // TODO improve validations
 
   static new(
     orderId: number,
@@ -37,7 +33,55 @@ export class OrderProduct {
     return new OrderProduct(0, now, now, orderId, productId, quantity);
   }
 
-  validate() {
+  // getters
+  public getId(): number {
+    return this.id;
+  }
+
+  public getCreatedAt(): Date {
+    return this.createdAt;
+  }
+
+  public getUpdatedAt(): Date {
+    return this.updatedAt;
+  }
+
+  public getOrderId(): number {
+    return this.orderId;
+  }
+
+  public getProductId(): number {
+    return this.productId;
+  }
+
+  public getQuantity(): number {
+    return this.quantity;
+  }
+
+  // setters
+  public setId(id: number): void {
+    this.id = id;
+  }
+
+  public setCreatedAt(createdAt: Date): void {
+    this.createdAt = createdAt;
+  }
+
+  public setUpdatedAt(updatedAt: Date): void {
+    this.updatedAt = updatedAt;
+  }
+
+  public setOrderId(orderId: number): void {
+    this.orderId = orderId;
+  }
+
+  public setProductId(productId: number): void {
+    this.productId = productId;
+  }
+
+  public setQuantity(quantity: number): void {
+    this.quantity = quantity;
+
     if (this.quantity <= 0) {
       throw new InvalidOrderProductError('Quantity must be greater than 0');
     }

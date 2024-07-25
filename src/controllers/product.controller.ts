@@ -6,22 +6,15 @@ import { ProductUseCases } from 'src/usecases/product.usecases';
 
 export class ProductController {
   static async findAll(database: Database): Promise<string> {
-    try {
-      const productGateway = new PrismaProductGateway(database);
-      const categoryGateway = new PrismaCategoryGateway(database);
+    const productGateway = new PrismaProductGateway(database);
+    const categoryGateway = new PrismaCategoryGateway(database);
 
-      const productsAndCategory = await ProductUseCases.findAll(
-        productGateway,
-        categoryGateway,
-      );
+    const productsAndCategory = await ProductUseCases.findAll(
+      productGateway,
+      categoryGateway,
+    );
 
-      return ProductAdapter.adaptArrayJson(productsAndCategory);
-    } catch (error) {
-      const adaptedError = ProductAdapter.adaptError(error);
-      // TODO como retornar? A princípio, o controller deveria devolver apenas
-      // uma string para que camada superior (API Restful, CLI, msg broker),
-      // mas desta forma, como descobrir o status code associado à mensagem?
-    }
+    return ProductAdapter.adaptArrayJson(productsAndCategory);
   }
 
   static async findById(database: Database, id: number): Promise<string> {

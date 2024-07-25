@@ -57,11 +57,11 @@ export class PrismaProductGateway implements ProductGateway {
     try {
       const createdProduct: PrismaProduct = await this.database.product.create({
         data: {
-          name: product.name,
-          price: new Prisma.Decimal(product.price),
-          description: product.description,
-          pictures: product.pictures,
-          categoryId: product.categoryId,
+          name: product.getName(),
+          price: new Prisma.Decimal(product.getPrice()),
+          description: product.getDescription(),
+          pictures: product.getPictures(),
+          categoryId: product.getCategoryId(),
         },
       });
 
@@ -70,7 +70,7 @@ export class PrismaProductGateway implements ProductGateway {
         createdProduct.createdAt,
         createdProduct.updatedAt,
         createdProduct.name,
-        new Decimal(product.price).toNumber(),
+        new Decimal(product.getPrice()).toNumber(),
         createdProduct.description,
         createdProduct.pictures,
         createdProduct.categoryId,

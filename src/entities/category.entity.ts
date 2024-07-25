@@ -1,13 +1,55 @@
+import { CategoryType } from 'src/enum/category-type.enum';
+import { InvalidCategoryError } from 'src/errors/invalid-category.error';
+
 export class Category {
-  public readonly id: number;
-  public readonly createdAt: Date;
-  public readonly updatedAt: Date;
-  public readonly type: string;
+  private id: number;
+  private createdAt: Date;
+  private updatedAt: Date;
+  private type: CategoryType;
 
   constructor(id: number, createdAt: Date, updatedAt: Date, type: string) {
+    this.setId(id);
+    this.setCreatedAt(createdAt);
+    this.setUpdatedAt(updatedAt);
+    this.setType(type);
+  }
+
+  // getters
+  public getId(): number {
+    return this.id;
+  }
+
+  public getCreatedAt(): Date {
+    return this.createdAt;
+  }
+
+  public getUpdatedAt(): Date {
+    return this.updatedAt;
+  }
+
+  public getType(): string {
+    return this.type;
+  }
+
+  // setters
+  public setId(id: number): void {
     this.id = id;
+  }
+
+  public setCreatedAt(createdAt: Date): void {
     this.createdAt = createdAt;
+  }
+
+  public setUpdatedAt(updatedAt: Date): void {
     this.updatedAt = updatedAt;
-    this.type = type;
+  }
+
+  public setType(type: string): void {
+    this.type = CategoryType[type];
+
+    if (!type)
+      throw new InvalidCategoryError(
+        'Type must be MEAL, DRINK, SIDE or DESSERT',
+      );
   }
 }

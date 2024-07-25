@@ -5,7 +5,7 @@ import { CategoryGateway } from 'src/interfaces/category.gateway.interface';
 import { ProductGateway } from 'src/interfaces/product.gateway.interface';
 import { ProductAndCategory } from 'src/types/product-and-category.type';
 
-// TODO return the associated entities or just their ids?
+// TODO retornar todas as entidades associadas ou apenas seus IDs?
 
 export class ProductUseCases {
   static async findAll(
@@ -17,7 +17,7 @@ export class ProductUseCases {
     const products = await productGateway.findAll();
 
     products.forEach(async (product) => {
-      const category = await categoryGateway.findById(product.categoryId);
+      const category = await categoryGateway.findById(product.getCategoryId());
 
       if (!category) throw new CategoryNotFoundError('Category not found');
 
@@ -36,7 +36,7 @@ export class ProductUseCases {
 
     if (!product) throw new ProductNotFoundError('Product not found');
 
-    const category = await categoryGateway.findById(product.id);
+    const category = await categoryGateway.findById(product.getId());
 
     if (!category) throw new CategoryNotFoundError('Category not found');
 

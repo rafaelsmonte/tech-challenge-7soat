@@ -77,9 +77,9 @@ export class PrismaCustomerGateway implements CustomerGateway {
       const createdCustomer: PrismaCustomer =
         await this.database.customer.create({
           data: {
-            name: customer.name,
-            taxpayerRegistry: customer.taxpayerRegistry,
-            email: customer.email,
+            name: customer.getName(),
+            taxpayerRegistry: customer.getTaxpayerRegistry(),
+            email: customer.getEmail(),
           },
         });
 
