@@ -1,3 +1,4 @@
+import { json } from 'body-parser';
 import { Customer } from 'src/entities/customer.entity';
 import { OrderProduct } from 'src/entities/order-product.entity';
 import { Order } from 'src/entities/order.entity';
@@ -119,7 +120,10 @@ export class OrderUseCases {
       );
     });
 
-     paymentGateway.create(Payment.new(newOrder.getPaymentId(),customer.getEmail(),newOrder.getTotalPrice()))
+     const paymentJSON = await paymentGateway.create(Payment.new(newOrder.getPaymentId(),customer.getEmail(),newOrder.getTotalPrice()))
+     const parsedPayment =  JSON.parse(paymentJSON)
+     newOrder.setPaymentPix(parsedPayment)
+     console.log(newOrder)
 
     return { order: newOrder, productsAndQuantity };
   }

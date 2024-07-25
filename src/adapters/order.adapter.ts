@@ -14,6 +14,8 @@ export const OrderAdapter = {
           status: orderAndProducts.order.getStatus(),
           customerId: orderAndProducts.order.getCustomerId(),
           productsAndQuantity: orderAndProducts.productsAndQuantity,
+          paymentId: orderAndProducts.order.getPaymentId(),
+          paymentPix: orderAndProducts.order.getPaymentPix(),
         };
       },
     );
@@ -35,6 +37,8 @@ export const OrderAdapter = {
       status: orderAndProducts.order.getStatus(),
       customerId: orderAndProducts.order.getCustomerId(),
       productsAndQuantity: orderAndProducts.productsAndQuantity,
+      paymentId: orderAndProducts.order.getPaymentId(),
+      paymentPix: orderAndProducts.order.getPaymentPix(),
     };
 
     return JSON.stringify(mappedOrder);

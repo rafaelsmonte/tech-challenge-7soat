@@ -67,8 +67,6 @@ export class OrderController {
       customerId,
     );
 
-    //create payment
-
     return OrderAdapter.adaptJson(orderAndProducts);
   }
 

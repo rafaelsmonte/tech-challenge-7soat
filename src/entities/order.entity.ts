@@ -12,6 +12,7 @@ export class Order {
   private status: OrderStatus;
   private customerId?: number;
   private paymentId?: string;
+  private paymentPix?: string;
 
   constructor(
     id: number,
@@ -23,6 +24,7 @@ export class Order {
     status: string,
     customerId?: number,
     paymentId?: string,
+    paymentPix?: string,
   ) {
 
     this.setId(id);
@@ -34,7 +36,7 @@ export class Order {
     this.setStatus(status);
     this.setCustomerId(customerId);
     this.setPaymentId(paymentId);
-
+    this.setPaymentPix(paymentPix)
   }
 
   static new(
@@ -44,7 +46,7 @@ export class Order {
     status: OrderStatus,
     customerId?: number,
     paymentId?: string,
-
+    paymentPix?: string,
   ): Order {
     const now = new Date();
     return new Order(
@@ -57,6 +59,7 @@ export class Order {
       status,
       customerId,
       paymentId,
+      paymentPix,
     );
   }
 
@@ -94,6 +97,9 @@ export class Order {
   }
   public getPaymentId(): string | null {
     return this.paymentId;
+  }
+  public getPaymentPix(): string | null {
+    return this.paymentPix;
   }
 
   // setters
@@ -139,6 +145,9 @@ export class Order {
   }
   public setPaymentId(paymentId: string | null): void {
     this.paymentId = paymentId;
+  }
+  public setPaymentPix(paymentPix: string | null): void {
+    this.paymentPix = paymentPix;
   }
 
 }
