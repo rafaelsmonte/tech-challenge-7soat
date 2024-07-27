@@ -21,7 +21,7 @@ export class MercadoPago implements IPayment {
         description: '',
         payment_method_id: 'pix',
         payer: {
-          email: payerEmail,
+          email: payerEmail ?? 'no_customer@stub.com',
         },
       };
 

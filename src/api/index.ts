@@ -185,7 +185,6 @@ export class TechChallengeApp {
 
     app.post('/order', async (request: Request, response: Response) => {
       const { customerId, notes, productsAndQuantity } = request.body;
-      // console.log(productsAndQuantity);
       await OrderController.create(
         this.database,
         this.payment,

@@ -58,7 +58,7 @@ export class ProductUseCases {
 
     if (!category) throw new CategoryNotFoundError('Category not found');
 
-    const newProduct = await productGateway.save(
+    const newProduct = await productGateway.create(
       Product.new(name, price, description, pictures, categoryId),
     );
 

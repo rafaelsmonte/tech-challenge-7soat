@@ -108,6 +108,8 @@ export class OrderUseCases {
       totalPrice += product.getPrice() * quantity;
     }
 
+    totalPrice = Number(totalPrice.toFixed(2));
+
     const paymentId = uuidv4();
 
     const newOrder = await orderGateway.create(

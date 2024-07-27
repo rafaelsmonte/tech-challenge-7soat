@@ -46,7 +46,7 @@ export class CustomerUseCases {
     if (customer)
       throw new CustomerAlreadyRegisteredError('Customer already registered');
 
-    return await customerGateway.save(
+    return await customerGateway.create(
       Customer.new(name, taxpayerRegistry, email),
     );
   }
