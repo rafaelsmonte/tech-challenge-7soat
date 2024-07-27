@@ -1,5 +1,6 @@
 import { Payment } from 'src/entities/payment.entity';
 
 export interface IPayment {
-  create(id: string, amount: number, payerEmail: string): Promise<Payment>;
+  create(amount: number, payerEmail: string): Promise<Payment>;
+  checkPaymentSource(dataID: any, xSignature: string | string[], xRequestId: string | string[]) : boolean;
 }

@@ -60,6 +60,30 @@ export class PrismaOrderGateway implements OrderGateway {
     }
   }
 
+  async findByPaymentId(paymentId: number): Promise<Order | null> {
+    try {
+      const order: PrismaOrder = await this.database.order.findFirst({
+        where: { paymentId : paymentId },
+      });
+
+      if (!order) return null;
+
+      return new Order(
+        order.id,
+        order.createdAt,
+        order.updatedAt,
+        order.notes,
+        order.trackingId,
+        new Decimal(order.totalPrice).toNumber(),
+        order.status,
+        order.paymentId,
+        order.customerId,
+      );
+    } catch (error) {
+      throw new DatabaseError('Failed to find order');
+    }
+  }
+
   // TODO how to use transactions
 
   async create(order: Order): Promise<Order> {
@@ -87,6 +111,7 @@ export class PrismaOrderGateway implements OrderGateway {
         createdOrder.customerId,
       );
     } catch (error) {
+      console.log(error)
       throw new DatabaseError('Failed to save order');
     }
   }

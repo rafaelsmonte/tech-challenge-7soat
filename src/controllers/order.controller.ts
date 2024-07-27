@@ -91,7 +91,20 @@ export class OrderController {
 
     return OrderAdapter.adaptJson(orderAndProducts);
   }
+  static async updatePayment(
+    database: Database,
+    paymentId: number,
+  ): Promise<string> {
+    const orderGateway = new PrismaOrderGateway(database);
 
+    const order = await OrderUseCases.updatePayment(
+      orderGateway,
+      paymentId,
+      "IN_PROGRESS",
+    );
+
+    return OrderAdapter.adaptOrderJson(order);
+  }
   static async delete(database: Database, id: number): Promise<void> {
     const orderGateway = new PrismaOrderGateway(database);
     const orderProductGateway = new PrismaOrderProductGateway(database);

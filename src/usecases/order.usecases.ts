@@ -108,28 +108,26 @@ export class OrderUseCases {
       totalPrice += product.getPrice() * quantity;
     }
 
-    const paymentId = uuidv4();
-
+    const payment = await paymentGateway.create(
+      Payment.new("0".valueOf(),totalPrice, customer?.getEmail() ?? ''),
+    );
     const newOrder = await orderGateway.create(
       Order.new(
         notes,
         0,
         totalPrice,
         OrderStatus.AWAITING,
-        paymentId,
+        payment.getId(),
         customerId,
       ),
     );
-
     for (const { productId, quantity } of productsAndQuantity) {
       await orderProductGateway.create(
         OrderProduct.new(newOrder.getId(), productId, quantity),
       );
     }
 
-    const payment = await paymentGateway.create(
-      Payment.new(paymentId, totalPrice, customer?.getEmail() ?? ''),
-    );
+  
 
     return { order: newOrder, productsAndQuantity, payment };
   }
@@ -165,7 +163,22 @@ export class OrderUseCases {
 
     return { order: updatedOrder, productsAndQuantity };
   }
+  static async updatePayment(
+    orderGateway: OrderGateway,
+    paymentId: number,
+    status: string,
+  ): Promise<Order> {
 
+    const order = await orderGateway.findByPaymentId(paymentId);
+
+    if (!order) throw new OrderNotFoundError('Order not found');
+   
+    order.setStatus(status);
+
+    const updatedOrder = await orderGateway.updateStatus(order);
+
+    return  updatedOrder ;
+  }
   static async delete(
     orderGateway: OrderGateway,
     orderProductGateway: OrderProductGateway,

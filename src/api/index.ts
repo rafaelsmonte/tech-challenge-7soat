@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { CategoryController } from 'src/controllers/category.controller';
 import { CustomerController } from 'src/controllers/customer.controller';
 import { OrderController } from 'src/controllers/order.controller';
@@ -226,6 +226,37 @@ export class TechChallengeApp {
         .then(() => response.status(204).send())
         .catch((error) => this.handleError(error, response));
     });
+
+    //WebHOOK
+    app.post(
+      '/order/payment', 
+      async (req: Request, res: Response, next: NextFunction) => {
+
+        //TODO separar o middleware????????????????????
+        const { query } = req;
+        const dataID = query["data.id"] as string;
+        const xSignature = req.headers['x-signature'] as string | string[];
+        const xRequestId = req.headers['x-request-id'] as string | string[];
+        
+        if (!this.payment.checkPaymentSource(dataID, xSignature, xRequestId)) {
+          return res.status(401).send();
+        }
+        console.log("next")
+        next();
+      }, 
+      async (request: Request, response: Response) => {
+        const paymentId = request?.body?.data?.id;
+        await OrderController.updatePayment(this.database, paymentId)
+          .then((order) => {
+            response
+              .setHeader('Content-type', 'application/json')
+              .status(200)
+              .send(order);
+          })
+          .catch((error) => this.handleError(error, response));
+      },
+    );
+
 
     app.listen(port, () => {
       console.log(`Tech challenge app listening on port ${port}`);

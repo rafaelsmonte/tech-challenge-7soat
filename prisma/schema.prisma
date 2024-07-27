@@ -53,7 +53,7 @@ model Order {
   totalPrice Decimal     @db.Decimal(10, 2)
   status     OrderStatus @default(AWAITING)
   notes      String      @default("")
-  paymentId  String      @db.VarChar(50)
+  paymentId  String      @unique 
   trackingId Int
 
   customer      Customer?      @relation(fields: [customerId], references: [id], onDelete: Cascade)

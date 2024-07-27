@@ -1,5 +1,7 @@
 import { OrderAndProductsAndPayment } from 'src/types/order-and-products-and-payment.type';
 import { OrderAndProducts } from 'src/types/order-and-products.type';
+import { Order } from 'src/entities/order.entity';
+
 
 // TODO retornar todas as entidades associadas ou apenas seus IDs?
 export const OrderAdapter = {
@@ -75,4 +77,26 @@ export const OrderAdapter = {
 
     return JSON.stringify(mappedOrder);
   },
+
+  adaptOrderJson: (order: Order | null): string => {
+    if (order === null) {
+      return JSON.stringify({});
+    }
+
+
+    const mappedOrder = {
+      id: order.getId(),
+      createdAt: order.getCreatedAt(),
+      updatedAt: order.getUpdatedAt(),
+      notes: order.getNotes(),
+      trackingId: order.getTrackingId(),
+      totalPrice: order.getTotalPrice(),
+      status: order.getStatus(),
+      customerId: order.getCustomerId(),
+      paymendId: order.getPaymentId()
+    };
+
+    return JSON.stringify(mappedOrder);
+  },
+
 };
