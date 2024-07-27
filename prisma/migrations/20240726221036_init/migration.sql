@@ -49,6 +49,7 @@ CREATE TABLE "orders" (
     "totalPrice" DECIMAL(10,2) NOT NULL,
     "status" "OrderStatus" NOT NULL DEFAULT 'AWAITING',
     "notes" TEXT NOT NULL DEFAULT '',
+    "paymentId" VARCHAR(50) NOT NULL,
     "trackingId" INTEGER NOT NULL,
 
     CONSTRAINT "orders_pkey" PRIMARY KEY ("id")

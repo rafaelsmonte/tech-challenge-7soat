@@ -1,3 +1,4 @@
+import { OrderAndProductsAndPayment } from 'src/types/order-and-products-and-payment.type';
 import { OrderAndProducts } from 'src/types/order-and-products.type';
 
 // TODO retornar todas as entidades associadas ou apenas seus IDs?
@@ -5,15 +6,18 @@ export const OrderAdapter = {
   adaptArrayJson: (ordersAndProducts: OrderAndProducts[]): string => {
     const mappedOrdersAndProducts = ordersAndProducts.map(
       (orderAndProducts) => {
+        const { order, productsAndQuantity } = orderAndProducts;
+
         return {
-          id: orderAndProducts.order.getId(),
-          createdAt: orderAndProducts.order.getCreatedAt(),
-          updatedAt: orderAndProducts.order.getUpdatedAt(),
-          notes: orderAndProducts.order.getNotes(),
-          trackingId: orderAndProducts.order.getTrackingId(),
-          status: orderAndProducts.order.getStatus(),
-          customerId: orderAndProducts.order.getCustomerId(),
-          productsAndQuantity: orderAndProducts.productsAndQuantity,
+          id: order.getId(),
+          createdAt: order.getCreatedAt(),
+          updatedAt: order.getUpdatedAt(),
+          notes: order.getNotes(),
+          trackingId: order.getTrackingId(),
+          totalPrice: order.getTotalPrice(),
+          status: order.getStatus(),
+          customerId: order.getCustomerId(),
+          productsAndQuantity: productsAndQuantity,
         };
       },
     );
@@ -26,15 +30,47 @@ export const OrderAdapter = {
       return JSON.stringify({});
     }
 
+    const { order, productsAndQuantity } = orderAndProducts;
+
     const mappedOrder = {
-      id: orderAndProducts.order.getId(),
-      createdAt: orderAndProducts.order.getCreatedAt(),
-      updatedAt: orderAndProducts.order.getUpdatedAt(),
-      notes: orderAndProducts.order.getNotes(),
-      trackingId: orderAndProducts.order.getTrackingId(),
-      status: orderAndProducts.order.getStatus(),
-      customerId: orderAndProducts.order.getCustomerId(),
-      productsAndQuantity: orderAndProducts.productsAndQuantity,
+      id: order.getId(),
+      createdAt: order.getCreatedAt(),
+      updatedAt: order.getUpdatedAt(),
+      notes: order.getNotes(),
+      trackingId: order.getTrackingId(),
+      totalPrice: order.getTotalPrice(),
+      status: order.getStatus(),
+      customerId: order.getCustomerId(),
+      productsAndQuantity: productsAndQuantity,
+    };
+
+    return JSON.stringify(mappedOrder);
+  },
+
+  adaptJsonWithPayment: (
+    OrderAndProductsAndPayment: OrderAndProductsAndPayment | null,
+  ): string => {
+    if (OrderAndProductsAndPayment === null) {
+      return JSON.stringify({});
+    }
+
+    const { order, productsAndQuantity, payment } = OrderAndProductsAndPayment;
+
+    const mappedOrder = {
+      id: order.getId(),
+      createdAt: order.getCreatedAt(),
+      updatedAt: order.getUpdatedAt(),
+      notes: order.getNotes(),
+      trackingId: order.getTrackingId(),
+      totalPrice: order.getTotalPrice(),
+      status: order.getStatus(),
+      customerId: order.getCustomerId(),
+      productsAndQuantity: productsAndQuantity,
+      payment: {
+        id: payment.getId(),
+        pixQrCode: payment.getPixQrCode(),
+        pixQrCodeBase64: payment.getPixQrCodeBase64(),
+      },
     };
 
     return JSON.stringify(mappedOrder);

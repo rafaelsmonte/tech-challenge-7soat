@@ -11,11 +11,13 @@ import { InvalidCustomerError } from 'src/errors/invalid-customer.error';
 import { InvalidOrderError } from 'src/errors/invalid-order.error';
 import { InvalidProductError } from 'src/errors/invalid-product.error';
 import { OrderNotFoundError } from 'src/errors/order-not-found.error';
+import { PaymentError } from 'src/errors/payment.error';
 import { ProductNotFoundError } from 'src/errors/product-not-found.error';
 import { Database } from 'src/interfaces/database.interface';
+import { IPayment } from 'src/interfaces/payment.interface';
 
 export class TechChallengeApp {
-  constructor(private database: Database) {}
+  constructor(private database: Database, private payment: IPayment) {}
 
   start() {
     const express = require('express');
@@ -183,8 +185,10 @@ export class TechChallengeApp {
 
     app.post('/order', async (request: Request, response: Response) => {
       const { customerId, notes, productsAndQuantity } = request.body;
+      // console.log(productsAndQuantity);
       await OrderController.create(
         this.database,
+        this.payment,
         notes,
         productsAndQuantity,
         customerId,
@@ -247,8 +251,10 @@ export class TechChallengeApp {
       response.status(409).json({ message: error.message });
     } else if (error instanceof DatabaseError) {
       response.status(500).json({ message: error.message });
+    } else if (error instanceof PaymentError) {
+      response.status(500).json({ message: error.message });
     } else {
-      // console.log(error);
+      console.log('An unexpected error has occurred: ' + error);
       response.status(500).json({ message: 'Internal Server Error' });
     }
   }

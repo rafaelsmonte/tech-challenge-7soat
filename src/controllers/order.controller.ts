@@ -1,9 +1,11 @@
 import { OrderAdapter } from 'src/adapters/order.adapter';
+import { PaymentGateway } from 'src/gateways/payment-gateway';
 import { PrismaCustomerGateway } from 'src/gateways/prisma-customer.gateway';
 import { PrismaOrderProductGateway } from 'src/gateways/prisma-order-product.gateway';
 import { PrismaOrderGateway } from 'src/gateways/prisma-order.gateway';
 import { PrismaProductGateway } from 'src/gateways/prisma-product.gateway';
 import { Database } from 'src/interfaces/database.interface';
+import { IPayment } from 'src/interfaces/payment.interface';
 import { ProductAndQuantity } from 'src/types/product-and-quantity.type';
 import { OrderUseCases } from 'src/usecases/order.usecases';
 
@@ -43,6 +45,7 @@ export class OrderController {
 
   static async create(
     database: Database,
+    payment: IPayment,
     notes: string,
     productsAndQuantity: ProductAndQuantity[],
     customerId?: number,
@@ -51,22 +54,20 @@ export class OrderController {
     const productGateway = new PrismaProductGateway(database);
     const customerGateway = new PrismaCustomerGateway(database);
     const orderProductGateway = new PrismaOrderProductGateway(database);
+    const paymentGateway = new PaymentGateway(payment);
 
-    // OrderUseCases.totalPrice
-    // PaymentUseCases.create
-    // OrderUSeCases.create(totalPrice, paymentId)
-
-    const orderAndProducts = await OrderUseCases.create(
+    const orderAndProductsAndPayment = await OrderUseCases.create(
       orderGateway,
       productGateway,
       customerGateway,
       orderProductGateway,
+      paymentGateway,
       productsAndQuantity,
       notes,
       customerId,
     );
 
-    return OrderAdapter.adaptJson(orderAndProducts);
+    return OrderAdapter.adaptJsonWithPayment(orderAndProductsAndPayment);
   }
 
   static async update(
@@ -97,6 +98,4 @@ export class OrderController {
 
     await OrderUseCases.delete(orderGateway, orderProductGateway, id);
   }
-
-  // TODO implement update flow
 }

@@ -9,6 +9,7 @@ export class Order {
   private trackingId: number;
   private totalPrice: number;
   private status: OrderStatus;
+  private paymentId: string;
   private customerId?: number;
 
   constructor(
@@ -19,6 +20,7 @@ export class Order {
     trackingId: number,
     totalPrice: number,
     status: string,
+    paymentId: string,
     customerId?: number,
   ) {
     this.setId(id);
@@ -28,6 +30,7 @@ export class Order {
     this.setTrackingId(trackingId);
     this.setTotalPrice(totalPrice);
     this.setStatus(status);
+    this.setPaymentId(paymentId);
     this.setCustomerId(customerId);
   }
 
@@ -36,6 +39,7 @@ export class Order {
     trackingId: number,
     totalPrice: number,
     status: OrderStatus,
+    paymentId: string,
     customerId?: number,
   ): Order {
     const now = new Date();
@@ -47,6 +51,7 @@ export class Order {
       trackingId,
       totalPrice,
       status,
+      paymentId,
       customerId,
     );
   }
@@ -78,6 +83,10 @@ export class Order {
 
   public getStatus(): string {
     return this.status;
+  }
+
+  public getPaymentId(): string {
+    return this.paymentId;
   }
 
   public getCustomerId(): number | null {
@@ -121,6 +130,10 @@ export class Order {
         'Status must be AWAITING, IN_PROGRESS, DONE or CANCELLED',
       );
     }
+  }
+
+  public setPaymentId(paymentId: string): void {
+    this.paymentId = paymentId;
   }
 
   public setCustomerId(customerId: number | null): void {

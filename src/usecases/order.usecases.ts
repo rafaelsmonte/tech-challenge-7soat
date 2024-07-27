@@ -1,17 +1,21 @@
 import { Customer } from 'src/entities/customer.entity';
 import { OrderProduct } from 'src/entities/order-product.entity';
 import { Order } from 'src/entities/order.entity';
+import { Payment } from 'src/entities/payment.entity';
 import { Product } from 'src/entities/product.entity';
 import { OrderStatus } from 'src/enum/order-status.enum';
 import { CustomerNotFoundError } from 'src/errors/customer-not-found.error';
 import { OrderNotFoundError } from 'src/errors/order-not-found.error';
 import { ProductNotFoundError } from 'src/errors/product-not-found.error';
+import { PaymentGateway } from 'src/gateways/payment-gateway';
 import { CustomerGateway } from 'src/interfaces/customer.gateway.interface';
 import { OrderProductGateway } from 'src/interfaces/order-product.gateway.interface';
 import { OrderGateway } from 'src/interfaces/order.gateway.interface';
 import { ProductGateway } from 'src/interfaces/product.gateway.interface';
+import { OrderAndProductsAndPayment } from 'src/types/order-and-products-and-payment.type';
 import { OrderAndProducts } from 'src/types/order-and-products.type';
 import { ProductAndQuantity } from 'src/types/product-and-quantity.type';
+import { v4 as uuidv4 } from 'uuid';
 
 // TODO retornar todas as entidades associadas ou apenas seus IDs?
 // TODO como utilizar transaction nesse cenário de queries encadeadas?
@@ -79,10 +83,11 @@ export class OrderUseCases {
     productGateway: ProductGateway,
     customerGateway: CustomerGateway,
     orderProductGateway: OrderProductGateway,
+    paymentGateway: PaymentGateway,
     productsAndQuantity: ProductAndQuantity[],
     notes: string,
     customerId?: number,
-  ): Promise<OrderAndProducts> {
+  ): Promise<OrderAndProductsAndPayment> {
     let customer: Customer | null = null;
     let products: Product[] = [];
     let totalPrice = 0;
@@ -103,10 +108,17 @@ export class OrderUseCases {
       totalPrice += product.getPrice() * quantity;
     }
 
-    // TODO create payment
+    const paymentId = uuidv4();
 
     const newOrder = await orderGateway.create(
-      Order.new(notes, 0, totalPrice, OrderStatus.AWAITING, customerId),
+      Order.new(
+        notes,
+        0,
+        totalPrice,
+        OrderStatus.AWAITING,
+        paymentId,
+        customerId,
+      ),
     );
 
     for (const { productId, quantity } of productsAndQuantity) {
@@ -115,7 +127,11 @@ export class OrderUseCases {
       );
     }
 
-    return { order: newOrder, productsAndQuantity };
+    const payment = await paymentGateway.create(
+      Payment.new(paymentId, totalPrice, customer?.getEmail() ?? ''),
+    );
+
+    return { order: newOrder, productsAndQuantity, payment };
   }
 
   static async update(

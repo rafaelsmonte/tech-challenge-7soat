@@ -27,6 +27,7 @@ export class PrismaOrderGateway implements OrderGateway {
             order.trackingId,
             new Decimal(order.totalPrice).toNumber(),
             order.status,
+            order.paymentId,
             order.customerId,
           ),
       );
@@ -51,6 +52,7 @@ export class PrismaOrderGateway implements OrderGateway {
         order.trackingId,
         new Decimal(order.totalPrice).toNumber(),
         order.status,
+        order.paymentId,
         order.customerId,
       );
     } catch (error) {
@@ -68,6 +70,7 @@ export class PrismaOrderGateway implements OrderGateway {
           trackingId: order.getTrackingId(),
           totalPrice: new Prisma.Decimal(order.getTotalPrice()),
           status: PrismaOrderStatus.AWAITING,
+          paymentId: order.getPaymentId(),
           customerId: order.getCustomerId(),
         },
       });
@@ -80,6 +83,7 @@ export class PrismaOrderGateway implements OrderGateway {
         createdOrder.trackingId,
         new Decimal(createdOrder.totalPrice).toNumber(),
         createdOrder.status,
+        createdOrder.paymentId,
         createdOrder.customerId,
       );
     } catch (error) {
@@ -106,6 +110,7 @@ export class PrismaOrderGateway implements OrderGateway {
         updatedOrder.trackingId,
         new Decimal(updatedOrder.totalPrice).toNumber(),
         updatedOrder.status,
+        updatedOrder.paymentId,
         updatedOrder.customerId,
       );
     } catch (error) {

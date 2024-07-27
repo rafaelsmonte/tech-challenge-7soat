@@ -1,7 +1,10 @@
 import { TechChallengeApp } from './api';
-import { PrismaDatabase } from './external/database.external';
+import { MercadoPago } from './external/mercado-pago-payment.external';
+import { PrismaDatabase } from './external/prisma-database.external';
 
 const database = new PrismaDatabase();
-const app = new TechChallengeApp(database);
+const payment = new MercadoPago();
+
+const app = new TechChallengeApp(database, payment);
 
 app.start();
