@@ -93,14 +93,23 @@ export class OrderController {
   }
   static async updatePayment(
     database: Database,
+    payment: IPayment,
     paymentId: number,
+    dataID: string, 
+    signature: string | string[], 
+    requestId: string | string[], 
   ): Promise<string> {
     const orderGateway = new PrismaOrderGateway(database);
+    const paymentGateway = new PaymentGateway(payment)
 
     const order = await OrderUseCases.updatePayment(
       orderGateway,
+      paymentGateway,
       paymentId,
       "IN_PROGRESS",
+      dataID, 
+      signature, 
+      requestId, 
     );
 
     return OrderAdapter.adaptOrderJson(order);

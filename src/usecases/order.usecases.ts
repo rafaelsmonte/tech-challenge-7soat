@@ -6,7 +6,9 @@ import { Product } from 'src/entities/product.entity';
 import { OrderStatus } from 'src/enum/order-status.enum';
 import { CustomerNotFoundError } from 'src/errors/customer-not-found.error';
 import { OrderNotFoundError } from 'src/errors/order-not-found.error';
+import { IncorrectPaymentSourceError } from 'src/errors/incorrect-payment-source';
 import { ProductNotFoundError } from 'src/errors/product-not-found.error';
+import { InvalidPaymentOrderStatusError } from 'src/errors/invalid-payment-order-status-error';
 import { PaymentGateway } from 'src/gateways/payment-gateway';
 import { CustomerGateway } from 'src/interfaces/customer.gateway.interface';
 import { OrderProductGateway } from 'src/interfaces/order-product.gateway.interface';
@@ -165,13 +167,25 @@ export class OrderUseCases {
   }
   static async updatePayment(
     orderGateway: OrderGateway,
+    paymentGateway: PaymentGateway,
     paymentId: number,
     status: string,
+    dataID: string, 
+    signature: string | string[], 
+    requestId: string | string[], 
   ): Promise<Order> {
+
+    const checkPaymentSource = paymentGateway.checkSource(dataID,signature,requestId)
+
+    if (!checkPaymentSource) throw new IncorrectPaymentSourceError('Incorrect Payment Source');
+
 
     const order = await orderGateway.findByPaymentId(paymentId);
 
     if (!order) throw new OrderNotFoundError('Order not found');
+
+
+    if (order.getStatus()!="AWAITING")  throw new InvalidPaymentOrderStatusError('Order must have AWAITING status');
    
     order.setStatus(status);
 

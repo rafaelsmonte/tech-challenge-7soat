@@ -1,16 +1,18 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { CategoryController } from 'src/controllers/category.controller';
 import { CustomerController } from 'src/controllers/customer.controller';
 import { OrderController } from 'src/controllers/order.controller';
 import { ProductController } from 'src/controllers/product.controller';
 import { CategoryNotFoundError } from 'src/errors/category-not-found.error';
 import { CustomerAlreadyRegisteredError } from 'src/errors/customer-already-registered.error';
+import { InvalidPaymentOrderStatusError } from 'src/errors/invalid-payment-order-status-error';
 import { CustomerNotFoundError } from 'src/errors/customer-not-found.error';
 import { DatabaseError } from 'src/errors/database.error';
 import { InvalidCustomerError } from 'src/errors/invalid-customer.error';
 import { InvalidOrderError } from 'src/errors/invalid-order.error';
 import { InvalidProductError } from 'src/errors/invalid-product.error';
 import { OrderNotFoundError } from 'src/errors/order-not-found.error';
+import { IncorrectPaymentSourceError } from 'src/errors/incorrect-payment-source';
 import { PaymentError } from 'src/errors/payment.error';
 import { ProductNotFoundError } from 'src/errors/product-not-found.error';
 import { Database } from 'src/interfaces/database.interface';
@@ -230,23 +232,27 @@ export class TechChallengeApp {
     //WebHOOK
     app.post(
       '/order/payment', 
-      async (req: Request, res: Response, next: NextFunction) => {
+      // async (req: Request, res: Response, next: NextFunction) => {
 
-        //TODO separar o middleware????????????????????
-        const { query } = req;
-        const dataID = query["data.id"] as string;
-        const xSignature = req.headers['x-signature'] as string | string[];
-        const xRequestId = req.headers['x-request-id'] as string | string[];
+      //   //TODO separar o middleware????????????????????
+      //   const { query } = req;
+      //   const dataID = query["data.id"] as string;
+      //   const xSignature = req.headers['x-signature'] as string | string[];
+      //   const xRequestId = req.headers['x-request-id'] as string | string[];
         
-        if (!this.payment.checkPaymentSource(dataID, xSignature, xRequestId)) {
-          return res.status(401).send();
-        }
-        console.log("next")
-        next();
-      }, 
+      //   if (!this.payment.checkPaymentSource(dataID, xSignature, xRequestId)) {
+      //     return res.status(401).send();
+      //   }
+      //   console.log("next")
+      //   next();
+      // }, 
       async (request: Request, response: Response) => {
         const paymentId = request?.body?.data?.id;
-        await OrderController.updatePayment(this.database, paymentId)
+        const { query } = request;
+        const dataID = query["data.id"] as string;
+        const xSignature = request.headers['x-signature'] as string | string[];
+        const xRequestId = request.headers['x-request-id'] as string | string[];
+        await OrderController.updatePayment(this.database, this.payment, paymentId, dataID, xSignature, xRequestId)
           .then((order) => {
             response
               .setHeader('Content-type', 'application/json')
@@ -264,7 +270,11 @@ export class TechChallengeApp {
   }
 
   handleError(error: Error, response: Response): void {
-    if (error instanceof InvalidCustomerError) {
+    if (error instanceof InvalidPaymentOrderStatusError) {
+      response.status(400).json({ message: error.message });
+    } else if (error instanceof IncorrectPaymentSourceError) {
+      response.status(401).json({ message: error.message });
+    } else if (error instanceof InvalidCustomerError) {
       response.status(400).json({ message: error.message });
     } else if (error instanceof InvalidOrderError) {
       response.status(400).json({ message: error.message });

@@ -11,4 +11,7 @@ export class PaymentGateway implements IPaymentGateway {
       payment.getPayerEmail(),
     );
   }
+  public checkSource(dataID:string,xSignature:string | string[],xRequestId:string | string[]):boolean {
+    return this.paymentMethod.checkPaymentSource(dataID,xSignature,xRequestId)
+  }
 }

@@ -47,8 +47,6 @@ export class MercadoPago implements IPayment {
   checkPaymentSource(dataID:string,xSignature:string,xRequestId:string): boolean {
     const secret : string= process.env.MERCADO_PAGO_SECRET
 
-    console.log(dataID,xRequestId,xSignature,secret)
-  
     if (!xSignature || !xRequestId) {
       return false
     }
