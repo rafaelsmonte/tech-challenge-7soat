@@ -15,6 +15,7 @@ import { PaymentError } from 'src/errors/payment.error';
 import { ProductNotFoundError } from 'src/errors/product-not-found.error';
 import { IDatabase } from 'src/interfaces/database.interface';
 import { IPayment } from 'src/interfaces/payment.interface';
+const swaggerUi = require('swagger-ui-express');
 
 export class TechChallengeApp {
   constructor(private database: IDatabase, private payment: IPayment) {}
@@ -27,6 +28,11 @@ export class TechChallengeApp {
     const app = express();
 
     app.use(bodyParser.json());
+
+    //Swagger
+  
+    const options = require("./swagger.json")
+    app.use('/docs', swaggerUi.serve, swaggerUi.setup(options));
 
     // Customer endpoints
     app.get('/customer', async (request: Request, response: Response) => {
