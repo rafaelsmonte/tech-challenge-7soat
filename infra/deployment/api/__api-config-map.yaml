@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tech-challenge-7soat-api-config-map
+data:
+  DATABASE_URL: postgresql://tech-challenge-7soat:Yp5Wf+J4PG02bRWxq+EYDQ==@tech-challenge-7soat-service-db:5432/tech-challenge-7soat?schema=public
+  POSTGRES_PASSWORD: Yp5Wf+J4PG02bRWxq+EYDQ==
+  POSTGRES_USER: tech-challenge-7soat
+  POSTGRES_DB: tech-challenge-7soat

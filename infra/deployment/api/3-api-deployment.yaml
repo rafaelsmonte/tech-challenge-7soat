@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tech-challenge-7soat-api-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tech-challenge-7soat-api
+  template:
+    metadata:
+      labels:
+        app: tech-challenge-7soat-api
+    spec:
+      containers:
+      - name: tech-challenge-7soat-api
+        image: 839260668425.dkr.ecr.us-east-1.amazonaws.com/tech-challenge-7soat-ecr-api:tech-challenge-7soat-api-240721051651
+        resources:
+          limits:
+              memory: "256Mi"
+              cpu: "500m"
+        ports:
+          - containerPort: 3000
+        envFrom:
+            - secretRef:
+                name: tech-challenge-7soat-api-external-secret

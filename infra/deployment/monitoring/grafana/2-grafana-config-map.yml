@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tech-challenge-7soat-grafana-config-map
+data:
+  grafana.ini: |
+    [server]
+    http_port = 3000
