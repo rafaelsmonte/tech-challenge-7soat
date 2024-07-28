@@ -1,9 +1,9 @@
-import { Product } from 'src/entities/product.entity';
-import { CategoryNotFoundError } from 'src/errors/category-not-found.error';
-import { ProductNotFoundError } from 'src/errors/product-not-found.error';
-import { ICategoryGateway } from 'src/interfaces/category.gateway.interface';
-import { IProductGateway } from 'src/interfaces/product.gateway.interface';
-import { ProductAndCategory } from 'src/types/product-and-category.type';
+import { Product } from '../entities/product.entity';
+import { CategoryNotFoundError } from '../errors/category-not-found.error';
+import { ProductNotFoundError } from '../errors/product-not-found.error';
+import { ICategoryGateway } from '../interfaces/category.gateway.interface';
+import { IProductGateway } from '../interfaces/product.gateway.interface';
+import { ProductAndCategory } from '../types/product-and-category.type';
 
 // TODO retornar todas as entidades associadas ou apenas seus IDs?
 

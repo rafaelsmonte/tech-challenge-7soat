@@ -1,5 +1,5 @@
-import { CategoryType } from 'src/enum/category-type.enum';
-import { InvalidCategoryError } from 'src/errors/invalid-category.error';
+import { CategoryType } from '../enum/category-type.enum';
+import { InvalidCategoryError } from '../errors/invalid-category.error';
 
 export class Category {
   private id: number;

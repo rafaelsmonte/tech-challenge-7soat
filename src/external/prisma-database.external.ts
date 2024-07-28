@@ -9,13 +9,13 @@ import {
   Prisma,
 } from '@prisma/client';
 import Decimal from 'decimal.js';
-import { Category } from 'src/entities/category.entity';
-import { Customer } from 'src/entities/customer.entity';
-import { OrderProduct } from 'src/entities/order-product.entity';
-import { Order } from 'src/entities/order.entity';
-import { Product } from 'src/entities/product.entity';
-import { DatabaseError } from 'src/errors/database.error';
-import { IDatabase } from 'src/interfaces/database.interface';
+import { Category } from '../entities/category.entity';
+import { Customer } from '../entities/customer.entity';
+import { OrderProduct } from '../entities/order-product.entity';
+import { Order } from '../entities/order.entity';
+import { Product } from '../entities/product.entity';
+import { DatabaseError } from '../errors/database.error';
+import { IDatabase } from '../interfaces/database.interface';
 
 export class PrismaDatabase implements IDatabase {
   private prismaClient: PrismaClient;

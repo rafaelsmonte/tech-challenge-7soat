@@ -1,4 +1,4 @@
-import { Payment } from 'src/entities/payment.entity';
+import { Payment } from '../entities/payment.entity';
 
 export interface IPaymentGateway {
   create(payment: Payment): Promise<Payment>;

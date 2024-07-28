@@ -1,6 +1,6 @@
-import { Category } from 'src/entities/category.entity';
-import { ICategoryGateway } from 'src/interfaces/category.gateway.interface';
-import { IDatabase } from 'src/interfaces/database.interface';
+import { Category } from '../entities/category.entity';
+import { ICategoryGateway } from '../interfaces/category.gateway.interface';
+import { IDatabase } from '../interfaces/database.interface';
 
 export class CategoryGateway implements ICategoryGateway {
   constructor(private database: IDatabase) {}

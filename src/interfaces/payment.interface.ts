@@ -1,4 +1,4 @@
-import { Payment } from 'src/entities/payment.entity';
+import { Payment } from '../entities/payment.entity';
 
 export interface IPayment {
   create(amount: number, payerEmail: string): Promise<Payment>;

@@ -1,7 +1,7 @@
-import { CategoryAdapter } from 'src/adapters/category.adapter';
-import { CategoryGateway } from 'src/gateways/category.gateway';
-import { IDatabase } from 'src/interfaces/database.interface';
-import { CategoryUseCases } from 'src/usecases/category.usecases';
+import { CategoryAdapter } from '../adapters/category.adapter';
+import { CategoryGateway } from '../gateways/category.gateway';
+import { IDatabase } from '../interfaces/database.interface';
+import { CategoryUseCases } from '../usecases/category.usecases';
 
 export class CategoryController {
   static async findAll(database: IDatabase): Promise<string> {

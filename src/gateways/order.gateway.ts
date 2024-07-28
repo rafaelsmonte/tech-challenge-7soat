@@ -1,6 +1,6 @@
-import { Order } from 'src/entities/order.entity';
-import { IDatabase } from 'src/interfaces/database.interface';
-import { IOrderGateway } from 'src/interfaces/order.gateway.interface';
+import { Order } from '../entities/order.entity';
+import { IDatabase } from '../interfaces/database.interface';
+import { IOrderGateway } from '../interfaces/order.gateway.interface';
 
 export class OrderGateway implements IOrderGateway {
   constructor(private database: IDatabase) {}

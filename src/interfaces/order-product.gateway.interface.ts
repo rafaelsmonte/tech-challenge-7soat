@@ -1,4 +1,4 @@
-import { OrderProduct } from 'src/entities/order-product.entity';
+import { OrderProduct } from '../entities/order-product.entity';
 
 export interface IOrderProductGateway {
   findByOrderId(orderId: number): Promise<OrderProduct[]>;

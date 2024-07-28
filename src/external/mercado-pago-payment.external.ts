@@ -1,7 +1,7 @@
-import { IPayment } from 'src/interfaces/payment.interface';
+import { IPayment } from '../interfaces/payment.interface';
 import { MercadoPagoConfig, Payment as MercadoPagoPayment } from 'mercadopago';
-import { Payment } from 'src/entities/payment.entity';
-import { PaymentError } from 'src/errors/payment.error';
+import { Payment } from '../entities/payment.entity';
+import { PaymentError } from '../errors/payment.error';
 import { createHmac } from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
 

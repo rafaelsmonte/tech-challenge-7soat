@@ -1,7 +1,7 @@
-import { CustomerAdapter } from 'src/adapters/customer.adapter';
-import { CustomerGateway } from 'src/gateways/customer.gateway';
-import { IDatabase } from 'src/interfaces/database.interface';
-import { CustomerUseCases } from 'src/usecases/customer.usecases';
+import { CustomerAdapter } from '../adapters/customer.adapter';
+import { CustomerGateway } from '../gateways/customer.gateway';
+import { IDatabase } from '../interfaces/database.interface';
+import { CustomerUseCases } from '../usecases/customer.usecases';
 
 export class CustomerController {
   static async findAll(database: IDatabase): Promise<string> {

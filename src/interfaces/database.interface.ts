@@ -1,8 +1,8 @@
-import { Category } from 'src/entities/category.entity';
-import { Customer } from 'src/entities/customer.entity';
-import { OrderProduct } from 'src/entities/order-product.entity';
-import { Order } from 'src/entities/order.entity';
-import { Product } from 'src/entities/product.entity';
+import { Category } from '../entities/category.entity';
+import { Customer } from '../entities/customer.entity';
+import { OrderProduct } from '../entities/order-product.entity';
+import { Order } from '../entities/order.entity';
+import { Product } from '../entities/product.entity';
 
 export interface IDatabase {
   // Category
