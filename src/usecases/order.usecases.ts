@@ -7,6 +7,7 @@ import { OrderStatus } from 'src/enum/order-status.enum';
 import { CustomerNotFoundError } from 'src/errors/customer-not-found.error';
 import { IncorrectPaymentSourceError } from 'src/errors/incorrect-payment-source.error';
 import { InvalidPaymentOrderStatusError } from 'src/errors/invalid-payment-status.error';
+import { IncorrectPaymentActionError } from 'src/errors/incorrect-payment-action.error';
 import { OrderNotFoundError } from 'src/errors/order-not-found.error';
 import { ProductNotFoundError } from 'src/errors/product-not-found.error';
 import { ICustomerGateway } from 'src/interfaces/customer.gateway.interface';
@@ -92,6 +93,9 @@ export class OrderUseCases {
     let customer: Customer | null = null;
     let products: Product[] = [];
     let totalPrice = 0;
+    const paymentTimOut =  Number(process.env.PAYMENT_TIMEOUT) || 5
+    const paymentExpirationDate = new Date();
+    paymentExpirationDate.setSeconds(paymentExpirationDate.getSeconds() + paymentTimOut);
 
     if (customerId) {
       customer = await customerGateway.findById(customerId);
@@ -112,7 +116,7 @@ export class OrderUseCases {
     totalPrice = Number(totalPrice.toFixed(2));
 
     const payment = await paymentGateway.create(
-      Payment.new(totalPrice, customer?.getEmail()),
+      Payment.new(totalPrice,paymentExpirationDate, customer?.getEmail()),
     );
 
     const newOrder = await orderGateway.create(
@@ -120,7 +124,7 @@ export class OrderUseCases {
         notes,
         0,
         totalPrice,
-        OrderStatus.AWAITING,
+        OrderStatus.PAYMENT_PENDING,
         payment.getId(),
         customerId,
       ),
@@ -175,24 +179,33 @@ export class OrderUseCases {
     dataID: string,
     signature: string | string[],
     requestId: string | string[],
+    action: string,
   ): Promise<OrderAndProducts> {
     const checkPaymentSource = paymentGateway.checkPaymentSource(
       dataID,
       signature,
       requestId,
+      action,
     );
 
     if (!checkPaymentSource)
       throw new IncorrectPaymentSourceError('Incorrect Payment Source');
 
+    const checkPaymentAction = paymentGateway.checkPaymentAction(action)
+    
+    if (!checkPaymentAction)
+      throw new IncorrectPaymentActionError ('Incorrect Payment Action');
+
     const order = await orderGateway.findByPaymentId(paymentId);
 
     if (!order) throw new OrderNotFoundError('Order not found');
 
-    if (order.getStatus() != OrderStatus.AWAITING)
-      throw new InvalidPaymentOrderStatusError('Order is already paid');
+    if (order.getStatus() != OrderStatus.PAYMENT_PENDING)
+      throw new InvalidPaymentOrderStatusError('Order status is not payment pending');
 
-    order.setStatus(OrderStatus.IN_PROGRESS);
+    const paymentStatus = await paymentGateway.getPaymenteStatus(paymentId)
+
+    order.setStatus(paymentStatus);
 
     const updatedOrder = await orderGateway.updateStatus(order);
 

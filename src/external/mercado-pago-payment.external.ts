@@ -4,9 +4,11 @@ import { Payment } from 'src/entities/payment.entity';
 import { PaymentError } from 'src/errors/payment.error';
 import { createHmac } from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
+import { OrderStatus } from 'src/enum/order-status.enum';
+
 
 export class MercadoPago implements IPayment {
-  async create(amount: number, payerEmail: string): Promise<Payment> {
+  async create(amount: number, payerEmail: string, expirationDate:Date): Promise<Payment> {
     try {
       const client = new MercadoPagoConfig({
         accessToken: process.env.MERCADO_PAGO_ACCESS_TOKEN || '',
@@ -15,6 +17,7 @@ export class MercadoPago implements IPayment {
 
       const requestOptions = { idempotencyKey: uuidv4() };
       const body = {
+        date_of_expiration: expirationDate.toISOString(),
         transaction_amount: amount,
         description: '',
         payment_method_id: 'pix',
@@ -41,10 +44,10 @@ export class MercadoPago implements IPayment {
         amount,
         pixQrCode,
         pixQrCodeBase64,
+        expirationDate,
         payerEmail,
       );
     } catch (error: any) {
-      console.log(error);
       throw new PaymentError('Failed to create payment');
     }
   }
@@ -88,6 +91,28 @@ export class MercadoPago implements IPayment {
       else return false;
     } catch (error) {
       throw new PaymentError('Failed to check payment source');
+    }
+  }
+  checkPaymentAction(action: string): boolean{
+    return action==="payment.updated"?true:false
+  }
+  async getPaymenteStatus(paymentId: number): Promise<OrderStatus>{
+    try{
+
+      const client = new MercadoPagoConfig({
+        accessToken: process.env.MERCADO_PAGO_ACCESS_TOKEN || '',
+      });
+      const payment = new MercadoPagoPayment(client);
+
+      const paymentResponse = await payment.get({
+        id:paymentId
+      })
+      if (paymentResponse.status === "approved")
+        return OrderStatus.IN_PROGRESS
+      return OrderStatus.PAYMENT_FAILED
+
+    }catch(error){
+      throw new PaymentError('Failed to check payment Status');
     }
   }
 }

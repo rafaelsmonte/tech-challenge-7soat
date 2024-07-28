@@ -1,6 +1,7 @@
 import { Payment } from 'src/entities/payment.entity';
 import { IPaymentGateway } from 'src/interfaces/payment.gateway.interface';
 import { IPayment } from 'src/interfaces/payment.interface';
+import { OrderStatus } from 'src/enum/order-status.enum';
 
 export class PaymentGateway implements IPaymentGateway {
   constructor(private paymentMethod: IPayment) {}
@@ -9,6 +10,7 @@ export class PaymentGateway implements IPaymentGateway {
     return this.paymentMethod.create(
       payment.getAmount(),
       payment.getPayerEmail(),
+      payment.getExpirationDate(),
     );
   }
 
@@ -23,4 +25,11 @@ export class PaymentGateway implements IPaymentGateway {
       xRequestId,
     );
   }
+  public async getPaymenteStatus(paymentId: number): Promise<OrderStatus>{
+   return this.paymentMethod.getPaymenteStatus(paymentId)
+  }
+  public checkPaymentAction(action: string): boolean{
+    return this.paymentMethod.checkPaymentAction(action)
+  }
+
 }

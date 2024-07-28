@@ -81,6 +81,8 @@ enum OrderStatus {
   IN_PROGRESS
   DONE
   CANCELLED
+  PAYMENT_PENDING
+  PAYMENT_FAILED
 }
 
 enum CategoryType {
