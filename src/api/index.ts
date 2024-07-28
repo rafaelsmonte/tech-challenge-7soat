@@ -32,7 +32,7 @@ export class TechChallengeApp {
     // Metrics
     collectDefaultMetrics();
 
-    app.get('/metrics', async (request, response) => {
+    app.get('/metrics', async (request: Request, response: Response) => {
       try {
         response.setHeader('Content-Type', register.contentType);
         response.send(await register.metrics());
