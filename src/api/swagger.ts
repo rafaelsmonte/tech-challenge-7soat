@@ -1,7 +1,7 @@
 const swaggerAutogen = require('swagger-autogen')();
 
 const port = 3000;
-const outputFile = './swagger.json';
+const outputFile = './swagger-auto.json';
 const routes = ['./index.ts'];
 
 const doc = {
@@ -9,7 +9,7 @@ const doc = {
     title: 'Tech Challenge 7SOAT',
     description: ''
   },
-  host: `localhost:${port}`
+  host: `10.100.61.151:${port}`
 };
 
 
