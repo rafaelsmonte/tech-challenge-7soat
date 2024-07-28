@@ -18,9 +18,6 @@ import { OrderAndProductsAndPayment } from '../types/order-and-products-and-paym
 import { OrderAndProducts } from '../types/order-and-products.type';
 import { ProductAndQuantity } from '../types/product-and-quantity.type';
 
-// TODO retornar todas as entidades associadas ou apenas seus IDs?
-// TODO como utilizar transaction nesse cenário de queries encadeadas?
-
 export class OrderUseCases {
   static async findAll(
     orderGateway: IOrderGateway,
@@ -32,7 +29,9 @@ export class OrderUseCases {
 
     const orders = await orderGateway.findAll();
 
-    for (const order of orders) {
+    const filteredAndSortedOrders = this.filterAndSortOrders(orders);
+
+    for (const order of filteredAndSortedOrders) {
       const orderProducts = await orderProductGateway.findByOrderId(
         order.getId(),
       );
@@ -222,5 +221,31 @@ export class OrderUseCases {
     if (!order) throw new OrderNotFoundError('Order not found');
 
     await orderGateway.delete(id);
+  }
+
+  static filterAndSortOrders(orders: Order[]): Order[] {
+    const unfinishedOrders = orders.filter(
+      (order) => order.getStatus() !== OrderStatus.FINISHED,
+    );
+
+    const statusOrder = {
+      [OrderStatus.DONE]: 1,
+      [OrderStatus.IN_PROGRESS]: 2,
+      [OrderStatus.AWAITING]: 3,
+    };
+
+    const sortedOrders = unfinishedOrders.sort((a, b) => {
+      const statusComparison =
+        statusOrder[a.getStatus()] - statusOrder[b.getStatus()];
+
+      if (statusComparison !== 0) return statusComparison;
+
+      return (
+        new Date(a.getCreatedAt()).getTime() -
+        new Date(b.getCreatedAt()).getTime()
+      );
+    });
+
+    return sortedOrders;
   }
 }
