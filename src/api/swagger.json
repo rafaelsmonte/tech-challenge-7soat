@@ -1,8 +1,9 @@
+
 {
   "swagger": "2.0",
   "info": {
     "title": "Tech Challenge 7SOAT",
-    "description": "",
+    "description": "API documentation for the Tech Challenge 7SOAT",
     "version": "1.0.0"
   },
   "host": "10.100.61.151:3000",
@@ -13,18 +14,21 @@
   "paths": {
     "/customer": {
       "get": {
-        "description": "",
+        "description": "Retrieve a list of customers",
         "produces": [
           "application/json"
         ],
         "responses": {
+          "200": {
+            "description": "A list of customers"
+          },
           "default": {
-            "description": ""
+            "description": "Unexpected error"
           }
         }
       },
       "post": {
-        "description": "",
+        "description": "Create a new customer",
         "produces": [
           "application/json"
         ],
@@ -32,37 +36,39 @@
           {
             "name": "body",
             "in": "body",
+            "required": true,
             "schema": {
               "type": "object",
               "properties": {
                 "name": {
-                  "example": "any",
-                  "type":"string"
+                  "type": "string",
+                  "example": "any"
                 },
                 "taxpayerRegistry": {
-                  "example": "any",
-                  "type":"string"
-
+                  "type": "string",
+                  "example": "any"
                 },
                 "email": {
-                  "example": "any",
-                  "type":"string"
-
+                  "type": "string",
+                  "example": "any"
                 }
               }
             }
           }
         ],
         "responses": {
+          "201": {
+            "description": "Customer created successfully"
+          },
           "default": {
-            "description": ""
+            "description": "Unexpected error"
           }
         }
       }
     },
     "/customer/{id}": {
       "get": {
-        "description": "",
+        "description": "Retrieve details of a customer by ID",
         "produces": [
           "application/json"
         ],
@@ -71,17 +77,24 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "number"
+            "type": "number",
+            "description": "ID of the customer to retrieve"
           }
         ],
         "responses": {
+          "200": {
+            "description": "Customer details"
+          },
+          "404": {
+            "description": "Customer not found"
+          },
           "default": {
-            "description": ""
+            "description": "Unexpected error"
           }
         }
       },
       "delete": {
-        "description": "",
+        "description": "Delete a customer by ID",
         "produces": [
           "application/json"
         ],
@@ -90,19 +103,26 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "ID of the customer to delete"
           }
         ],
         "responses": {
           "204": {
-            "description": "No Content"
+            "description": "Customer deleted successfully"
+          },
+          "404": {
+            "description": "Customer not found"
+          },
+          "default": {
+            "description": "Unexpected error"
           }
         }
       }
     },
     "/customer/check-if-exists/{taxpayerRegistry}": {
       "get": {
-        "description": "",
+        "description": "Check if a customer exists by taxpayer registry",
         "produces": [
           "application/json"
         ],
@@ -111,43 +131,56 @@
             "name": "taxpayerRegistry",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "Taxpayer registry of the customer to check"
           }
         ],
         "responses": {
+          "200": {
+            "description": "Customer exists"
+          },
+          "404": {
+            "description": "Customer not found"
+          },
           "default": {
-            "description": ""
+            "description": "Unexpected error"
           }
         }
       }
     },
     "/category": {
       "get": {
-        "description": "",
+        "description": "Retrieve a list of categories",
         "produces": [
           "application/json"
         ],
         "responses": {
+          "200": {
+            "description": "A list of categories"
+          },
           "default": {
-            "description": ""
+            "description": "Unexpected error"
           }
         }
       }
     },
     "/product": {
       "get": {
-        "description": "",
+        "description": "Retrieve a list of products",
         "produces": [
           "application/json"
         ],
         "responses": {
+          "200": {
+            "description": "A list of products"
+          },
           "default": {
-            "description": ""
+            "description": "Unexpected error"
           }
         }
       },
       "post": {
-        "description": "",
+        "description": "Create a new product",
         "produces": [
           "application/json"
         ],
@@ -155,48 +188,47 @@
           {
             "name": "body",
             "in": "body",
+            "required": true,
             "schema": {
               "type": "object",
               "properties": {
                 "name": {
-                  "example": "Coke 600ml",
-                  "type":"string"
-
+                  "type": "string",
+                  "example": "Coke 600ml"
                 },
                 "price": {
-                  "example": "10.00",
-                  "type":"number"
-
+                  "type": "number",
+                  "example": 10.00
                 },
                 "description": {
-                  "example": "Product Description",
-                  "type":"string"
-
+                  "type": "string",
+                  "example": "Product Description"
                 },
                 "pictures": {
-                  "example": "URL",
-                  "type":"string"
-
+                  "type": "string",
+                  "example": "URL"
                 },
                 "categoryId": {
-                  "example": "1",
-                  "type":"number"
-
+                  "type": "number",
+                  "example": 1
                 }
               }
             }
           }
         ],
         "responses": {
+          "201": {
+            "description": "Product created successfully"
+          },
           "default": {
-            "description": ""
+            "description": "Unexpected error"
           }
         }
       }
     },
     "/product/{id}": {
       "get": {
-        "description": "",
+        "description": "Retrieve details of a product by ID",
         "produces": [
           "application/json"
         ],
@@ -205,17 +237,24 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "number"
+            "type": "number",
+            "description": "ID of the product to retrieve"
           }
         ],
         "responses": {
+          "200": {
+            "description": "Product details"
+          },
+          "404": {
+            "description": "Product not found"
+          },
           "default": {
-            "description": ""
+            "description": "Unexpected error"
           }
         }
       },
       "delete": {
-        "description": "",
+        "description": "Delete a product by ID",
         "produces": [
           "application/json"
         ],
@@ -224,30 +263,40 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "number"
+            "type": "number",
+            "description": "ID of the product to delete"
           }
         ],
         "responses": {
           "204": {
-            "description": "No Content"
+            "description": "Product deleted successfully"
+          },
+          "404": {
+            "description": "Product not found"
+          },
+          "default": {
+            "description": "Unexpected error"
           }
         }
       }
     },
     "/order": {
       "get": {
-        "description": "",
+        "description": "Retrieve a list of orders",
         "produces": [
           "application/json"
         ],
         "responses": {
+          "200": {
+            "description": "A list of orders"
+          },
           "default": {
-            "description": ""
+            "description": "Unexpected error"
           }
         }
       },
       "post": {
-        "description": "",
+        "description": "Create a new order",
         "produces": [
           "application/json"
         ],
@@ -255,16 +304,20 @@
           {
             "name": "body",
             "in": "body",
+            "required": true,
             "schema": {
               "type": "object",
               "properties": {
                 "customerId": {
+                  "type": "string",
                   "example": "any"
                 },
                 "notes": {
+                  "type": "string",
                   "example": "any"
                 },
                 "productsAndQuantity": {
+                  "type": "object",
                   "example": "any"
                 }
               }
@@ -272,15 +325,18 @@
           }
         ],
         "responses": {
+          "201": {
+            "description": "Order created successfully"
+          },
           "default": {
-            "description": ""
+            "description": "Unexpected error"
           }
         }
       }
     },
     "/order/{id}": {
       "get": {
-        "description": "",
+        "description": "Retrieve details of an order by ID",
         "produces": [
           "application/json"
         ],
@@ -289,17 +345,24 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "number"
+            "type": "number",
+            "description": "ID of the order to retrieve"
           }
         ],
         "responses": {
+          "200": {
+            "description": "Order details"
+          },
+          "404": {
+            "description": "Order not found"
+          },
           "default": {
-            "description": ""
+            "description": "Unexpected error"
           }
         }
       },
       "delete": {
-        "description": "",
+        "description": "Delete an order by ID",
         "produces": [
           "application/json"
         ],
@@ -308,70 +371,19 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "ID of the order to delete"
           }
         ],
         "responses": {
           "204": {
-            "description": "No Content"
-          }
-        }
-      }
-    },
-    "/order/payment": {
-      "post": {
-        "description": "",
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "x-signature",
-            "in": "header",
-            "type": "string"
+            "description": "Order deleted successfully"
           },
-          {
-            "name": "x-request-id",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/order/{id}/change-status": {
-      "patch": {
-        "description": "",
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "number"
+          "404": {
+            "description": "Order not found"
           },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "status": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
           "default": {
-            "description": ""
+            "description": "Unexpected error"
           }
         }
       }
