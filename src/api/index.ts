@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { collectDefaultMetrics, register } from 'prom-client';
 import { CategoryController } from 'src/controllers/category.controller';
 import { CustomerController } from 'src/controllers/customer.controller';
 import { OrderController } from 'src/controllers/order.controller';
@@ -27,6 +28,18 @@ export class TechChallengeApp {
     const app = express();
 
     app.use(bodyParser.json());
+
+    // Metrics
+    collectDefaultMetrics();
+
+    app.get('/metrics', async (request, response) => {
+      try {
+        response.setHeader('Content-Type', register.contentType);
+        response.send(await register.metrics());
+      } catch (error) {
+        this.handleError(error, response);
+      }
+    });
 
     // Customer endpoints
     app.get('/customer', async (request: Request, response: Response) => {
