@@ -1,6 +1,6 @@
-import { Payment } from 'src/entities/payment.entity';
-import { IPaymentGateway } from 'src/interfaces/payment.gateway.interface';
-import { IPayment } from 'src/interfaces/payment.interface';
+import { Payment } from '../entities/payment.entity';
+import { IPaymentGateway } from '../interfaces/payment.gateway.interface';
+import { IPayment } from '../interfaces/payment.interface';
 
 export class PaymentGateway implements IPaymentGateway {
   constructor(private paymentMethod: IPayment) {}

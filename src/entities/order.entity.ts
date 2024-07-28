@@ -1,5 +1,5 @@
-import { OrderStatus } from 'src/enum/order-status.enum';
-import { InvalidOrderError } from 'src/errors/invalid-order.error';
+import { OrderStatus } from '../enum/order-status.enum';
+import { InvalidOrderError } from '../errors/invalid-order.error';
 
 export class Order {
   private id: number;

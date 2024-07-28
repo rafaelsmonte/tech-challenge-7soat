@@ -1,5 +1,5 @@
-import { OrderAndProductsAndPayment } from 'src/types/order-and-products-and-payment.type';
-import { OrderAndProducts } from 'src/types/order-and-products.type';
+import { OrderAndProductsAndPayment } from '../types/order-and-products-and-payment.type';
+import { OrderAndProducts } from '../types/order-and-products.type';
 
 // TODO retornar todas as entidades associadas ou apenas seus IDs?
 export const OrderAdapter = {

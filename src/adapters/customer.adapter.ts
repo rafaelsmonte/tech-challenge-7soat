@@ -1,4 +1,4 @@
-import { Customer } from 'src/entities/customer.entity';
+import { Customer } from '../entities/customer.entity';
 
 export const CustomerAdapter = {
   adaptArrayJson: (customers: Customer[]): string => {

@@ -1,5 +1,5 @@
-import { Category } from 'src/entities/category.entity';
-import { Product } from 'src/entities/product.entity';
+import { Category } from '../entities/category.entity';
+import { Product } from '../entities/product.entity';
 
 export type ProductAndCategory = {
   product: Product;

@@ -1,7 +1,7 @@
-import { Customer } from 'src/entities/customer.entity';
-import { CustomerAlreadyRegisteredError } from 'src/errors/customer-already-registered.error';
-import { CustomerNotFoundError } from 'src/errors/customer-not-found.error';
-import { ICustomerGateway } from 'src/interfaces/customer.gateway.interface';
+import { Customer } from '../entities/customer.entity';
+import { CustomerAlreadyRegisteredError } from '../errors/customer-already-registered.error';
+import { CustomerNotFoundError } from '../errors/customer-not-found.error';
+import { ICustomerGateway } from '../interfaces/customer.gateway.interface';
 
 export class CustomerUseCases {
   static async findAll(customerGateway: ICustomerGateway): Promise<Customer[]> {

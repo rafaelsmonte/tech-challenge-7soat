@@ -1,0 +1,15 @@
+#==============================================================================
+# type: PersistentVolumeClaim
+# description: Volume claim for database volume
+#==============================================================================
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: tech-challenge-7soat-volume-claim-db
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: tech-challenge-7soat-ebs-storage-class

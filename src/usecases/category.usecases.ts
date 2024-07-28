@@ -1,5 +1,5 @@
-import { Category } from 'src/entities/category.entity';
-import { ICategoryGateway } from 'src/interfaces/category.gateway.interface';
+import { Category } from '../entities/category.entity';
+import { ICategoryGateway } from '../interfaces/category.gateway.interface';
 
 export class CategoryUseCases {
   static async findAll(categoryGateway: ICategoryGateway): Promise<Category[]> {

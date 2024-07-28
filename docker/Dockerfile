@@ -6,7 +6,7 @@ WORKDIR /usr/src/app
 # Bundle app source
 COPY package.json yarn.lock ./
 COPY tsconfig* ./
-COPY nest-cli.json ./
+# COPY nest-cli.json ./
 COPY prisma/ prisma/
 COPY src/ src/
 COPY docker/docker-entrypoint.sh docker-entrypoint.sh

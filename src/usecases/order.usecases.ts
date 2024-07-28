@@ -1,22 +1,22 @@
-import { Customer } from 'src/entities/customer.entity';
-import { OrderProduct } from 'src/entities/order-product.entity';
-import { Order } from 'src/entities/order.entity';
-import { Payment } from 'src/entities/payment.entity';
-import { Product } from 'src/entities/product.entity';
-import { OrderStatus } from 'src/enum/order-status.enum';
-import { CustomerNotFoundError } from 'src/errors/customer-not-found.error';
-import { IncorrectPaymentSourceError } from 'src/errors/incorrect-payment-source.error';
-import { InvalidPaymentOrderStatusError } from 'src/errors/invalid-payment-status.error';
-import { OrderNotFoundError } from 'src/errors/order-not-found.error';
-import { ProductNotFoundError } from 'src/errors/product-not-found.error';
-import { ICustomerGateway } from 'src/interfaces/customer.gateway.interface';
-import { IOrderProductGateway } from 'src/interfaces/order-product.gateway.interface';
-import { IOrderGateway } from 'src/interfaces/order.gateway.interface';
-import { IPaymentGateway } from 'src/interfaces/payment.gateway.interface';
-import { IProductGateway } from 'src/interfaces/product.gateway.interface';
-import { OrderAndProductsAndPayment } from 'src/types/order-and-products-and-payment.type';
-import { OrderAndProducts } from 'src/types/order-and-products.type';
-import { ProductAndQuantity } from 'src/types/product-and-quantity.type';
+import { Customer } from '../entities/customer.entity';
+import { OrderProduct } from '../entities/order-product.entity';
+import { Order } from '../entities/order.entity';
+import { Payment } from '../entities/payment.entity';
+import { Product } from '../entities/product.entity';
+import { OrderStatus } from '../enum/order-status.enum';
+import { CustomerNotFoundError } from '../errors/customer-not-found.error';
+import { IncorrectPaymentSourceError } from '../errors/incorrect-payment-source.error';
+import { InvalidPaymentOrderStatusError } from '../errors/invalid-payment-status.error';
+import { OrderNotFoundError } from '../errors/order-not-found.error';
+import { ProductNotFoundError } from '../errors/product-not-found.error';
+import { ICustomerGateway } from '../interfaces/customer.gateway.interface';
+import { IOrderProductGateway } from '../interfaces/order-product.gateway.interface';
+import { IOrderGateway } from '../interfaces/order.gateway.interface';
+import { IPaymentGateway } from '../interfaces/payment.gateway.interface';
+import { IProductGateway } from '../interfaces/product.gateway.interface';
+import { OrderAndProductsAndPayment } from '../types/order-and-products-and-payment.type';
+import { OrderAndProducts } from '../types/order-and-products.type';
+import { ProductAndQuantity } from '../types/product-and-quantity.type';
 
 // TODO retornar todas as entidades associadas ou apenas seus IDs?
 // TODO como utilizar transaction nesse cenário de queries encadeadas?

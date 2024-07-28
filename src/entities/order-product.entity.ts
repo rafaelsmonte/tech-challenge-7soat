@@ -1,4 +1,4 @@
-import { InvalidOrderProductError } from 'src/errors/invalid-order-product.error';
+import { InvalidOrderProductError } from '../errors/invalid-order-product.error';
 
 export class OrderProduct {
   private id: number;

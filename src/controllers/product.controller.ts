@@ -1,8 +1,8 @@
-import { ProductAdapter } from 'src/adapters/product.adapter';
-import { CategoryGateway } from 'src/gateways/category.gateway';
-import { ProductGateway } from 'src/gateways/product.gateway';
-import { IDatabase } from 'src/interfaces/database.interface';
-import { ProductUseCases } from 'src/usecases/product.usecases';
+import { ProductAdapter } from '../adapters/product.adapter';
+import { CategoryGateway } from '../gateways/category.gateway';
+import { ProductGateway } from '../gateways/product.gateway';
+import { IDatabase } from '../interfaces/database.interface';
+import { ProductUseCases } from '../usecases/product.usecases';
 
 export class ProductController {
   static async findAll(database: IDatabase): Promise<string> {

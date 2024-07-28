@@ -1,0 +1,14 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: tech-challenge-7soat-prometheus-cluster-binding
+  labels:
+    app: tech-challenge-7soat-prometheus-cluster-binding
+subjects:
+  - kind: ServiceAccount
+    name: tech-challenge-7soat-prometheus-service-account
+    namespace: default
+roleRef:
+  kind: ClusterRole
+  name: tech-challenge-7soat-prometheus-cluster-role
+  apiGroup: rbac.authorization.k8s.io

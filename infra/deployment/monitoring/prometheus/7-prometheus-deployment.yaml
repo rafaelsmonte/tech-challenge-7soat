@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tech-challenge-7soat-prometheus-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tech-challenge-7soat-prometheus
+  template:
+    metadata:
+      labels:
+        app: tech-challenge-7soat-prometheus
+    spec:
+      serviceAccountName: tech-challenge-7soat-prometheus-service-account
+      containers:
+        - name: tech-challenge-7soat-prometheus
+          image: prom/prometheus:v2.53.1
+          args:
+            - '--config.file=/etc/prometheus/prometheus.yml'
+            - '--storage.tsdb.path=/prometheus'
+            - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+            - '--web.console.templates=/usr/share/prometheus/consoles'
+          ports:
+            - name: web
+              containerPort: 9090
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/prometheus
+            - name: data-volume
+              mountPath: /prometheus
+      volumes:
+        - name: config-volume
+          configMap:
+            name: tech-challenge-7soat-prometheus-config-map
+        - name: data-volume
+          emptyDir: {}

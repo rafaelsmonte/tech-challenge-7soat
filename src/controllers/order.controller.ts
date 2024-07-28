@@ -1,13 +1,13 @@
-import { OrderAdapter } from 'src/adapters/order.adapter';
-import { CustomerGateway } from 'src/gateways/customer.gateway';
-import { OrderProductGateway } from 'src/gateways/order-product.gateway';
-import { OrderGateway } from 'src/gateways/order.gateway';
-import { PaymentGateway } from 'src/gateways/payment-gateway';
-import { ProductGateway } from 'src/gateways/product.gateway';
-import { IDatabase } from 'src/interfaces/database.interface';
-import { IPayment } from 'src/interfaces/payment.interface';
-import { ProductAndQuantity } from 'src/types/product-and-quantity.type';
-import { OrderUseCases } from 'src/usecases/order.usecases';
+import { OrderAdapter } from '../adapters/order.adapter';
+import { CustomerGateway } from '../gateways/customer.gateway';
+import { OrderProductGateway } from '../gateways/order-product.gateway';
+import { OrderGateway } from '../gateways/order.gateway';
+import { PaymentGateway } from '../gateways/payment-gateway';
+import { ProductGateway } from '../gateways/product.gateway';
+import { IDatabase } from '../interfaces/database.interface';
+import { IPayment } from '../interfaces/payment.interface';
+import { ProductAndQuantity } from '../types/product-and-quantity.type';
+import { OrderUseCases } from '../usecases/order.usecases';
 
 export class OrderController {
   static async findAll(database: IDatabase): Promise<string> {

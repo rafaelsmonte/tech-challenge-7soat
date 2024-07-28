@@ -1,21 +1,21 @@
 import { Request, Response } from 'express';
 import { collectDefaultMetrics, register } from 'prom-client';
-import { CategoryController } from 'src/controllers/category.controller';
-import { CustomerController } from 'src/controllers/customer.controller';
-import { OrderController } from 'src/controllers/order.controller';
-import { ProductController } from 'src/controllers/product.controller';
-import { CategoryNotFoundError } from 'src/errors/category-not-found.error';
-import { CustomerAlreadyRegisteredError } from 'src/errors/customer-already-registered.error';
-import { CustomerNotFoundError } from 'src/errors/customer-not-found.error';
-import { DatabaseError } from 'src/errors/database.error';
-import { InvalidCustomerError } from 'src/errors/invalid-customer.error';
-import { InvalidOrderError } from 'src/errors/invalid-order.error';
-import { InvalidProductError } from 'src/errors/invalid-product.error';
-import { OrderNotFoundError } from 'src/errors/order-not-found.error';
-import { PaymentError } from 'src/errors/payment.error';
-import { ProductNotFoundError } from 'src/errors/product-not-found.error';
-import { IDatabase } from 'src/interfaces/database.interface';
-import { IPayment } from 'src/interfaces/payment.interface';
+import { CategoryController } from '../controllers/category.controller';
+import { CustomerController } from '../controllers/customer.controller';
+import { OrderController } from '../controllers/order.controller';
+import { ProductController } from '../controllers/product.controller';
+import { CategoryNotFoundError } from '../errors/category-not-found.error';
+import { CustomerAlreadyRegisteredError } from '../errors/customer-already-registered.error';
+import { CustomerNotFoundError } from '../errors/customer-not-found.error';
+import { DatabaseError } from '../errors/database.error';
+import { InvalidCustomerError } from '../errors/invalid-customer.error';
+import { InvalidOrderError } from '../errors/invalid-order.error';
+import { InvalidProductError } from '../errors/invalid-product.error';
+import { OrderNotFoundError } from '../errors/order-not-found.error';
+import { PaymentError } from '../errors/payment.error';
+import { ProductNotFoundError } from '../errors/product-not-found.error';
+import { IDatabase } from '../interfaces/database.interface';
+import { IPayment } from '../interfaces/payment.interface';
 
 export class TechChallengeApp {
   constructor(private database: IDatabase, private payment: IPayment) {}

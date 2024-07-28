@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: kube-state-metrics
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: kube-state-metrics
+  template:
+    metadata:
+      labels:
+        app: kube-state-metrics
+    spec:
+      containers:
+      - name: kube-state-metrics
+        image: registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.1.0  # Replace with the desired version
+        args:
+        - --kubelet-port=10250
+        - --telemetry-path=/metrics
+        env:
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: spec.nodeName
+        ports:
+        - containerPort: 8080  # Default port for kube-state-metrics
+        volumeMounts:
+        - name: kubelet-dir
+          mountPath: /var/lib/kubelet  # Mount the directory to access kubelet
+      volumes:
+      - name: kubelet-dir
+        hostPath:
+          path: /var/lib/kubelet  # Path on the host to mount

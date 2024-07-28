@@ -1,4 +1,4 @@
-import { InvalidCustomerError } from 'src/errors/invalid-customer.error';
+import { InvalidCustomerError } from '../errors/invalid-customer.error';
 
 export class Customer {
   private id: number;

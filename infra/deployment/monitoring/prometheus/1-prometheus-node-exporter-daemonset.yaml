@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: tech-challenge-7soat-prometheus-node-exporter-daemonset
+  namespace: default
+  labels:
+    app: tech-challenge-7soat-prometheus-node-exporter-daemonset
+spec:
+  selector:
+    matchLabels:
+      app: tech-challenge-7soat-prometheus-node-exporter
+  template:
+    metadata:
+      labels:
+        app: tech-challenge-7soat-prometheus-node-exporter
+    spec:
+      containers:
+      - name: tech-challenge-7soat-prometheus-node-exporter
+        image: prom/node-exporter:v1.5.0
+        ports:
+        - name: metrics
+          containerPort: 9100
+        volumeMounts:
+        - name: proc
+          mountPath: /host/proc
+          readOnly: true
+        - name: sys
+          mountPath: /host/sys
+          readOnly: true
+      hostNetwork: true
+      volumes:
+      - name: proc
+        hostPath:
+          path: /proc
+      - name: sys
+        hostPath:
+          path: /sys
