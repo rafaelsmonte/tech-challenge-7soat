@@ -120,7 +120,7 @@ export class OrderUseCases {
         notes,
         0,
         totalPrice,
-        OrderStatus.AWAITING,
+        OrderStatus.PAYMENT_PENDING,
         payment.getId(),
         customerId,
       ),
@@ -183,16 +183,16 @@ export class OrderUseCases {
     );
 
     if (!checkPaymentSource)
-      throw new IncorrectPaymentSourceError('Incorrect Payment Source');
+      throw new IncorrectPaymentSourceError('Incorrect payment source');
 
     const order = await orderGateway.findByPaymentId(paymentId);
 
     if (!order) throw new OrderNotFoundError('Order not found');
 
-    if (order.getStatus() != OrderStatus.AWAITING)
-      throw new InvalidPaymentOrderStatusError('Order is already paid');
+    if (order.getStatus() != OrderStatus.PAYMENT_PENDING)
+      throw new InvalidPaymentOrderStatusError('Order already paid');
 
-    order.setStatus(OrderStatus.IN_PROGRESS);
+    order.setStatus(OrderStatus.AWAITING);
 
     const updatedOrder = await orderGateway.updateStatus(order);
 

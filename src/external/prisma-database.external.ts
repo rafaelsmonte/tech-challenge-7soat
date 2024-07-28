@@ -324,7 +324,7 @@ export class PrismaDatabase implements IDatabase {
           notes: order.getNotes(),
           trackingId: order.getTrackingId(),
           totalPrice: new Prisma.Decimal(order.getTotalPrice()),
-          status: PrismaOrderStatus.AWAITING,
+          status: PrismaOrderStatus.PAYMENT_PENDING,
           paymentId: order.getPaymentId(),
           customerId: order.getCustomerId(),
         },

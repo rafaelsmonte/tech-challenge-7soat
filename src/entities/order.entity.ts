@@ -127,7 +127,7 @@ export class Order {
 
     if (!this.status) {
       throw new InvalidOrderError(
-        'Status must be AWAITING, IN_PROGRESS, DONE or CANCELLED',
+        'Status must be AWAITING, IN_PROGRESS, DONE, FINISHED or CANCELLED',
       );
     }
   }

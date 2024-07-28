@@ -77,9 +77,12 @@ model OrderProduct {
 }
 
 enum OrderStatus {
+  PAYMENT_PENDING
+  PAYMENT_FAILED
   AWAITING
   IN_PROGRESS
   DONE
+  FINISHED
   CANCELLED
 }
 
