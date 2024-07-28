@@ -1,9 +1,9 @@
 import { Customer } from 'src/entities/customer.entity';
-import { CustomerGateway } from 'src/interfaces/customer.gateway.interface';
-import { Database } from 'src/interfaces/database.interface';
+import { ICustomerGateway } from 'src/interfaces/customer.gateway.interface';
+import { IDatabase } from 'src/interfaces/database.interface';
 
-export class PrismaCustomerGateway implements CustomerGateway {
-  constructor(private database: Database) {}
+export class CustomerGateway implements ICustomerGateway {
+  constructor(private database: IDatabase) {}
 
   public async findAll(): Promise<Customer[]> {
     return this.database.findAllCustomers();

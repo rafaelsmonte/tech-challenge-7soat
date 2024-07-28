@@ -1,9 +1,9 @@
 import { Category } from 'src/entities/category.entity';
-import { CategoryGateway } from 'src/interfaces/category.gateway.interface';
-import { Database } from 'src/interfaces/database.interface';
+import { ICategoryGateway } from 'src/interfaces/category.gateway.interface';
+import { IDatabase } from 'src/interfaces/database.interface';
 
-export class PrismaCategoryGateway implements CategoryGateway {
-  constructor(private database: Database) {}
+export class CategoryGateway implements ICategoryGateway {
+  constructor(private database: IDatabase) {}
 
   public async findAll(): Promise<Category[]> {
     return this.database.findAllCategories();

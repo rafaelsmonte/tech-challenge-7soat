@@ -43,13 +43,13 @@ CREATE TABLE "products" (
 -- CreateTable
 CREATE TABLE "orders" (
     "id" SERIAL NOT NULL,
+    "paymentId" BIGINT NOT NULL,
     "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMPTZ(3) NOT NULL,
     "customerId" INTEGER,
     "totalPrice" DECIMAL(10,2) NOT NULL,
     "status" "OrderStatus" NOT NULL DEFAULT 'AWAITING',
     "notes" TEXT NOT NULL DEFAULT '',
-    "paymentId" VARCHAR(50) NOT NULL,
     "trackingId" INTEGER NOT NULL,
 
     CONSTRAINT "orders_pkey" PRIMARY KEY ("id")
@@ -69,6 +69,9 @@ CREATE TABLE "orderProducts" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "customers_taxpayerRegistry_key" ON "customers"("taxpayerRegistry");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "orders_paymentId_key" ON "orders"("paymentId");
 
 -- AddForeignKey
 ALTER TABLE "products" ADD CONSTRAINT "products_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "categories"("id") ON DELETE CASCADE ON UPDATE CASCADE;

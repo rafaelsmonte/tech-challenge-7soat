@@ -15,9 +15,9 @@ import { OrderProduct } from 'src/entities/order-product.entity';
 import { Order } from 'src/entities/order.entity';
 import { Product } from 'src/entities/product.entity';
 import { DatabaseError } from 'src/errors/database.error';
-import { Database } from 'src/interfaces/database.interface';
+import { IDatabase } from 'src/interfaces/database.interface';
 
-export class PrismaDatabase implements Database {
+export class PrismaDatabase implements IDatabase {
   private prismaClient: PrismaClient;
 
   constructor() {
@@ -260,7 +260,7 @@ export class PrismaDatabase implements Database {
             order.trackingId,
             new Decimal(order.totalPrice).toNumber(),
             order.status,
-            order.paymentId,
+            Number(order.paymentId),
             order.customerId,
           ),
       );
@@ -285,7 +285,31 @@ export class PrismaDatabase implements Database {
         order.trackingId,
         new Decimal(order.totalPrice).toNumber(),
         order.status,
-        order.paymentId,
+        Number(order.paymentId),
+        order.customerId,
+      );
+    } catch (error) {
+      throw new DatabaseError('Failed to find order');
+    }
+  }
+
+  async findOrderByPaymentId(paymentId: number): Promise<Order | null> {
+    try {
+      const order: PrismaOrder = await this.prismaClient.order.findUnique({
+        where: { paymentId },
+      });
+
+      if (!order) return null;
+
+      return new Order(
+        order.id,
+        order.createdAt,
+        order.updatedAt,
+        order.notes,
+        order.trackingId,
+        new Decimal(order.totalPrice).toNumber(),
+        order.status,
+        Number(order.paymentId),
         order.customerId,
       );
     } catch (error) {
@@ -314,10 +338,11 @@ export class PrismaDatabase implements Database {
         createdOrder.trackingId,
         new Decimal(createdOrder.totalPrice).toNumber(),
         createdOrder.status,
-        createdOrder.paymentId,
+        Number(createdOrder.paymentId),
         createdOrder.customerId,
       );
     } catch (error) {
+      console.log(error);
       throw new DatabaseError('Failed to save order');
     }
   }
@@ -341,7 +366,7 @@ export class PrismaDatabase implements Database {
         updatedOrder.trackingId,
         new Decimal(updatedOrder.totalPrice).toNumber(),
         updatedOrder.status,
-        updatedOrder.paymentId,
+        Number(updatedOrder.paymentId),
         updatedOrder.customerId,
       );
     } catch (error) {

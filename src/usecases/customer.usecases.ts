@@ -1,16 +1,16 @@
 import { Customer } from 'src/entities/customer.entity';
 import { CustomerAlreadyRegisteredError } from 'src/errors/customer-already-registered.error';
 import { CustomerNotFoundError } from 'src/errors/customer-not-found.error';
-import { CustomerGateway } from 'src/interfaces/customer.gateway.interface';
+import { ICustomerGateway } from 'src/interfaces/customer.gateway.interface';
 
 export class CustomerUseCases {
-  static async findAll(customerGateway: CustomerGateway): Promise<Customer[]> {
+  static async findAll(customerGateway: ICustomerGateway): Promise<Customer[]> {
     const customers = await customerGateway.findAll();
     return customers;
   }
 
   static async findById(
-    customerGateway: CustomerGateway,
+    customerGateway: ICustomerGateway,
     id: number,
   ): Promise<Customer> {
     const customer = await customerGateway.findById(id);
@@ -21,7 +21,7 @@ export class CustomerUseCases {
   }
 
   static async findByTaxpayerRegistry(
-    customerGateway: CustomerGateway,
+    customerGateway: ICustomerGateway,
     taxpayerRegistry: string,
   ): Promise<Customer> {
     const customer = await customerGateway.findByTaxpayerRegistry(
@@ -34,7 +34,7 @@ export class CustomerUseCases {
   }
 
   static async create(
-    customerGateway: CustomerGateway,
+    customerGateway: ICustomerGateway,
     name: string,
     taxpayerRegistry: string,
     email: string,
@@ -52,7 +52,7 @@ export class CustomerUseCases {
   }
 
   static async delete(
-    customerGateway: CustomerGateway,
+    customerGateway: ICustomerGateway,
     id: number,
   ): Promise<void> {
     const customer = await customerGateway.findById(id);

@@ -4,7 +4,7 @@ import { OrderProduct } from 'src/entities/order-product.entity';
 import { Order } from 'src/entities/order.entity';
 import { Product } from 'src/entities/product.entity';
 
-export interface Database {
+export interface IDatabase {
   // Category
   findAllCategories(): Promise<Category[]>;
   findCategoryById(id: number): Promise<Category | null>;
@@ -27,6 +27,7 @@ export interface Database {
   // Order
   findAllOrders(): Promise<Order[]>;
   findOrderById(id: number): Promise<Order | null>;
+  findOrderByPaymentId(paymentId: number): Promise<Order | null>;
   createOrder(order: Order): Promise<Order>;
   updateOrderStatus(order: Order): Promise<Order>;
   deleteOrder(id: number): Promise<void>;

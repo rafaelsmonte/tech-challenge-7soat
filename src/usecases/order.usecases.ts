@@ -5,27 +5,28 @@ import { Payment } from 'src/entities/payment.entity';
 import { Product } from 'src/entities/product.entity';
 import { OrderStatus } from 'src/enum/order-status.enum';
 import { CustomerNotFoundError } from 'src/errors/customer-not-found.error';
+import { IncorrectPaymentSourceError } from 'src/errors/incorrect-payment-source.error';
+import { InvalidPaymentOrderStatusError } from 'src/errors/invalid-payment-status.error';
 import { OrderNotFoundError } from 'src/errors/order-not-found.error';
 import { ProductNotFoundError } from 'src/errors/product-not-found.error';
-import { PaymentGateway } from 'src/gateways/payment-gateway';
-import { CustomerGateway } from 'src/interfaces/customer.gateway.interface';
-import { OrderProductGateway } from 'src/interfaces/order-product.gateway.interface';
-import { OrderGateway } from 'src/interfaces/order.gateway.interface';
-import { ProductGateway } from 'src/interfaces/product.gateway.interface';
+import { ICustomerGateway } from 'src/interfaces/customer.gateway.interface';
+import { IOrderProductGateway } from 'src/interfaces/order-product.gateway.interface';
+import { IOrderGateway } from 'src/interfaces/order.gateway.interface';
+import { IPaymentGateway } from 'src/interfaces/payment.gateway.interface';
+import { IProductGateway } from 'src/interfaces/product.gateway.interface';
 import { OrderAndProductsAndPayment } from 'src/types/order-and-products-and-payment.type';
 import { OrderAndProducts } from 'src/types/order-and-products.type';
 import { ProductAndQuantity } from 'src/types/product-and-quantity.type';
-import { v4 as uuidv4 } from 'uuid';
 
 // TODO retornar todas as entidades associadas ou apenas seus IDs?
 // TODO como utilizar transaction nesse cenário de queries encadeadas?
 
 export class OrderUseCases {
   static async findAll(
-    orderGateway: OrderGateway,
-    productGateway: ProductGateway,
-    customerGateway: CustomerGateway,
-    orderProductGateway: OrderProductGateway,
+    orderGateway: IOrderGateway,
+    productGateway: IProductGateway,
+    customerGateway: ICustomerGateway,
+    orderProductGateway: IOrderProductGateway,
   ): Promise<OrderAndProducts[]> {
     const orderAndProducts: OrderAndProducts[] = [];
 
@@ -52,10 +53,10 @@ export class OrderUseCases {
   }
 
   static async findById(
-    orderGateway: OrderGateway,
-    productGateway: ProductGateway,
-    customerGateway: CustomerGateway,
-    orderProductGateway: OrderProductGateway,
+    orderGateway: IOrderGateway,
+    productGateway: IProductGateway,
+    customerGateway: ICustomerGateway,
+    orderProductGateway: IOrderProductGateway,
     id: number,
   ): Promise<OrderAndProducts> {
     const productsAndQuantity: ProductAndQuantity[] = [];
@@ -79,11 +80,11 @@ export class OrderUseCases {
   }
 
   static async create(
-    orderGateway: OrderGateway,
-    productGateway: ProductGateway,
-    customerGateway: CustomerGateway,
-    orderProductGateway: OrderProductGateway,
-    paymentGateway: PaymentGateway,
+    orderGateway: IOrderGateway,
+    productGateway: IProductGateway,
+    customerGateway: ICustomerGateway,
+    orderProductGateway: IOrderProductGateway,
+    paymentGateway: IPaymentGateway,
     productsAndQuantity: ProductAndQuantity[],
     notes: string,
     customerId?: number,
@@ -110,7 +111,9 @@ export class OrderUseCases {
 
     totalPrice = Number(totalPrice.toFixed(2));
 
-    const paymentId = uuidv4();
+    const payment = await paymentGateway.create(
+      Payment.new(totalPrice, customer?.getEmail()),
+    );
 
     const newOrder = await orderGateway.create(
       Order.new(
@@ -118,7 +121,7 @@ export class OrderUseCases {
         0,
         totalPrice,
         OrderStatus.AWAITING,
-        paymentId,
+        payment.getId(),
         customerId,
       ),
     );
@@ -129,18 +132,14 @@ export class OrderUseCases {
       );
     }
 
-    const payment = await paymentGateway.create(
-      Payment.new(paymentId, totalPrice, customer?.getEmail() ?? ''),
-    );
-
     return { order: newOrder, productsAndQuantity, payment };
   }
 
   static async update(
-    orderGateway: OrderGateway,
-    productGateway: ProductGateway,
-    customerGateway: CustomerGateway,
-    orderProductGateway: OrderProductGateway,
+    orderGateway: IOrderGateway,
+    productGateway: IProductGateway,
+    customerGateway: ICustomerGateway,
+    orderProductGateway: IOrderProductGateway,
     id: number,
     status: string,
   ): Promise<OrderAndProducts> {
@@ -168,9 +167,54 @@ export class OrderUseCases {
     return { order: updatedOrder, productsAndQuantity };
   }
 
+  static async updateStatusOnPaymentReceived(
+    orderGateway: IOrderGateway,
+    paymentGateway: IPaymentGateway,
+    orderProductGateway: IOrderProductGateway,
+    paymentId: number,
+    dataID: string,
+    signature: string | string[],
+    requestId: string | string[],
+  ): Promise<OrderAndProducts> {
+    const checkPaymentSource = paymentGateway.checkPaymentSource(
+      dataID,
+      signature,
+      requestId,
+    );
+
+    if (!checkPaymentSource)
+      throw new IncorrectPaymentSourceError('Incorrect Payment Source');
+
+    const order = await orderGateway.findByPaymentId(paymentId);
+
+    if (!order) throw new OrderNotFoundError('Order not found');
+
+    if (order.getStatus() != OrderStatus.AWAITING)
+      throw new InvalidPaymentOrderStatusError('Order is already paid');
+
+    order.setStatus(OrderStatus.IN_PROGRESS);
+
+    const updatedOrder = await orderGateway.updateStatus(order);
+
+    const orderProducts = await orderProductGateway.findByOrderId(
+      order.getId(),
+    );
+
+    const productsAndQuantity: ProductAndQuantity[] = [];
+
+    orderProducts.forEach((orderProduct) => {
+      productsAndQuantity.push({
+        productId: orderProduct.getProductId(),
+        quantity: orderProduct.getQuantity(),
+      });
+    });
+
+    return { order: updatedOrder, productsAndQuantity };
+  }
+
   static async delete(
-    orderGateway: OrderGateway,
-    orderProductGateway: OrderProductGateway,
+    orderGateway: IOrderGateway,
+    orderProductGateway: IOrderProductGateway,
     id: number,
   ): Promise<void> {
     const order = await orderGateway.findById(id);

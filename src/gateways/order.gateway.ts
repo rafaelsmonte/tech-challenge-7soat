@@ -1,9 +1,9 @@
 import { Order } from 'src/entities/order.entity';
-import { Database } from 'src/interfaces/database.interface';
-import { OrderGateway } from 'src/interfaces/order.gateway.interface';
+import { IDatabase } from 'src/interfaces/database.interface';
+import { IOrderGateway } from 'src/interfaces/order.gateway.interface';
 
-export class PrismaOrderGateway implements OrderGateway {
-  constructor(private database: Database) {}
+export class OrderGateway implements IOrderGateway {
+  constructor(private database: IDatabase) {}
 
   // TODO add parameters
   async findAll(): Promise<Order[]> {
@@ -12,6 +12,10 @@ export class PrismaOrderGateway implements OrderGateway {
 
   async findById(id: number): Promise<Order | null> {
     return this.database.findOrderById(id);
+  }
+
+  findByPaymentId(paymentId: number): Promise<Order | null> {
+    return this.database.findOrderByPaymentId(paymentId);
   }
 
   async create(order: Order): Promise<Order> {

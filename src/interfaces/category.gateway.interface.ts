@@ -1,6 +1,6 @@
 import { Category } from 'src/entities/category.entity';
 
-export interface CategoryGateway {
+export interface ICategoryGateway {
   findAll(): Promise<Category[]>;
   findById(id: number): Promise<Category | null>;
 }

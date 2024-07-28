@@ -1,13 +1,13 @@
 import { ProductAdapter } from 'src/adapters/product.adapter';
-import { PrismaCategoryGateway } from 'src/gateways/prisma-category.gateway';
-import { PrismaProductGateway } from 'src/gateways/prisma-product.gateway';
-import { Database } from 'src/interfaces/database.interface';
+import { CategoryGateway } from 'src/gateways/category.gateway';
+import { ProductGateway } from 'src/gateways/product.gateway';
+import { IDatabase } from 'src/interfaces/database.interface';
 import { ProductUseCases } from 'src/usecases/product.usecases';
 
 export class ProductController {
-  static async findAll(database: Database): Promise<string> {
-    const productGateway = new PrismaProductGateway(database);
-    const categoryGateway = new PrismaCategoryGateway(database);
+  static async findAll(database: IDatabase): Promise<string> {
+    const productGateway = new ProductGateway(database);
+    const categoryGateway = new CategoryGateway(database);
 
     const productsAndCategory = await ProductUseCases.findAll(
       productGateway,
@@ -17,9 +17,9 @@ export class ProductController {
     return ProductAdapter.adaptArrayJson(productsAndCategory);
   }
 
-  static async findById(database: Database, id: number): Promise<string> {
-    const productGateway = new PrismaProductGateway(database);
-    const categoryGateway = new PrismaCategoryGateway(database);
+  static async findById(database: IDatabase, id: number): Promise<string> {
+    const productGateway = new ProductGateway(database);
+    const categoryGateway = new CategoryGateway(database);
 
     const productAndCategory = await ProductUseCases.findById(
       productGateway,
@@ -31,15 +31,15 @@ export class ProductController {
   }
 
   static async create(
-    database: Database,
+    database: IDatabase,
     name: string,
     price: number,
     description: string,
     pictures: string[],
     categoryId: number,
   ): Promise<string> {
-    const productGateway = new PrismaProductGateway(database);
-    const categoryGateway = new PrismaCategoryGateway(database);
+    const productGateway = new ProductGateway(database);
+    const categoryGateway = new CategoryGateway(database);
 
     const productAndCategory = await ProductUseCases.create(
       productGateway,
@@ -54,8 +54,9 @@ export class ProductController {
     return ProductAdapter.adaptJson(productAndCategory);
   }
 
-  static async delete(database: Database, id: number): Promise<void> {
-    const productGateway = new PrismaProductGateway(database);
+  static async delete(database: IDatabase, id: number): Promise<void> {
+    const productGateway = new ProductGateway(database);
+
     await ProductUseCases.delete(productGateway, id);
   }
 

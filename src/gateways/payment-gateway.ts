@@ -7,9 +7,20 @@ export class PaymentGateway implements IPaymentGateway {
 
   public async create(payment: Payment): Promise<Payment> {
     return this.paymentMethod.create(
-      payment.getId(),
       payment.getAmount(),
       payment.getPayerEmail(),
+    );
+  }
+
+  public checkPaymentSource(
+    dataID: string,
+    xSignature: string | string[],
+    xRequestId: string | string[],
+  ): boolean {
+    return this.paymentMethod.checkPaymentSource(
+      dataID,
+      xSignature,
+      xRequestId,
     );
   }
 }

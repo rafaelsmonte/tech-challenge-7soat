@@ -1,9 +1,9 @@
 import { Product } from 'src/entities/product.entity';
-import { Database } from 'src/interfaces/database.interface';
-import { ProductGateway } from 'src/interfaces/product.gateway.interface';
+import { IDatabase } from 'src/interfaces/database.interface';
+import { IProductGateway } from 'src/interfaces/product.gateway.interface';
 
-export class PrismaProductGateway implements ProductGateway {
-  constructor(private database: Database) {}
+export class ProductGateway implements IProductGateway {
+  constructor(private database: IDatabase) {}
 
   public async findAll(): Promise<Product[]> {
     return this.database.findAllProducts();

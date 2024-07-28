@@ -1,30 +1,30 @@
 export class Payment {
-  private id: string;
+  private id: number;
   private amount: number;
-  private payerEmail: string;
+  private payerEmail?: string;
   private pixQrCode: string;
-  private pixQrCodeBase64;
+  private pixQrCodeBase64: string;
 
   constructor(
-    id: string,
+    id: number,
     amount: number,
-    payerEmail: string,
     pixQrCode: string,
     pixQrCodeBase64: string,
+    payerEmail?: string,
   ) {
     this.setId(id);
     this.setAmount(amount);
-    this.setPayerEmail(payerEmail);
     this.setPixQrCode(pixQrCode);
     this.setPixQrCodeBase64(pixQrCodeBase64);
+    this.setPayerEmail(payerEmail);
   }
 
-  static new(id: string, amount: number, payerEmail: string): Payment {
-    return new Payment(id, amount, payerEmail, '', '');
+  static new(amount: number, payerEmail?: string): Payment {
+    return new Payment(0, amount, '', '', payerEmail);
   }
 
   // getters
-  public getId(): string {
+  public getId(): number {
     return this.id;
   }
 
@@ -45,7 +45,7 @@ export class Payment {
   }
 
   // setters
-  public setId(id: string): void {
+  public setId(id: number): void {
     this.id = id;
   }
 
@@ -53,7 +53,7 @@ export class Payment {
     this.amount = amount;
   }
 
-  public setPayerEmail(payerEmail: string): void {
+  public setPayerEmail(payerEmail?: string): void {
     this.payerEmail = payerEmail;
   }
 

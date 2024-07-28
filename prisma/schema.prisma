@@ -47,13 +47,13 @@ model Product {
 
 model Order {
   id         Int         @id @default(autoincrement())
+  paymentId  BigInt      @unique
   createdAt  DateTime    @default(now()) @db.Timestamptz(3)
   updatedAt  DateTime    @updatedAt @db.Timestamptz(3)
   customerId Int?
   totalPrice Decimal     @db.Decimal(10, 2)
   status     OrderStatus @default(AWAITING)
   notes      String      @default("")
-  paymentId  String      @db.VarChar(50)
   trackingId Int
 
   customer      Customer?      @relation(fields: [customerId], references: [id], onDelete: Cascade)

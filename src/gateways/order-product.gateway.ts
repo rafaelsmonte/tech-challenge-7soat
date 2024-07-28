@@ -1,9 +1,9 @@
 import { OrderProduct } from 'src/entities/order-product.entity';
-import { Database } from 'src/interfaces/database.interface';
-import { OrderProductGateway } from 'src/interfaces/order-product.gateway.interface';
+import { IDatabase } from 'src/interfaces/database.interface';
+import { IOrderProductGateway } from 'src/interfaces/order-product.gateway.interface';
 
-export class PrismaOrderProductGateway implements OrderProductGateway {
-  constructor(private database: Database) {}
+export class OrderProductGateway implements IOrderProductGateway {
+  constructor(private database: IDatabase) {}
 
   async findByOrderId(orderId: number): Promise<OrderProduct[]> {
     return this.database.findOrderProductsByOrderId(orderId);

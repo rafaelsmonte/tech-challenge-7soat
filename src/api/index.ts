@@ -13,11 +13,11 @@ import { InvalidProductError } from 'src/errors/invalid-product.error';
 import { OrderNotFoundError } from 'src/errors/order-not-found.error';
 import { PaymentError } from 'src/errors/payment.error';
 import { ProductNotFoundError } from 'src/errors/product-not-found.error';
-import { Database } from 'src/interfaces/database.interface';
+import { IDatabase } from 'src/interfaces/database.interface';
 import { IPayment } from 'src/interfaces/payment.interface';
 
 export class TechChallengeApp {
-  constructor(private database: Database, private payment: IPayment) {}
+  constructor(private database: IDatabase, private payment: IPayment) {}
 
   start() {
     const express = require('express');
@@ -201,6 +201,47 @@ export class TechChallengeApp {
         .catch((error) => this.handleError(error, response));
     });
 
+    // Mercado Pago Webhook
+    app.post(
+      '/order/payment',
+      // async (req: Request, res: Response, next: NextFunction) => {
+
+      //   //TODO separar o middleware????????????????????
+      //   const { query } = req;
+      //   const dataID = query["data.id"] as string;
+      //   const xSignature = req.headers['x-signature'] as string | string[];
+      //   const xRequestId = req.headers['x-request-id'] as string | string[];
+
+      //   if (!this.payment.checkPaymentSource(dataID, xSignature, xRequestId)) {
+      //     return res.status(401).send();
+      //   }
+      //   console.log("next")
+      //   next();
+      // },
+      async (request: Request, response: Response) => {
+        const paymentId = Number(request?.body?.data?.id);
+        const { query } = request;
+        const dataID = query['data.id'] as string;
+        const xSignature = request.headers['x-signature'] as string | string[];
+        const xRequestId = request.headers['x-request-id'] as string | string[];
+        await OrderController.updateStatusOnPaymentReceived(
+          this.database,
+          this.payment,
+          paymentId,
+          dataID,
+          xSignature,
+          xRequestId,
+        )
+          .then((order) => {
+            response
+              .setHeader('Content-type', 'application/json')
+              .status(200)
+              .send(order);
+          })
+          .catch((error) => this.handleError(error, response));
+      },
+    );
+
     app.patch(
       '/order/:id/change-status',
       async (request: Request, response: Response) => {
@@ -216,8 +257,6 @@ export class TechChallengeApp {
           .catch((error) => this.handleError(error, response));
       },
     );
-
-    // add new route to payment webhook
 
     app.delete('/order/:id', async (request: Request, response: Response) => {
       const id = Number(request.params.id);

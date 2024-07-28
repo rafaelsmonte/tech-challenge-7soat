@@ -1,16 +1,16 @@
 import { Product } from 'src/entities/product.entity';
 import { CategoryNotFoundError } from 'src/errors/category-not-found.error';
 import { ProductNotFoundError } from 'src/errors/product-not-found.error';
-import { CategoryGateway } from 'src/interfaces/category.gateway.interface';
-import { ProductGateway } from 'src/interfaces/product.gateway.interface';
+import { ICategoryGateway } from 'src/interfaces/category.gateway.interface';
+import { IProductGateway } from 'src/interfaces/product.gateway.interface';
 import { ProductAndCategory } from 'src/types/product-and-category.type';
 
 // TODO retornar todas as entidades associadas ou apenas seus IDs?
 
 export class ProductUseCases {
   static async findAll(
-    productGateway: ProductGateway,
-    categoryGateway: CategoryGateway,
+    productGateway: IProductGateway,
+    categoryGateway: ICategoryGateway,
   ): Promise<ProductAndCategory[]> {
     let productsAndCategory: ProductAndCategory[] = [];
 
@@ -30,8 +30,8 @@ export class ProductUseCases {
   }
 
   static async findById(
-    productGateway: ProductGateway,
-    categoryGateway: CategoryGateway,
+    productGateway: IProductGateway,
+    categoryGateway: ICategoryGateway,
     id: number,
   ): Promise<ProductAndCategory> {
     const product = await productGateway.findById(id);
@@ -46,8 +46,8 @@ export class ProductUseCases {
   }
 
   static async create(
-    productGateway: ProductGateway,
-    categoryGateway: CategoryGateway,
+    productGateway: IProductGateway,
+    categoryGateway: ICategoryGateway,
     name: string,
     price: number,
     description: string,
@@ -66,7 +66,7 @@ export class ProductUseCases {
   }
 
   static async delete(
-    productGateway: ProductGateway,
+    productGateway: IProductGateway,
     id: number,
   ): Promise<void> {
     const product = await productGateway.findById(id);

@@ -9,7 +9,7 @@ export class Order {
   private trackingId: number;
   private totalPrice: number;
   private status: OrderStatus;
-  private paymentId: string;
+  private paymentId: number;
   private customerId?: number;
 
   constructor(
@@ -20,7 +20,7 @@ export class Order {
     trackingId: number,
     totalPrice: number,
     status: string,
-    paymentId: string,
+    paymentId: number,
     customerId?: number,
   ) {
     this.setId(id);
@@ -39,7 +39,7 @@ export class Order {
     trackingId: number,
     totalPrice: number,
     status: OrderStatus,
-    paymentId: string,
+    paymentId: number,
     customerId?: number,
   ): Order {
     const now = new Date();
@@ -85,7 +85,7 @@ export class Order {
     return this.status;
   }
 
-  public getPaymentId(): string {
+  public getPaymentId(): number {
     return this.paymentId;
   }
 
@@ -132,7 +132,7 @@ export class Order {
     }
   }
 
-  public setPaymentId(paymentId: string): void {
+  public setPaymentId(paymentId: number): void {
     this.paymentId = paymentId;
   }
 

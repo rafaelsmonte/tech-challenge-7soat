@@ -1,20 +1,20 @@
 import { OrderAdapter } from 'src/adapters/order.adapter';
+import { CustomerGateway } from 'src/gateways/customer.gateway';
+import { OrderProductGateway } from 'src/gateways/order-product.gateway';
+import { OrderGateway } from 'src/gateways/order.gateway';
 import { PaymentGateway } from 'src/gateways/payment-gateway';
-import { PrismaCustomerGateway } from 'src/gateways/prisma-customer.gateway';
-import { PrismaOrderProductGateway } from 'src/gateways/prisma-order-product.gateway';
-import { PrismaOrderGateway } from 'src/gateways/prisma-order.gateway';
-import { PrismaProductGateway } from 'src/gateways/prisma-product.gateway';
-import { Database } from 'src/interfaces/database.interface';
+import { ProductGateway } from 'src/gateways/product.gateway';
+import { IDatabase } from 'src/interfaces/database.interface';
 import { IPayment } from 'src/interfaces/payment.interface';
 import { ProductAndQuantity } from 'src/types/product-and-quantity.type';
 import { OrderUseCases } from 'src/usecases/order.usecases';
 
 export class OrderController {
-  static async findAll(database: Database): Promise<string> {
-    const orderGateway = new PrismaOrderGateway(database);
-    const productGateway = new PrismaProductGateway(database);
-    const customerGateway = new PrismaCustomerGateway(database);
-    const orderProductGateway = new PrismaOrderProductGateway(database);
+  static async findAll(database: IDatabase): Promise<string> {
+    const orderGateway = new OrderGateway(database);
+    const productGateway = new ProductGateway(database);
+    const customerGateway = new CustomerGateway(database);
+    const orderProductGateway = new OrderProductGateway(database);
 
     const orders = await OrderUseCases.findAll(
       orderGateway,
@@ -26,11 +26,11 @@ export class OrderController {
     return OrderAdapter.adaptArrayJson(orders);
   }
 
-  static async findById(database: Database, id: number): Promise<string> {
-    const orderGateway = new PrismaOrderGateway(database);
-    const productGateway = new PrismaProductGateway(database);
-    const customerGateway = new PrismaCustomerGateway(database);
-    const orderProductGateway = new PrismaOrderProductGateway(database);
+  static async findById(database: IDatabase, id: number): Promise<string> {
+    const orderGateway = new OrderGateway(database);
+    const productGateway = new ProductGateway(database);
+    const customerGateway = new CustomerGateway(database);
+    const orderProductGateway = new OrderProductGateway(database);
 
     const orderAndProducts = await OrderUseCases.findById(
       orderGateway,
@@ -44,16 +44,16 @@ export class OrderController {
   }
 
   static async create(
-    database: Database,
+    database: IDatabase,
     payment: IPayment,
     notes: string,
     productsAndQuantity: ProductAndQuantity[],
     customerId?: number,
   ): Promise<string> {
-    const orderGateway = new PrismaOrderGateway(database);
-    const productGateway = new PrismaProductGateway(database);
-    const customerGateway = new PrismaCustomerGateway(database);
-    const orderProductGateway = new PrismaOrderProductGateway(database);
+    const orderGateway = new OrderGateway(database);
+    const productGateway = new ProductGateway(database);
+    const customerGateway = new CustomerGateway(database);
+    const orderProductGateway = new OrderProductGateway(database);
     const paymentGateway = new PaymentGateway(payment);
 
     const orderAndProductsAndPayment = await OrderUseCases.create(
@@ -71,14 +71,14 @@ export class OrderController {
   }
 
   static async update(
-    database: Database,
+    database: IDatabase,
     id: number,
     status: string,
   ): Promise<string> {
-    const orderGateway = new PrismaOrderGateway(database);
-    const productGateway = new PrismaProductGateway(database);
-    const customerGateway = new PrismaCustomerGateway(database);
-    const orderProductGateway = new PrismaOrderProductGateway(database);
+    const orderGateway = new OrderGateway(database);
+    const productGateway = new ProductGateway(database);
+    const customerGateway = new CustomerGateway(database);
+    const orderProductGateway = new OrderProductGateway(database);
 
     const orderAndProducts = await OrderUseCases.update(
       orderGateway,
@@ -92,9 +92,34 @@ export class OrderController {
     return OrderAdapter.adaptJson(orderAndProducts);
   }
 
-  static async delete(database: Database, id: number): Promise<void> {
-    const orderGateway = new PrismaOrderGateway(database);
-    const orderProductGateway = new PrismaOrderProductGateway(database);
+  static async updateStatusOnPaymentReceived(
+    database: IDatabase,
+    payment: IPayment,
+    paymentId: number,
+    dataID: string,
+    signature: string | string[],
+    requestId: string | string[],
+  ): Promise<string> {
+    const orderGateway = new OrderGateway(database);
+    const orderProductGateway = new OrderProductGateway(database);
+    const paymentGateway = new PaymentGateway(payment);
+
+    const orderAndProducts = await OrderUseCases.updateStatusOnPaymentReceived(
+      orderGateway,
+      paymentGateway,
+      orderProductGateway,
+      paymentId,
+      dataID,
+      signature,
+      requestId,
+    );
+
+    return OrderAdapter.adaptJson(orderAndProducts);
+  }
+
+  static async delete(database: IDatabase, id: number): Promise<void> {
+    const orderGateway = new OrderGateway(database);
+    const orderProductGateway = new OrderProductGateway(database);
 
     await OrderUseCases.delete(orderGateway, orderProductGateway, id);
   }
