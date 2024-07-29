@@ -6,5 +6,8 @@ export interface IPaymentGateway {
     dataID: any,
     xSignature: string | string[],
     xRequestId: string | string[],
+    action: string,
   ): boolean;
+  checkPaymentAction(action: string): boolean;
+  isPaymentApproved(paymentId: number): Promise<boolean>;
 }

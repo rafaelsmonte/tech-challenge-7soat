@@ -16,6 +16,8 @@ import { PaymentError } from '../errors/payment.error';
 import { ProductNotFoundError } from '../errors/product-not-found.error';
 import { IDatabase } from '../interfaces/database.interface';
 import { IPayment } from '../interfaces/payment.interface';
+import { InvalidPaymentOrderStatusError } from 'src/errors/invalid-payment-status.error';
+import { IncorrectPaymentActionError } from 'src/errors/incorrect-payment-action.error';
 
 export class TechChallengeApp {
   constructor(private database: IDatabase, private payment: IPayment) {}
@@ -23,6 +25,7 @@ export class TechChallengeApp {
   start() {
     const express = require('express');
     const bodyParser = require('body-parser');
+    const swaggerUi = require('swagger-ui-express');
 
     const port = 3000;
     const app = express();
@@ -40,6 +43,10 @@ export class TechChallengeApp {
         this.handleError(error, response);
       }
     });
+
+    //Swagger
+    const options = require('./swagger.json');
+    app.use('/docs', swaggerUi.serve, swaggerUi.setup(options));
 
     // Customer endpoints
     app.get('/customer', async (request: Request, response: Response) => {
@@ -215,45 +222,30 @@ export class TechChallengeApp {
     });
 
     // Mercado Pago Webhook
-    app.post(
-      '/order/payment',
-      // async (req: Request, res: Response, next: NextFunction) => {
-
-      //   //TODO separar o middleware????????????????????
-      //   const { query } = req;
-      //   const dataID = query["data.id"] as string;
-      //   const xSignature = req.headers['x-signature'] as string | string[];
-      //   const xRequestId = req.headers['x-request-id'] as string | string[];
-
-      //   if (!this.payment.checkPaymentSource(dataID, xSignature, xRequestId)) {
-      //     return res.status(401).send();
-      //   }
-      //   console.log("next")
-      //   next();
-      // },
-      async (request: Request, response: Response) => {
-        const paymentId = Number(request?.body?.data?.id);
-        const { query } = request;
-        const dataID = query['data.id'] as string;
-        const xSignature = request.headers['x-signature'] as string | string[];
-        const xRequestId = request.headers['x-request-id'] as string | string[];
-        await OrderController.updateStatusOnPaymentReceived(
-          this.database,
-          this.payment,
-          paymentId,
-          dataID,
-          xSignature,
-          xRequestId,
-        )
-          .then((order) => {
-            response
-              .setHeader('Content-type', 'application/json')
-              .status(200)
-              .send(order);
-          })
-          .catch((error) => this.handleError(error, response));
-      },
-    );
+    app.post('/order/payment', async (request: Request, response: Response) => {
+      const paymentId = Number(request?.body?.data?.id);
+      const action = request?.body?.action;
+      const { query } = request;
+      const dataID = query['data.id'] as string;
+      const xSignature = request.headers['x-signature'] as string | string[];
+      const xRequestId = request.headers['x-request-id'] as string | string[];
+      await OrderController.updateStatusOnPaymentReceived(
+        this.database,
+        this.payment,
+        paymentId,
+        dataID,
+        xSignature,
+        xRequestId,
+        action,
+      )
+        .then((order) => {
+          response
+            .setHeader('Content-type', 'application/json')
+            .status(200)
+            .send(order);
+        })
+        .catch((error) => this.handleError(error, response));
+    });
 
     app.patch(
       '/order/:id/change-status',
@@ -289,6 +281,10 @@ export class TechChallengeApp {
     } else if (error instanceof InvalidOrderError) {
       response.status(400).json({ message: error.message });
     } else if (error instanceof InvalidProductError) {
+      response.status(400).json({ message: error.message });
+    } else if (error instanceof InvalidPaymentOrderStatusError) {
+      response.status(400).json({ message: error.message });
+    } else if (error instanceof IncorrectPaymentActionError) {
       response.status(400).json({ message: error.message });
     } else if (error instanceof CustomerNotFoundError) {
       response.status(404).json({ message: error.message });

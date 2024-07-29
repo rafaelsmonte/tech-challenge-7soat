@@ -99,6 +99,7 @@ export class OrderController {
     dataID: string,
     signature: string | string[],
     requestId: string | string[],
+    action: string,
   ): Promise<string> {
     const orderGateway = new OrderGateway(database);
     const orderProductGateway = new OrderProductGateway(database);
@@ -112,6 +113,7 @@ export class OrderController {
       dataID,
       signature,
       requestId,
+      action,
     );
 
     return OrderAdapter.adaptJson(orderAndProducts);

@@ -8,6 +8,7 @@ export class PaymentGateway implements IPaymentGateway {
   public async create(payment: Payment): Promise<Payment> {
     return this.paymentMethod.create(
       payment.getAmount(),
+      payment.getExpirationDate(),
       payment.getPayerEmail(),
     );
   }
@@ -22,5 +23,13 @@ export class PaymentGateway implements IPaymentGateway {
       xSignature,
       xRequestId,
     );
+  }
+
+  public async isPaymentApproved(paymentId: number): Promise<boolean> {
+    return this.paymentMethod.isPaymentApproved(paymentId);
+  }
+
+  public checkPaymentAction(action: string): boolean {
+    return this.paymentMethod.checkPaymentAction(action);
   }
 }

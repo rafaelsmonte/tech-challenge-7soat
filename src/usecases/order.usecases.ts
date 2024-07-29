@@ -1,3 +1,4 @@
+import { IncorrectPaymentActionError } from 'src/errors/incorrect-payment-action.error';
 import { Customer } from '../entities/customer.entity';
 import { OrderProduct } from '../entities/order-product.entity';
 import { Order } from '../entities/order.entity';
@@ -110,8 +111,14 @@ export class OrderUseCases {
 
     totalPrice = Number(totalPrice.toFixed(2));
 
+    const paymentTimeout = Number(process.env.PAYMENT_TMEOUT) || 5;
+    const paymentExpirationDate = new Date();
+    paymentExpirationDate.setSeconds(
+      paymentExpirationDate.getSeconds() + paymentTimeout,
+    );
+
     const payment = await paymentGateway.create(
-      Payment.new(totalPrice, customer?.getEmail()),
+      Payment.new(totalPrice, paymentExpirationDate, customer?.getEmail()),
     );
 
     const newOrder = await orderGateway.create(
@@ -174,24 +181,37 @@ export class OrderUseCases {
     dataID: string,
     signature: string | string[],
     requestId: string | string[],
+    action: string,
   ): Promise<OrderAndProducts> {
     const checkPaymentSource = paymentGateway.checkPaymentSource(
       dataID,
       signature,
       requestId,
+      action,
     );
 
     if (!checkPaymentSource)
       throw new IncorrectPaymentSourceError('Incorrect payment source');
+
+    const checkPaymentAction = paymentGateway.checkPaymentAction(action);
+
+    if (!checkPaymentAction)
+      throw new IncorrectPaymentActionError('Incorrect payment action');
 
     const order = await orderGateway.findByPaymentId(paymentId);
 
     if (!order) throw new OrderNotFoundError('Order not found');
 
     if (order.getStatus() != OrderStatus.PAYMENT_PENDING)
-      throw new InvalidPaymentOrderStatusError('Order already paid');
+      throw new InvalidPaymentOrderStatusError(
+        'Order status is not payment pending',
+      );
 
-    order.setStatus(OrderStatus.AWAITING);
+    if (await paymentGateway.isPaymentApproved(paymentId)) {
+      order.setStatus(OrderStatus.AWAITING);
+    } else {
+      order.setStatus(OrderStatus.PAYMENT_FAILED);
+    }
 
     const updatedOrder = await orderGateway.updateStatus(order);
 

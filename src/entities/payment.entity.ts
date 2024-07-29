@@ -4,23 +4,30 @@ export class Payment {
   private payerEmail?: string;
   private pixQrCode: string;
   private pixQrCodeBase64: string;
+  private expirationDate: Date;
 
   constructor(
     id: number,
     amount: number,
     pixQrCode: string,
     pixQrCodeBase64: string,
+    expirationDate: Date,
     payerEmail?: string,
   ) {
     this.setId(id);
     this.setAmount(amount);
     this.setPixQrCode(pixQrCode);
     this.setPixQrCodeBase64(pixQrCodeBase64);
+    this.setExpirationDate(expirationDate);
     this.setPayerEmail(payerEmail);
   }
 
-  static new(amount: number, payerEmail?: string): Payment {
-    return new Payment(0, amount, '', '', payerEmail);
+  static new(
+    amount: number,
+    expirationDate: Date,
+    payerEmail?: string,
+  ): Payment {
+    return new Payment(0, amount, '', '', expirationDate, payerEmail);
   }
 
   // getters
@@ -44,6 +51,10 @@ export class Payment {
     return this.pixQrCodeBase64;
   }
 
+  public getExpirationDate(): Date {
+    return this.expirationDate;
+  }
+
   // setters
   public setId(id: number): void {
     this.id = id;
@@ -63,6 +74,10 @@ export class Payment {
 
   public setPixQrCodeBase64(pixQrCodeBase64: string): void {
     this.pixQrCodeBase64 = pixQrCodeBase64;
+  }
+
+  public setExpirationDate(expirationDate: Date): void {
+    this.expirationDate = expirationDate;
   }
 
   // TODO improve validations
