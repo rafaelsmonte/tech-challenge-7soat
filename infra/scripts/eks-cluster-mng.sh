@@ -77,7 +77,7 @@ case "$1" in
   # Method: deploy-api
   # Description: Build API docker image and pushes to ECR
   #============================================================================
-  deploy-api)
+  update-api-image)
     export BUILD_VERSION=$(date +%y%m%d%I%M%S)
     export ECR_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY_NAME
     docker build -t $API_IMAGE_NAME -f docker/Dockerfile .

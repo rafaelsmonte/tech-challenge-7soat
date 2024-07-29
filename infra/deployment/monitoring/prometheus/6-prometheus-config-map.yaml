@@ -48,5 +48,12 @@ data:
             regex: '^/system\.slice/(.+)\.service$'
             target_label: systemd_service_name
             replacement: '${1}'
-
-
+      - job_name: 'tech-challenge-7soat-api'
+        kubernetes_sd_configs:
+        - role: endpoints
+        relabel_configs:
+        - source_labels: [__meta_kubernetes_service_name]
+          action: keep
+          regex: tech-challenge-7soat-api-cluster-ip
+        scheme: http
+        metrics_path: /metrics
