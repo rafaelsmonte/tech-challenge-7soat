@@ -1,4 +1,4 @@
-import { IncorrectPaymentActionError } from 'src/errors/incorrect-payment-action.error';
+import { IncorrectPaymentActionError } from '../errors/incorrect-payment-action.error';
 import { Customer } from '../entities/customer.entity';
 import { OrderProduct } from '../entities/order-product.entity';
 import { Order } from '../entities/order.entity';

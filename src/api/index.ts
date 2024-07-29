@@ -16,8 +16,8 @@ import { PaymentError } from '../errors/payment.error';
 import { ProductNotFoundError } from '../errors/product-not-found.error';
 import { IDatabase } from '../interfaces/database.interface';
 import { IPayment } from '../interfaces/payment.interface';
-import { InvalidPaymentOrderStatusError } from 'src/errors/invalid-payment-status.error';
-import { IncorrectPaymentActionError } from 'src/errors/incorrect-payment-action.error';
+import { InvalidPaymentOrderStatusError } from '../errors/invalid-payment-status.error';
+import { IncorrectPaymentActionError } from '../errors/incorrect-payment-action.error';
 
 export class TechChallengeApp {
   constructor(private database: IDatabase, private payment: IPayment) {}

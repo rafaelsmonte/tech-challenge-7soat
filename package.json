@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "rimraf dist/ && tsc",
+    "build": "rimraf dist/ && tsc && npm run copy-build-deps",
+    "copy-build-deps": "copyfiles -u 2 src/api/swagger.json dist/src/api",
     "swagger": "node ./src/api/swagger.ts",
     "start:dev": "ts-node-dev -r tsconfig-paths/register src/index.ts",
     "start:prod": "node dist/src/index.js"
@@ -27,6 +28,7 @@
     "@types/express-prometheus-middleware": "^1.2.3",
     "add": "^2.0.6",
     "body-parser": "^1.20.2",
+    "copyfiles": "^2.4.1",
     "decimal.js": "^10.4.3",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
