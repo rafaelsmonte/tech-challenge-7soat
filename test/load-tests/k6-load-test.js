@@ -13,7 +13,7 @@ export let options = {
 
 // Define the main test function
 export default function () {
-  let response = http.get('http://a2958cdc71dc44e42935803a91625bf4-1882915345.us-east-1.elb.amazonaws.com/api/v1/customer'); // Replace with your URL
+  let response = http.get('http://a2958cdc71dc44e42935803a91625bf4-1882915345.us-east-1.elb.amazonaws.com/customer'); // Replace with your URL
   check(response, {
     'is status 200': (r) => r.status === 200,
   });

@@ -262,3 +262,8 @@ Suggested name: K8SASGPolicy
 // Creates a kubernetes service account with that policy
 ./infra/scripts/eks-cluster-deploy.sh cretae-service-account-autoscaler
 ```
+
+## Grafana Dashboards
+
+ - Node Exporter Metrics: 1860
+ - Node Express Metrics: 14565
