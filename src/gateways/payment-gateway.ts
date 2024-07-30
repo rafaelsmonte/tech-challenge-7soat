@@ -8,7 +8,6 @@ export class PaymentGateway implements IPaymentGateway {
   public async create(payment: Payment): Promise<Payment> {
     return this.paymentMethod.create(
       payment.getAmount(),
-      payment.getExpirationDate(),
       payment.getPayerEmail(),
     );
   }

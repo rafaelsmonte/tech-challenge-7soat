@@ -1,96 +1,93 @@
-import { IncorrectPaymentActionError } from '../errors/incorrect-payment-action.error';
+import { ProductDetailWithQuantity } from 'src/types/product-detail-with-quantity.type';
 import { Customer } from '../entities/customer.entity';
-import { OrderProduct } from '../entities/order-product.entity';
 import { Order } from '../entities/order.entity';
 import { Payment } from '../entities/payment.entity';
-import { Product } from '../entities/product.entity';
 import { OrderStatus } from '../enum/order-status.enum';
 import { CustomerNotFoundError } from '../errors/customer-not-found.error';
-import { IncorrectPaymentSourceError } from '../errors/incorrect-payment-source.error';
 import { InvalidPaymentOrderStatusError } from '../errors/invalid-payment-status.error';
 import { OrderNotFoundError } from '../errors/order-not-found.error';
 import { ProductNotFoundError } from '../errors/product-not-found.error';
 import { ICustomerGateway } from '../interfaces/customer.gateway.interface';
-import { IOrderProductGateway } from '../interfaces/order-product.gateway.interface';
 import { IOrderGateway } from '../interfaces/order.gateway.interface';
 import { IPaymentGateway } from '../interfaces/payment.gateway.interface';
 import { IProductGateway } from '../interfaces/product.gateway.interface';
-import { OrderAndProductsAndPayment } from '../types/order-and-products-and-payment.type';
-import { OrderAndProducts } from '../types/order-and-products.type';
-import { ProductAndQuantity } from '../types/product-and-quantity.type';
+import { ProductWithQuantity } from 'src/types/product-with-quantity.type';
+import { OrderDetail } from 'src/types/order-detail.type';
+import { OrderDetailWithPayment } from 'src/types/order-detail-with-payment.type';
 
 export class OrderUseCases {
   static async findAll(
     orderGateway: IOrderGateway,
     productGateway: IProductGateway,
     customerGateway: ICustomerGateway,
-    orderProductGateway: IOrderProductGateway,
-  ): Promise<OrderAndProducts[]> {
-    const orderAndProducts: OrderAndProducts[] = [];
+  ): Promise<OrderDetail[]> {
+    const ordersDetail: OrderDetail[] = [];
 
     const orders = await orderGateway.findAll();
 
     const filteredAndSortedOrders = this.filterAndSortOrders(orders);
 
     for (const order of filteredAndSortedOrders) {
-      const orderProducts = await orderProductGateway.findByOrderId(
-        order.getId(),
-      );
+      const customer = order.getCustomerId()
+        ? await customerGateway.findById(order.getCustomerId())
+        : null;
 
-      const productsAndQuantity: ProductAndQuantity[] = [];
+      const productsDetailWithQuantity: ProductDetailWithQuantity[] = [];
 
-      orderProducts.forEach((orderProduct) => {
-        productsAndQuantity.push({
-          productId: orderProduct.getProductId(),
-          quantity: orderProduct.getQuantity(),
+      for (const { productId, quantity } of order.getProductsWithQuantity()) {
+        const product = await productGateway.findById(productId);
+
+        productsDetailWithQuantity.push({
+          product,
+          quantity,
         });
-      });
+      }
 
-      orderAndProducts.push({ order, productsAndQuantity });
+      ordersDetail.push({ order, customer, productsDetailWithQuantity });
     }
 
-    return orderAndProducts;
+    return ordersDetail;
   }
 
   static async findById(
     orderGateway: IOrderGateway,
     productGateway: IProductGateway,
     customerGateway: ICustomerGateway,
-    orderProductGateway: IOrderProductGateway,
     id: number,
-  ): Promise<OrderAndProducts> {
-    const productsAndQuantity: ProductAndQuantity[] = [];
-
+  ): Promise<OrderDetail> {
     const order = await orderGateway.findById(id);
 
     if (!order) throw new OrderNotFoundError('Order not found');
 
-    const orderProducts = await orderProductGateway.findByOrderId(
-      order.getId(),
-    );
+    const customer = order.getCustomerId()
+      ? await customerGateway.findById(order.getCustomerId())
+      : null;
 
-    orderProducts.forEach((orderProduct) => {
-      productsAndQuantity.push({
-        productId: orderProduct.getProductId(),
-        quantity: orderProduct.getQuantity(),
+    const productsDetailWithQuantity: ProductDetailWithQuantity[] = [];
+
+    for (const { productId, quantity } of order.getProductsWithQuantity()) {
+      const product = await productGateway.findById(productId);
+
+      productsDetailWithQuantity.push({
+        product,
+        quantity,
       });
-    });
+    }
 
-    return { order, productsAndQuantity };
+    return { order, customer, productsDetailWithQuantity };
   }
 
   static async create(
     orderGateway: IOrderGateway,
     productGateway: IProductGateway,
     customerGateway: ICustomerGateway,
-    orderProductGateway: IOrderProductGateway,
     paymentGateway: IPaymentGateway,
-    productsAndQuantity: ProductAndQuantity[],
+    productsWithQuantity: ProductWithQuantity[],
     notes: string,
     customerId?: number,
-  ): Promise<OrderAndProductsAndPayment> {
+  ): Promise<OrderDetailWithPayment> {
+    let productsDetailWithQuantity: ProductDetailWithQuantity[] = [];
     let customer: Customer | null = null;
-    let products: Product[] = [];
     let totalPrice = 0;
 
     if (customerId) {
@@ -99,26 +96,20 @@ export class OrderUseCases {
       if (!customer) throw new CustomerNotFoundError('Customer not found!');
     }
 
-    for (const { productId, quantity } of productsAndQuantity) {
+    for (const { productId, quantity } of productsWithQuantity) {
       const product = await productGateway.findById(productId);
 
       if (!product) throw new ProductNotFoundError('Product not found!');
 
-      products.push(product);
+      productsDetailWithQuantity.push({ product, quantity });
 
       totalPrice += product.getPrice() * quantity;
     }
 
     totalPrice = Number(totalPrice.toFixed(2));
 
-    const paymentTimeout = Number(process.env.PAYMENT_TMEOUT) || 5;
-    const paymentExpirationDate = new Date();
-    paymentExpirationDate.setSeconds(
-      paymentExpirationDate.getSeconds() + paymentTimeout,
-    );
-
     const payment = await paymentGateway.create(
-      Payment.new(totalPrice, paymentExpirationDate, customer?.getEmail()),
+      Payment.new(totalPrice, customer?.getEmail()),
     );
 
     const newOrder = await orderGateway.create(
@@ -128,58 +119,52 @@ export class OrderUseCases {
         totalPrice,
         OrderStatus.PAYMENT_PENDING,
         payment.getId(),
+        productsWithQuantity,
         customerId,
       ),
     );
 
-    for (const { productId, quantity } of productsAndQuantity) {
-      await orderProductGateway.create(
-        OrderProduct.new(newOrder.getId(), productId, quantity),
-      );
-    }
-
-    return { order: newOrder, productsAndQuantity, payment };
+    return { order: newOrder, payment, customer, productsDetailWithQuantity };
   }
 
   static async update(
     orderGateway: IOrderGateway,
     productGateway: IProductGateway,
     customerGateway: ICustomerGateway,
-    orderProductGateway: IOrderProductGateway,
     id: number,
     status: string,
-  ): Promise<OrderAndProducts> {
-    const productsAndQuantity: ProductAndQuantity[] = [];
-
+  ): Promise<OrderDetail> {
     const order = await orderGateway.findById(id);
 
     if (!order) throw new OrderNotFoundError('Order not found');
 
-    const orderProducts = await orderProductGateway.findByOrderId(
-      order.getId(),
-    );
+    const customer = order.getCustomerId()
+      ? await customerGateway.findById(order.getCustomerId())
+      : null;
 
-    orderProducts.forEach((orderProduct) => {
-      productsAndQuantity.push({
-        productId: orderProduct.getProductId(),
-        quantity: orderProduct.getQuantity(),
+    const productsDetailWithQuantity: ProductDetailWithQuantity[] = [];
+
+    for (const { productId, quantity } of order.getProductsWithQuantity()) {
+      const product = await productGateway.findById(productId);
+
+      productsDetailWithQuantity.push({
+        product,
+        quantity,
       });
-    });
+    }
 
     order.setStatus(status);
 
     const updatedOrder = await orderGateway.updateStatus(order);
 
-    return { order: updatedOrder, productsAndQuantity };
+    return { order: updatedOrder, customer, productsDetailWithQuantity };
   }
 
   static async updateStatusOnPaymentReceived(
     orderGateway: IOrderGateway,
     paymentGateway: IPaymentGateway,
-    orderProductGateway: IOrderProductGateway,
     paymentId: number,
-  ): Promise<OrderAndProducts> {
-
+  ): Promise<void> {
     const order = await orderGateway.findByPaymentId(paymentId);
 
     if (!order) throw new OrderNotFoundError('Order not found');
@@ -194,30 +179,9 @@ export class OrderUseCases {
     } else {
       order.setStatus(OrderStatus.PAYMENT_FAILED);
     }
-
-    const updatedOrder = await orderGateway.updateStatus(order);
-
-    const orderProducts = await orderProductGateway.findByOrderId(
-      order.getId(),
-    );
-
-    const productsAndQuantity: ProductAndQuantity[] = [];
-
-    orderProducts.forEach((orderProduct) => {
-      productsAndQuantity.push({
-        productId: orderProduct.getProductId(),
-        quantity: orderProduct.getQuantity(),
-      });
-    });
-
-    return { order: updatedOrder, productsAndQuantity };
   }
 
-  static async delete(
-    orderGateway: IOrderGateway,
-    orderProductGateway: IOrderProductGateway,
-    id: number,
-  ): Promise<void> {
+  static async delete(orderGateway: IOrderGateway, id: number): Promise<void> {
     const order = await orderGateway.findById(id);
 
     if (!order) throw new OrderNotFoundError('Order not found');

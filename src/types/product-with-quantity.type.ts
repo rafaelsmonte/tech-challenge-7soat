@@ -1,4 +1,4 @@
-export type ProductAndQuantity = {
+export type ProductWithQuantity = {
   productId: number;
   quantity: number;
 };

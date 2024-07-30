@@ -21,13 +21,13 @@ export class ProductController {
     const productGateway = new ProductGateway(database);
     const categoryGateway = new CategoryGateway(database);
 
-    const productAndCategory = await ProductUseCases.findById(
+    const productDetail = await ProductUseCases.findById(
       productGateway,
       categoryGateway,
       id,
     );
 
-    return ProductAdapter.adaptJson(productAndCategory);
+    return ProductAdapter.adaptJson(productDetail);
   }
 
   static async create(
@@ -41,7 +41,7 @@ export class ProductController {
     const productGateway = new ProductGateway(database);
     const categoryGateway = new CategoryGateway(database);
 
-    const productAndCategory = await ProductUseCases.create(
+    const productDetail = await ProductUseCases.create(
       productGateway,
       categoryGateway,
       name,
@@ -51,7 +51,7 @@ export class ProductController {
       categoryId,
     );
 
-    return ProductAdapter.adaptJson(productAndCategory);
+    return ProductAdapter.adaptJson(productDetail);
   }
 
   static async delete(database: IDatabase, id: number): Promise<void> {
@@ -59,6 +59,4 @@ export class ProductController {
 
     await ProductUseCases.delete(productGateway, id);
   }
-
-  // TODO implement update flow
 }

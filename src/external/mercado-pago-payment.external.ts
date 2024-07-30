@@ -6,11 +6,7 @@ import { createHmac } from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
 
 export class MercadoPago implements IPayment {
-  async create(
-    amount: number,
-    expirationDate: Date,
-    payerEmail?: string,
-  ): Promise<Payment> {
+  async create(amount: number, payerEmail?: string): Promise<Payment> {
     try {
       const client = new MercadoPagoConfig({
         accessToken: process.env.MERCADO_PAGO_ACCESS_TOKEN || '',
@@ -19,7 +15,6 @@ export class MercadoPago implements IPayment {
 
       const requestOptions = { idempotencyKey: uuidv4() };
       const body = {
-        date_of_expiration: expirationDate.toISOString(),
         transaction_amount: amount,
         description: '',
         payment_method_id: 'pix',
@@ -46,7 +41,6 @@ export class MercadoPago implements IPayment {
         amount,
         pixQrCode,
         pixQrCodeBase64,
-        expirationDate,
         payerEmail,
       );
     } catch (error: any) {

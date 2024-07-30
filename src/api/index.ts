@@ -34,13 +34,15 @@ export class TechChallengeApp {
     app.use(bodyParser.json());
 
     // Metrics
-    app.use(promMid({
-      metricsPath: '/metrics',
-      collectDefaultMetrics: true,
-      requestDurationBuckets: [0.1, 0.5, 1, 1.5],
-      requestLengthBuckets: [512, 1024, 5120, 10240, 51200, 102400],
-      responseLengthBuckets: [512, 1024, 5120, 10240, 51200, 102400]
-    }));
+    app.use(
+      promMid({
+        metricsPath: '/metrics',
+        collectDefaultMetrics: true,
+        requestDurationBuckets: [0.1, 0.5, 1, 1.5],
+        requestLengthBuckets: [512, 1024, 5120, 10240, 51200, 102400],
+        responseLengthBuckets: [512, 1024, 5120, 10240, 51200, 102400],
+      }),
+    );
 
     //Swagger
     const options = require('./swagger.json');
@@ -202,12 +204,12 @@ export class TechChallengeApp {
     });
 
     app.post('/order', async (request: Request, response: Response) => {
-      const { customerId, notes, productsAndQuantity } = request.body;
+      const { customerId, notes, productsWithQuantity } = request.body;
       await OrderController.create(
         this.database,
         this.payment,
         notes,
-        productsAndQuantity,
+        productsWithQuantity,
         customerId,
       )
         .then((order) => {
@@ -220,28 +222,33 @@ export class TechChallengeApp {
     });
 
     // Mercado Pago Webhook
-    app.post('/order/payment', 
-       async (req: Request, res: Response, next: NextFunction) => {
+    app.post(
+      '/order/payment',
+      async (req: Request, res: Response, next: NextFunction) => {
         const { query } = req;
-        const dataID = query["data.id"] as string;
-        const xSignature =  req.headers['x-signature'];
+        const dataID = query['data.id'] as string;
+        const xSignature = req.headers['x-signature'];
         const xRequestId = req.headers['x-request-id'];
 
         try {
           const secret: string = process.env.MERCADO_PAGO_SECRET || '';
-    
+
           if (!xSignature || !xRequestId) {
-            return res.status(401).json({ message: 'Failed to check payment source' });
+            return res
+              .status(401)
+              .json({ message: 'Failed to check payment source' });
           }
           if (Array.isArray(xSignature)) {
-            return res.status(401).json({ message: 'Failed to check payment source' });
+            return res
+              .status(401)
+              .json({ message: 'Failed to check payment source' });
           }
-      
+
           const parts = xSignature.split(',');
-    
+
           let ts: string | undefined;
           let hash: string | undefined;
-    
+
           parts.forEach((part) => {
             const [key, value] = part.split('=').map((str) => str.trim());
             if (key === 'ts') {
@@ -250,43 +257,46 @@ export class TechChallengeApp {
               hash = value;
             }
           });
-    
+
           if (!ts || !hash) {
-            return res.status(401).json({ message: 'Failed to check payment source' });
+            return res
+              .status(401)
+              .json({ message: 'Failed to check payment source' });
           }
-    
+
           const manifest = `id:${dataID};request-id:${xRequestId};ts:${ts};`;
           const hmac = createHmac('sha256', secret);
           hmac.update(manifest);
           const sha = hmac.digest('hex');
-    
-          if (sha === hash) 
-            return next();
-          return res.status(500).json({ message: 'Failed to check payment source' });
+
+          if (sha === hash) return next();
+          return res
+            .status(500)
+            .json({ message: 'Failed to check payment source' });
         } catch (error) {
-          return res.status(500).json({ message: 'Failed to check payment source' });
+          return res
+            .status(500)
+            .json({ message: 'Failed to check payment source' });
         }
-      }, 
+      },
       async (request: Request, response: Response) => {
         const paymentId = Number(request?.body?.data?.id);
         const action = request?.body?.action;
 
         if (action !== 'payment.updated')
-          return response.status(500).json({ message: 'Invalid Action' });       
-          await OrderController.updateStatusOnPaymentReceived(
-            this.database,
-            this.payment,
-            paymentId,
-          )
-            .then((order) => {
-              response
-                .setHeader('Content-type', 'application/json')
-                .status(200)
-                .send(order);
-            })
-            .catch((error) => this.handleError(error, response));
-        
-    });
+          return response.status(500).json({ message: 'Invalid Action' });
+
+        await OrderController.updateStatusOnPaymentReceived(
+          this.database,
+          this.payment,
+          paymentId,
+        )
+          .then(() => {
+            response.setHeader('Content-type', 'application/json').status(200);
+          })
+          .catch((error) => this.handleError(error, response));
+      },
+    );
 
     app.patch(
       '/order/:id/change-status',
