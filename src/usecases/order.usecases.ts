@@ -178,25 +178,7 @@ export class OrderUseCases {
     paymentGateway: IPaymentGateway,
     orderProductGateway: IOrderProductGateway,
     paymentId: number,
-    dataID: string,
-    signature: string | string[],
-    requestId: string | string[],
-    action: string,
   ): Promise<OrderAndProducts> {
-    const checkPaymentSource = paymentGateway.checkPaymentSource(
-      dataID,
-      signature,
-      requestId,
-      action,
-    );
-
-    if (!checkPaymentSource)
-      throw new IncorrectPaymentSourceError('Incorrect payment source');
-
-    const checkPaymentAction = paymentGateway.checkPaymentAction(action);
-
-    if (!checkPaymentAction)
-      throw new IncorrectPaymentActionError('Incorrect payment action');
 
     const order = await orderGateway.findByPaymentId(paymentId);
 

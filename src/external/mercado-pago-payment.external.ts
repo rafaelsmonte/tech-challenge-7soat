@@ -55,52 +55,6 @@ export class MercadoPago implements IPayment {
     }
   }
 
-  checkPaymentSource(
-    dataID: string,
-    xSignature: string,
-    xRequestId: string,
-  ): boolean {
-    try {
-      const secret: string = process.env.MERCADO_PAGO_SECRET || '';
-
-      if (!xSignature || !xRequestId) {
-        return false;
-      }
-
-      const parts = xSignature.split(',');
-
-      let ts: string | undefined;
-      let hash: string | undefined;
-
-      parts.forEach((part) => {
-        const [key, value] = part.split('=').map((str) => str.trim());
-        if (key === 'ts') {
-          ts = value;
-        } else if (key === 'v1') {
-          hash = value;
-        }
-      });
-
-      if (!ts || !hash) {
-        return false;
-      }
-
-      const manifest = `id:${dataID};request-id:${xRequestId};ts:${ts};`;
-      const hmac = createHmac('sha256', secret);
-      hmac.update(manifest);
-      const sha = hmac.digest('hex');
-
-      if (sha === hash) return true;
-      else return false;
-    } catch (error) {
-      throw new PaymentError('Failed to check payment source');
-    }
-  }
-
-  checkPaymentAction(action: string): boolean {
-    return action === 'payment.updated' ? true : false;
-  }
-
   async isPaymentApproved(paymentId: number): Promise<boolean> {
     try {
       const client = new MercadoPagoConfig({

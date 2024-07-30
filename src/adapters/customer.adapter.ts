@@ -17,9 +17,7 @@ export const CustomerAdapter = {
   },
 
   adaptJson: (customer: Customer | null): string => {
-    if (customer === null) {
-      return JSON.stringify({});
-    }
+    if (!customer) return JSON.stringify({});
 
     const mappedCustomer = {
       id: customer.getId(),

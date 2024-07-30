@@ -26,9 +26,7 @@ export const OrderAdapter = {
   },
 
   adaptJson: (orderAndProducts: OrderAndProducts | null): string => {
-    if (orderAndProducts === null) {
-      return JSON.stringify({});
-    }
+    if (!orderAndProducts) return JSON.stringify({});
 
     const { order, productsAndQuantity } = orderAndProducts;
 
@@ -48,13 +46,11 @@ export const OrderAdapter = {
   },
 
   adaptJsonWithPayment: (
-    OrderAndProductsAndPayment: OrderAndProductsAndPayment | null,
+    orderAndProductsAndPayment: OrderAndProductsAndPayment | null,
   ): string => {
-    if (OrderAndProductsAndPayment === null) {
-      return JSON.stringify({});
-    }
+    if (!orderAndProductsAndPayment) return JSON.stringify({});
 
-    const { order, productsAndQuantity, payment } = OrderAndProductsAndPayment;
+    const { order, productsAndQuantity, payment } = orderAndProductsAndPayment;
 
     const mappedOrder = {
       id: order.getId(),
