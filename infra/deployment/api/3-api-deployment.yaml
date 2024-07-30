@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: tech-challenge-7soat-api
-        image: 839260668425.dkr.ecr.us-east-1.amazonaws.com/tech-challenge-7soat-ecr-api:tech-challenge-7soat-api-240728102309
+        image: 839260668425.dkr.ecr.us-east-1.amazonaws.com/tech-challenge-7soat-ecr-api:tech-challenge-7soat-api-240730081354
         resources:
           limits:
               memory: "256Mi"
