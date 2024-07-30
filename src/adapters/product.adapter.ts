@@ -24,9 +24,7 @@ export const ProductAdapter = {
   },
 
   adaptJson: (productAndCategory: ProductAndCategory | null): string => {
-    if (productAndCategory === null) {
-      return JSON.stringify({});
-    }
+    if (!productAndCategory) return JSON.stringify({});
 
     const mappedProduct = {
       id: productAndCategory.product.getId(),
