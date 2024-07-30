@@ -59,6 +59,4 @@ export class ProductController {
 
     await ProductUseCases.delete(productGateway, id);
   }
-
-  // TODO implement update flow
 }

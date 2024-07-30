@@ -1,12 +1,11 @@
 import { OrderAndProductsAndPayment } from '../types/order-and-products-and-payment.type';
 import { OrderAndProducts } from '../types/order-and-products.type';
 
-// TODO retornar todas as entidades associadas ou apenas seus IDs?
 export const OrderAdapter = {
   adaptArrayJson: (ordersAndProducts: OrderAndProducts[]): string => {
     const mappedOrdersAndProducts = ordersAndProducts.map(
       (orderAndProducts) => {
-        const { order, productsAndQuantity } = orderAndProducts;
+        const { order, productsWithQuantity, customer } = orderAndProducts;
 
         return {
           id: order.getId(),
@@ -16,8 +15,27 @@ export const OrderAdapter = {
           trackingId: order.getTrackingId(),
           totalPrice: order.getTotalPrice(),
           status: order.getStatus(),
-          customerId: order.getCustomerId(),
-          productsAndQuantity: productsAndQuantity,
+          customer: customer
+            ? {
+                id: customer.getId(),
+                name: customer.getName(),
+                taxpayerRegistry: customer.getTaxpayerRegistry(),
+                email: customer.getEmail(),
+              }
+            : null,
+          products: productsWithQuantity.map((productWithQuantity) => {
+            return {
+              id: productWithQuantity.product.getId(),
+              createdAt: productWithQuantity.product.getCreatedAt(),
+              updatedAt: productWithQuantity.product.getUpdatedAt(),
+              name: productWithQuantity.product.getName(),
+              price: productWithQuantity.product.getPrice(),
+              description: productWithQuantity.product.getDescription(),
+              pictures: productWithQuantity.product.getPictures(),
+              categoryId: productWithQuantity.product.getCategoryId(),
+              quantity: productWithQuantity.quantity,
+            };
+          }),
         };
       },
     );
@@ -28,7 +46,7 @@ export const OrderAdapter = {
   adaptJson: (orderAndProducts: OrderAndProducts | null): string => {
     if (!orderAndProducts) return JSON.stringify({});
 
-    const { order, productsAndQuantity } = orderAndProducts;
+    const { order, productsWithQuantity, customer } = orderAndProducts;
 
     const mappedOrder = {
       id: order.getId(),
@@ -38,8 +56,27 @@ export const OrderAdapter = {
       trackingId: order.getTrackingId(),
       totalPrice: order.getTotalPrice(),
       status: order.getStatus(),
-      customerId: order.getCustomerId(),
-      productsAndQuantity: productsAndQuantity,
+      customer: customer
+        ? {
+            id: customer.getId(),
+            name: customer.getName(),
+            taxpayerRegistry: customer.getTaxpayerRegistry(),
+            email: customer.getEmail(),
+          }
+        : null,
+      products: productsWithQuantity.map((productWithQuantity) => {
+        return {
+          id: productWithQuantity.product.getId(),
+          createdAt: productWithQuantity.product.getCreatedAt(),
+          updatedAt: productWithQuantity.product.getUpdatedAt(),
+          name: productWithQuantity.product.getName(),
+          price: productWithQuantity.product.getPrice(),
+          description: productWithQuantity.product.getDescription(),
+          pictures: productWithQuantity.product.getPictures(),
+          categoryId: productWithQuantity.product.getCategoryId(),
+          quantity: productWithQuantity.quantity,
+        };
+      }),
     };
 
     return JSON.stringify(mappedOrder);
@@ -50,7 +87,8 @@ export const OrderAdapter = {
   ): string => {
     if (!orderAndProductsAndPayment) return JSON.stringify({});
 
-    const { order, productsAndQuantity, payment } = orderAndProductsAndPayment;
+    const { order, productsWithQuantity, payment, customer } =
+      orderAndProductsAndPayment;
 
     const mappedOrder = {
       id: order.getId(),
@@ -60,13 +98,32 @@ export const OrderAdapter = {
       trackingId: order.getTrackingId(),
       totalPrice: order.getTotalPrice(),
       status: order.getStatus(),
-      customerId: order.getCustomerId(),
-      productsAndQuantity: productsAndQuantity,
+      customer: customer
+        ? {
+            id: customer.getId(),
+            name: customer.getName(),
+            taxpayerRegistry: customer.getTaxpayerRegistry(),
+            email: customer.getEmail(),
+          }
+        : null,
       payment: {
         id: payment.getId(),
         pixQrCode: payment.getPixQrCode(),
         pixQrCodeBase64: payment.getPixQrCodeBase64(),
       },
+      products: productsWithQuantity.map((productWithQuantity) => {
+        return {
+          id: productWithQuantity.product.getId(),
+          createdAt: productWithQuantity.product.getCreatedAt(),
+          updatedAt: productWithQuantity.product.getUpdatedAt(),
+          name: productWithQuantity.product.getName(),
+          price: productWithQuantity.product.getPrice(),
+          description: productWithQuantity.product.getDescription(),
+          pictures: productWithQuantity.product.getPictures(),
+          categoryId: productWithQuantity.product.getCategoryId(),
+          quantity: productWithQuantity.quantity,
+        };
+      }),
     };
 
     return JSON.stringify(mappedOrder);

@@ -126,6 +126,7 @@ export class PrismaDatabase implements IDatabase {
         customer.email,
       );
     } catch (error) {
+      // console.log(error);
       throw new DatabaseError('Failed to find customer');
     }
   }

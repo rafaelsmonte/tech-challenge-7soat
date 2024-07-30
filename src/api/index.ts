@@ -33,13 +33,15 @@ export class TechChallengeApp {
     app.use(bodyParser.json());
 
     // Metrics
-    app.use(promMid({
-      metricsPath: '/metrics',
-      collectDefaultMetrics: true,
-      requestDurationBuckets: [0.1, 0.5, 1, 1.5],
-      requestLengthBuckets: [512, 1024, 5120, 10240, 51200, 102400],
-      responseLengthBuckets: [512, 1024, 5120, 10240, 51200, 102400]
-    }));
+    app.use(
+      promMid({
+        metricsPath: '/metrics',
+        collectDefaultMetrics: true,
+        requestDurationBuckets: [0.1, 0.5, 1, 1.5],
+        requestLengthBuckets: [512, 1024, 5120, 10240, 51200, 102400],
+        responseLengthBuckets: [512, 1024, 5120, 10240, 51200, 102400],
+      }),
+    );
 
     //Swagger
     const options = require('./swagger.json');
@@ -226,6 +228,9 @@ export class TechChallengeApp {
       const dataID = query['data.id'] as string;
       const xSignature = request.headers['x-signature'] as string | string[];
       const xRequestId = request.headers['x-request-id'] as string | string[];
+
+      // validate request and action type
+
       await OrderController.updateStatusOnPaymentReceived(
         this.database,
         this.payment,

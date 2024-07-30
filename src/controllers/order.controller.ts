@@ -100,12 +100,12 @@ export class OrderController {
     signature: string | string[],
     requestId: string | string[],
     action: string,
-  ): Promise<string> {
+  ): Promise<void> {
     const orderGateway = new OrderGateway(database);
     const orderProductGateway = new OrderProductGateway(database);
     const paymentGateway = new PaymentGateway(payment);
 
-    const orderAndProducts = await OrderUseCases.updateStatusOnPaymentReceived(
+    await OrderUseCases.updateStatusOnPaymentReceived(
       orderGateway,
       paymentGateway,
       orderProductGateway,
@@ -115,8 +115,6 @@ export class OrderController {
       requestId,
       action,
     );
-
-    return OrderAdapter.adaptJson(orderAndProducts);
   }
 
   static async delete(database: IDatabase, id: number): Promise<void> {

@@ -1,7 +1,9 @@
+import { Customer } from 'src/entities/customer.entity';
 import { Order } from '../entities/order.entity';
-import { ProductAndQuantity } from './product-and-quantity.type';
+import { ProductWithQuantity } from './product-with-quantity.type';
 
 export type OrderAndProducts = {
   order: Order;
-  productsAndQuantity: ProductAndQuantity[];
+  customer?: Customer;
+  productsWithQuantity: ProductWithQuantity[];
 };

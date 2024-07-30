@@ -5,7 +5,6 @@ import { IOrderGateway } from '../interfaces/order.gateway.interface';
 export class OrderGateway implements IOrderGateway {
   constructor(private database: IDatabase) {}
 
-  // TODO add parameters
   async findAll(): Promise<Order[]> {
     return this.database.findAllOrders();
   }

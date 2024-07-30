@@ -5,8 +5,6 @@ import { ICategoryGateway } from '../interfaces/category.gateway.interface';
 import { IProductGateway } from '../interfaces/product.gateway.interface';
 import { ProductAndCategory } from '../types/product-and-category.type';
 
-// TODO retornar todas as entidades associadas ou apenas seus IDs?
-
 export class ProductUseCases {
   static async findAll(
     productGateway: IProductGateway,
