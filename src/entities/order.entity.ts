@@ -11,8 +11,8 @@ export class Order {
   private totalPrice: number;
   private status: OrderStatus;
   private paymentId: number;
-  private customerId?: number;
   private productsWithQuantity: ProductWithQuantity[];
+  private customerId?: number;
 
   constructor(
     id: number,

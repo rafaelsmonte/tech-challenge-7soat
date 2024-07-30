@@ -1,6 +1,5 @@
 import { Category } from '../entities/category.entity';
 import { Customer } from '../entities/customer.entity';
-import { OrderProduct } from '../entities/order-product.entity';
 import { Order } from '../entities/order.entity';
 import { Product } from '../entities/product.entity';
 
