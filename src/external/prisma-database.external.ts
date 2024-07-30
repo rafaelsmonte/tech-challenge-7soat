@@ -477,12 +477,4 @@ export class PrismaDatabase implements IDatabase {
       throw new DatabaseError('Failed to save orderProducts');
     }
   }
-
-  private async deleteOrderProduct(id: number): Promise<void> {
-    try {
-      await this.prismaClient.orderProduct.delete({ where: { id } });
-    } catch (error) {
-      throw new DatabaseError('Failed to delete orderProducts');
-    }
-  }
 }
