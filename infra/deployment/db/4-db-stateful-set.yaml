@@ -22,17 +22,35 @@ spec:
           image: postgres:14
           ports:
             - containerPort: 5432
-          env:
-            - name: POSTGRES_DB
-              value: tech-challenge-7soat
-            - name: POSTGRES_USER
-              value: tech-challenge-7soat
-            - name: POSTGRES_PASSWORD
-              value: Yp5Wf+J4PG02bRWxq+EYDQ==
+          envFrom:
+            - secretRef:
+                name: tech-challenge-7soat-db-external-secret
           volumeMounts:
             - name: tech-challenge-7soat-volume-claim-db
               mountPath: /var/lib/postgresql/data
               subPath: postgres-data
+          readinessProbe:
+            exec:
+              command:
+              - pg_isready
+              - -h
+              - localhost
+              - -p
+              - "5432"
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 3
+          livenessProbe:
+            exec:
+              command:
+              - pg_isready
+              - -h
+              - localhost
+              - -p
+              - "5432"
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            failureThreshold: 5
   volumeClaimTemplates:
     - metadata:
         name: tech-challenge-7soat-volume-claim-db
@@ -42,6 +60,3 @@ spec:
           requests:
             storage: 10Gi
         storageClassName: tech-challenge-7soat-ebs-storage-class
-
-
-

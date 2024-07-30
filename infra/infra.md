@@ -2,7 +2,37 @@
 
 ## Overview
 
-## Deployment
+<center><img src='./img/infra_architecture.png'></center>
+
+<br>
+
+- The infrastructure is deployed on AWS EKS.
+- There is a VPC configured with 4 subnets: 2 public and 2 private.
+- The Kubernetes cluster is in the 2 public subnets.
+- **API Deployment**:
+  - 1 service for an ALB load balancer to provide external access to the API.
+  - HPA to horizontally scale the API up to 10 pods.
+  - Secrets Manager integrated with AWS Secrets Manager to protect sensitive credentials.
+  - 1 service with ClusterIP to expose the application's internal DNS, allowing Prometheus to perform service discovery for scraping.
+- **Database StatefulSet**:
+  - 1 service with ClusterIP for internal DNS for database connections with the application.
+  - Use of a StatefulSet for deployment to prevent data loss if a pod fails to start and to guarantee a numbered identification of the pod.
+  - Use of a PersistentVolumeClaim with a StorageClass for Amazon EBS to enable EBS for database data, allowing us to use EBS snapshots for database backups.
+- **Monitoring**:
+  - 1 Grafana pod instance.
+  - 1 Prometheus pod instance.
+  - Both use `emptyDir` for disk storage but can be evolved to use EBS for persistent data storage.
+  - Node Exporter installed on each VM to monitor VM resources.
+- **Kube-system**:
+  - Some auxiliary services are installed in the kube-system namespace.
+  - The Cluster Autoscaler monitors cluster compute resources and adjusts the AWS Auto Scaling Group to scale the cluster up and down according to resource usage.
+  - EBS CSI implements the Kubernetes Container Storage Interface to enable the creation of storage classes for EBS resources.
+  - Metrics Server allows HPA to monitor API pod resource usage and scale it up or down horizontally.
+- **External Services**:
+  - Mercado Pago: We use Mercado Pago to facilitate payments via Pix.
+
+
+## Kubernetes Infra Setup Deployment
 
 ```
 Requirements:
@@ -261,6 +291,76 @@ Suggested name: K8SASGPolicy
 
 // Creates a kubernetes service account with that policy
 ./infra/scripts/eks-cluster-deploy.sh cretae-service-account-autoscaler
+```
+
+12. Install AWS EBS CSI (Container Storage Interface)
+
+```
+// AWS driver to expose EBS features to EKS Kubernetes pods resources
+helm repo add kubernetes-sigs https://kubernetes-sigs.github.io/aws-ebs-csi-driver/
+helm repo update
+helm install ebs-csi-driver kubernetes-sigs/aws-ebs-csi-driver
+```
+
+## Deploy Application on Kubernetes
+
+```
+Requirements:
+  - Kubernetes Infra Setup Deployment must have been executed
+  - Each "application" has its folder and the kubernetes resources are ordered. The deploy of each resource must
+    follow the order
+  - Bellow are the order in which each resource must be deployed
+```
+
+1. Deploy Database
+
+```
+kubectl apply -f deployment/db/1-db-secrets-store.yaml
+kubectl apply -f deployment/db/2-db-secrets.yaml
+kubectl apply -f deployment/db/3-db-storage-class.yaml
+kubectl apply -f deployment/db/4-db-stateful-set.yaml
+kubectl apply -f deployment/db/5-db-service.yaml
+```
+
+2. Deploy API
+
+**Note**: Make sure the api ECR image is the latest one in deployment file, otherwise, follow the instructions on *API ECR Image Deployment below*
+
+```
+kubectl apply -f deployment/api/1-api-secrets-store.yaml
+kubectl apply -f deployment/api/2-api-secrets.yaml
+kubectl apply -f deployment/api/3-api-deployment.yaml
+kubectl apply -f deployment/api/4-api-hpa.yaml
+kubectl apply -f deployment/api/5-api-service-load-balancer.yaml
+kubectl apply -f deployment/api/6-api-service-cluster-ip.yaml
+```
+
+*API API ECR Image Deployment*
+
+```
+From the projects root directory, execute the following command:
+
+./infra/scripts/eks-cluster-mng.sh update-api-image
+```
+
+1. Monitoring - Prometheus
+
+```
+kubectl apply -f deployment/monitoring/prometheus/1-prometheus-node-exporter-daemonset.yaml
+kubectl apply -f deployment/monitoring/prometheus/2-prometheus-service-account.yaml
+kubectl apply -f deployment/monitoring/prometheus/3-prometheus-cluster-role.yaml
+kubectl apply -f deployment/monitoring/prometheus/4-prometheus-cluster-role-binding.yaml
+kubectl apply -f deployment/monitoring/prometheus/5-prometheus-config-map.yaml
+kubectl apply -f deployment/monitoring/prometheus/6-prometheus-dployment.yaml
+kubectl apply -f deployment/monitoring/prometheus/7-prometheus-service.yaml
+```
+
+4. Monitoring - Grafana
+
+```
+kubectl apply -f deployment/monitoring/grafana/1-grafana-config-map.yaml
+kubectl apply -f deployment/monitoring/grafana/2-grafana-deployment.yaml
+kubectl apply -f deployment/monitoring/grafana/3-grafana-service.yaml
 ```
 
 ## Grafana Dashboards
