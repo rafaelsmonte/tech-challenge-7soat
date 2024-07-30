@@ -12,23 +12,8 @@ export class PaymentGateway implements IPaymentGateway {
     );
   }
 
-  public checkPaymentSource(
-    dataID: string,
-    xSignature: string | string[],
-    xRequestId: string | string[],
-  ): boolean {
-    return this.paymentMethod.checkPaymentSource(
-      dataID,
-      xSignature,
-      xRequestId,
-    );
-  }
-
   public async isPaymentApproved(paymentId: number): Promise<boolean> {
     return this.paymentMethod.isPaymentApproved(paymentId);
   }
 
-  public checkPaymentAction(action: string): boolean {
-    return this.paymentMethod.checkPaymentAction(action);
-  }
 }

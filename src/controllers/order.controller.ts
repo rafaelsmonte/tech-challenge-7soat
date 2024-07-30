@@ -96,10 +96,6 @@ export class OrderController {
     database: IDatabase,
     payment: IPayment,
     paymentId: number,
-    dataID: string,
-    signature: string | string[],
-    requestId: string | string[],
-    action: string,
   ): Promise<void> {
     const orderGateway = new OrderGateway(database);
     const orderProductGateway = new OrderProductGateway(database);
@@ -110,10 +106,6 @@ export class OrderController {
       paymentGateway,
       orderProductGateway,
       paymentId,
-      dataID,
-      signature,
-      requestId,
-      action,
     );
   }
 
