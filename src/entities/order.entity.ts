@@ -1,3 +1,4 @@
+import { ProductWithQuantity } from 'src/types/product-with-quantity.type';
 import { OrderStatus } from '../enum/order-status.enum';
 import { InvalidOrderError } from '../errors/invalid-order.error';
 
@@ -11,6 +12,7 @@ export class Order {
   private status: OrderStatus;
   private paymentId: number;
   private customerId?: number;
+  private productsWithQuantity: ProductWithQuantity[];
 
   constructor(
     id: number,
@@ -21,6 +23,7 @@ export class Order {
     totalPrice: number,
     status: string,
     paymentId: number,
+    productsWithQuantity: ProductWithQuantity[],
     customerId?: number,
   ) {
     this.setId(id);
@@ -31,6 +34,7 @@ export class Order {
     this.setTotalPrice(totalPrice);
     this.setStatus(status);
     this.setPaymentId(paymentId);
+    this.setProductsWithQuantity(productsWithQuantity);
     this.setCustomerId(customerId);
   }
 
@@ -40,6 +44,7 @@ export class Order {
     totalPrice: number,
     status: OrderStatus,
     paymentId: number,
+    productsWithQuantity: ProductWithQuantity[],
     customerId?: number,
   ): Order {
     const now = new Date();
@@ -52,6 +57,7 @@ export class Order {
       totalPrice,
       status,
       paymentId,
+      productsWithQuantity,
       customerId,
     );
   }
@@ -91,6 +97,10 @@ export class Order {
 
   public getCustomerId(): number | null {
     return this.customerId;
+  }
+
+  public getProductsWithQuantity(): ProductWithQuantity[] {
+    return this.productsWithQuantity;
   }
 
   // setters
@@ -134,6 +144,12 @@ export class Order {
 
   public setPaymentId(paymentId: number): void {
     this.paymentId = paymentId;
+  }
+
+  public setProductsWithQuantity(
+    productsWithQuantity: ProductWithQuantity[],
+  ): void {
+    this.productsWithQuantity = productsWithQuantity;
   }
 
   public setCustomerId(customerId: number | null): void {

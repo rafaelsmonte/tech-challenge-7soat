@@ -1,16 +1,16 @@
+import { ProductDetail } from 'src/types/product-detail.type';
 import { Product } from '../entities/product.entity';
 import { CategoryNotFoundError } from '../errors/category-not-found.error';
 import { ProductNotFoundError } from '../errors/product-not-found.error';
 import { ICategoryGateway } from '../interfaces/category.gateway.interface';
 import { IProductGateway } from '../interfaces/product.gateway.interface';
-import { ProductAndCategory } from '../types/product-and-category.type';
 
 export class ProductUseCases {
   static async findAll(
     productGateway: IProductGateway,
     categoryGateway: ICategoryGateway,
-  ): Promise<ProductAndCategory[]> {
-    let productsAndCategory: ProductAndCategory[] = [];
+  ): Promise<ProductDetail[]> {
+    let productsDetail: ProductDetail[] = [];
 
     const products = await productGateway.findAll();
 
@@ -19,19 +19,19 @@ export class ProductUseCases {
 
       if (!category) throw new CategoryNotFoundError('Category not found');
 
-      const productAndCategory: ProductAndCategory = { product, category };
+      const productDetail: ProductDetail = { product, category };
 
-      productsAndCategory.push(productAndCategory);
+      productsDetail.push(productDetail);
     }
 
-    return productsAndCategory;
+    return productsDetail;
   }
 
   static async findById(
     productGateway: IProductGateway,
     categoryGateway: ICategoryGateway,
     id: number,
-  ): Promise<ProductAndCategory> {
+  ): Promise<ProductDetail> {
     const product = await productGateway.findById(id);
 
     if (!product) throw new ProductNotFoundError('Product not found');
@@ -51,7 +51,7 @@ export class ProductUseCases {
     description: string,
     pictures: string[],
     categoryId: number,
-  ): Promise<ProductAndCategory> {
+  ): Promise<ProductDetail> {
     const category = await categoryGateway.findById(categoryId);
 
     if (!category) throw new CategoryNotFoundError('Category not found');

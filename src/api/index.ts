@@ -204,12 +204,12 @@ export class TechChallengeApp {
     });
 
     app.post('/order', async (request: Request, response: Response) => {
-      const { customerId, notes, productsAndQuantity } = request.body;
+      const { customerId, notes, productsWithQuantity } = request.body;
       await OrderController.create(
         this.database,
         this.payment,
         notes,
-        productsAndQuantity,
+        productsWithQuantity,
         customerId,
       )
         .then((order) => {

@@ -1,21 +1,21 @@
-import { ProductAndCategory } from '../types/product-and-category.type';
+import { ProductDetail } from 'src/types/product-detail.type';
 
 export const ProductAdapter = {
-  adaptArrayJson: (productsAndCategory: ProductAndCategory[]): string => {
-    const mappedProducts = productsAndCategory.map((productAndCategory) => {
+  adaptArrayJson: (productsDetail: ProductDetail[]): string => {
+    const mappedProducts = productsDetail.map((productDetail) => {
       return {
-        id: productAndCategory.product.getId(),
-        createdAt: productAndCategory.product.getCreatedAt(),
-        updatedAt: productAndCategory.product.getUpdatedAt(),
-        name: productAndCategory.product.getName(),
-        price: productAndCategory.product.getPrice(),
-        description: productAndCategory.product.getDescription(),
-        pictures: productAndCategory.product.getPictures(),
+        id: productDetail.product.getId(),
+        createdAt: productDetail.product.getCreatedAt(),
+        updatedAt: productDetail.product.getUpdatedAt(),
+        name: productDetail.product.getName(),
+        price: productDetail.product.getPrice(),
+        description: productDetail.product.getDescription(),
+        pictures: productDetail.product.getPictures(),
         category: {
-          id: productAndCategory.category.getId(),
-          createdAt: productAndCategory.category.getCreatedAt(),
-          updatedAt: productAndCategory.category.getUpdatedAt(),
-          type: productAndCategory.category.getType(),
+          id: productDetail.category.getId(),
+          createdAt: productDetail.category.getCreatedAt(),
+          updatedAt: productDetail.category.getUpdatedAt(),
+          type: productDetail.category.getType(),
         },
       };
     });
@@ -23,22 +23,22 @@ export const ProductAdapter = {
     return JSON.stringify(mappedProducts);
   },
 
-  adaptJson: (productAndCategory: ProductAndCategory | null): string => {
-    if (!productAndCategory) return JSON.stringify({});
+  adaptJson: (productDetail: ProductDetail | null): string => {
+    if (!productDetail) return JSON.stringify({});
 
     const mappedProduct = {
-      id: productAndCategory.product.getId(),
-      createdAt: productAndCategory.product.getCreatedAt(),
-      updatedAt: productAndCategory.product.getUpdatedAt(),
-      name: productAndCategory.product.getName(),
-      price: productAndCategory.product.getPrice(),
-      description: productAndCategory.product.getDescription(),
-      pictures: productAndCategory.product.getPictures(),
+      id: productDetail.product.getId(),
+      createdAt: productDetail.product.getCreatedAt(),
+      updatedAt: productDetail.product.getUpdatedAt(),
+      name: productDetail.product.getName(),
+      price: productDetail.product.getPrice(),
+      description: productDetail.product.getDescription(),
+      pictures: productDetail.product.getPictures(),
       category: {
-        id: productAndCategory.category.getId(),
-        createdAt: productAndCategory.category.getCreatedAt(),
-        updatedAt: productAndCategory.category.getUpdatedAt(),
-        type: productAndCategory.category.getType(),
+        id: productDetail.category.getId(),
+        createdAt: productDetail.category.getCreatedAt(),
+        updatedAt: productDetail.category.getUpdatedAt(),
+        type: productDetail.category.getType(),
       },
     };
 

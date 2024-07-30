@@ -11,11 +11,11 @@ import {
 import Decimal from 'decimal.js';
 import { Category } from '../entities/category.entity';
 import { Customer } from '../entities/customer.entity';
-import { OrderProduct } from '../entities/order-product.entity';
 import { Order } from '../entities/order.entity';
 import { Product } from '../entities/product.entity';
 import { DatabaseError } from '../errors/database.error';
 import { IDatabase } from '../interfaces/database.interface';
+import { ProductWithQuantity } from 'src/types/product-with-quantity.type';
 
 export class PrismaDatabase implements IDatabase {
   private prismaClient: PrismaClient;
@@ -249,22 +249,41 @@ export class PrismaDatabase implements IDatabase {
 
   async findAllOrders(): Promise<Order[]> {
     try {
-      const orders: PrismaOrder[] = await this.prismaClient.order.findMany();
+      const orders: Order[] = [];
 
-      return orders.map(
-        (order) =>
-          new Order(
-            order.id,
-            order.createdAt,
-            order.updatedAt,
-            order.notes,
-            order.trackingId,
-            new Decimal(order.totalPrice).toNumber(),
-            order.status,
-            Number(order.paymentId),
-            order.customerId,
-          ),
-      );
+      const prismaOrders: PrismaOrder[] =
+        await this.prismaClient.order.findMany();
+
+      for (const prismaOrder of prismaOrders) {
+        const orderProducts: PrismaOrderProduct[] =
+          await this.findOrderProductsByOrderId(prismaOrder.id);
+
+        const productsWithQuantity: ProductWithQuantity[] = orderProducts.map(
+          (orderProduct) => {
+            return {
+              productId: orderProduct.productId,
+              quantity: orderProduct.quantity,
+            };
+          },
+        );
+
+        const order: Order = new Order(
+          prismaOrder.id,
+          prismaOrder.createdAt,
+          prismaOrder.updatedAt,
+          prismaOrder.notes,
+          prismaOrder.trackingId,
+          new Decimal(prismaOrder.totalPrice).toNumber(),
+          prismaOrder.status,
+          Number(prismaOrder.paymentId),
+          productsWithQuantity,
+          prismaOrder.customerId,
+        );
+
+        orders.push(order);
+      }
+
+      return orders;
     } catch (error) {
       throw new DatabaseError('Failed to find orders');
     }
@@ -278,6 +297,18 @@ export class PrismaDatabase implements IDatabase {
 
       if (!order) return null;
 
+      const orderProducts: PrismaOrderProduct[] =
+        await this.findOrderProductsByOrderId(order.id);
+
+      const productsWithQuantity: ProductWithQuantity[] = orderProducts.map(
+        (orderProduct) => {
+          return {
+            productId: orderProduct.productId,
+            quantity: orderProduct.quantity,
+          };
+        },
+      );
+
       return new Order(
         order.id,
         order.createdAt,
@@ -287,6 +318,7 @@ export class PrismaDatabase implements IDatabase {
         new Decimal(order.totalPrice).toNumber(),
         order.status,
         Number(order.paymentId),
+        productsWithQuantity,
         order.customerId,
       );
     } catch (error) {
@@ -302,6 +334,18 @@ export class PrismaDatabase implements IDatabase {
 
       if (!order) return null;
 
+      const orderProducts: PrismaOrderProduct[] =
+        await this.findOrderProductsByOrderId(order.id);
+
+      const productsWithQuantity: ProductWithQuantity[] = orderProducts.map(
+        (orderProduct) => {
+          return {
+            productId: orderProduct.productId,
+            quantity: orderProduct.quantity,
+          };
+        },
+      );
+
       return new Order(
         order.id,
         order.createdAt,
@@ -311,6 +355,7 @@ export class PrismaDatabase implements IDatabase {
         new Decimal(order.totalPrice).toNumber(),
         order.status,
         Number(order.paymentId),
+        productsWithQuantity,
         order.customerId,
       );
     } catch (error) {
@@ -331,6 +376,10 @@ export class PrismaDatabase implements IDatabase {
         },
       });
 
+      for (const { productId, quantity } of order.getProductsWithQuantity()) {
+        await this.createOrderProduct(createdOrder.id, productId, quantity);
+      }
+
       return new Order(
         createdOrder.id,
         createdOrder.createdAt,
@@ -340,6 +389,7 @@ export class PrismaDatabase implements IDatabase {
         new Decimal(createdOrder.totalPrice).toNumber(),
         createdOrder.status,
         Number(createdOrder.paymentId),
+        order.getProductsWithQuantity(),
         createdOrder.customerId,
       );
     } catch (error) {
@@ -359,6 +409,20 @@ export class PrismaDatabase implements IDatabase {
         },
       });
 
+      if (!order) return null;
+
+      const orderProducts: PrismaOrderProduct[] =
+        await this.findOrderProductsByOrderId(order.getId());
+
+      const productsWithQuantity: ProductWithQuantity[] = orderProducts.map(
+        (orderProduct) => {
+          return {
+            productId: orderProduct.productId,
+            quantity: orderProduct.quantity,
+          };
+        },
+      );
+
       return new Order(
         updatedOrder.id,
         updatedOrder.createdAt,
@@ -368,6 +432,7 @@ export class PrismaDatabase implements IDatabase {
         new Decimal(updatedOrder.totalPrice).toNumber(),
         updatedOrder.status,
         Number(updatedOrder.paymentId),
+        productsWithQuantity,
         updatedOrder.customerId,
       );
     } catch (error) {
@@ -383,54 +448,37 @@ export class PrismaDatabase implements IDatabase {
     }
   }
 
-  async findOrderProductsByOrderId(orderId: number): Promise<OrderProduct[]> {
+  private async findOrderProductsByOrderId(
+    orderId: number,
+  ): Promise<PrismaOrderProduct[]> {
     try {
-      const orderProducts: PrismaOrderProduct[] =
-        await this.prismaClient.orderProduct.findMany({
-          where: { orderId },
-        });
-
-      return orderProducts.map(
-        (orderProduct) =>
-          new OrderProduct(
-            orderProduct.id,
-            orderProduct.createdAt,
-            orderProduct.updatedAt,
-            orderProduct.orderId,
-            orderProduct.productId,
-            orderProduct.quantity,
-          ),
-      );
+      return await this.prismaClient.orderProduct.findMany({
+        where: { orderId },
+      });
     } catch (error) {
       throw new DatabaseError('Failed to find orderProducts');
     }
   }
 
-  async createOrderProduct(orderProduct: OrderProduct): Promise<OrderProduct> {
+  private async createOrderProduct(
+    orderId: number,
+    productId: number,
+    quantity: number,
+  ): Promise<void> {
     try {
-      const createdOrderProduct: PrismaOrderProduct =
-        await this.prismaClient.orderProduct.create({
-          data: {
-            orderId: orderProduct.getOrderId(),
-            productId: orderProduct.getProductId(),
-            quantity: orderProduct.getQuantity(),
-          },
-        });
-
-      return new OrderProduct(
-        createdOrderProduct.id,
-        createdOrderProduct.createdAt,
-        createdOrderProduct.updatedAt,
-        createdOrderProduct.orderId,
-        createdOrderProduct.productId,
-        createdOrderProduct.quantity,
-      );
+      await this.prismaClient.orderProduct.create({
+        data: {
+          orderId,
+          productId,
+          quantity,
+        },
+      });
     } catch (error) {
       throw new DatabaseError('Failed to save orderProducts');
     }
   }
 
-  async deleteOrderProduct(id: number): Promise<void> {
+  private async deleteOrderProduct(id: number): Promise<void> {
     try {
       await this.prismaClient.orderProduct.delete({ where: { id } });
     } catch (error) {

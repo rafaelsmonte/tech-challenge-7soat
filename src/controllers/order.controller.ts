@@ -1,12 +1,11 @@
+import { ProductWithQuantity } from 'src/types/product-with-quantity.type';
 import { OrderAdapter } from '../adapters/order.adapter';
 import { CustomerGateway } from '../gateways/customer.gateway';
-import { OrderProductGateway } from '../gateways/order-product.gateway';
 import { OrderGateway } from '../gateways/order.gateway';
 import { PaymentGateway } from '../gateways/payment-gateway';
 import { ProductGateway } from '../gateways/product.gateway';
 import { IDatabase } from '../interfaces/database.interface';
 import { IPayment } from '../interfaces/payment.interface';
-import { ProductAndQuantity } from '../types/product-and-quantity.type';
 import { OrderUseCases } from '../usecases/order.usecases';
 
 export class OrderController {
@@ -14,13 +13,11 @@ export class OrderController {
     const orderGateway = new OrderGateway(database);
     const productGateway = new ProductGateway(database);
     const customerGateway = new CustomerGateway(database);
-    const orderProductGateway = new OrderProductGateway(database);
 
     const orders = await OrderUseCases.findAll(
       orderGateway,
       productGateway,
       customerGateway,
-      orderProductGateway,
     );
 
     return OrderAdapter.adaptArrayJson(orders);
@@ -30,44 +27,40 @@ export class OrderController {
     const orderGateway = new OrderGateway(database);
     const productGateway = new ProductGateway(database);
     const customerGateway = new CustomerGateway(database);
-    const orderProductGateway = new OrderProductGateway(database);
 
-    const orderAndProducts = await OrderUseCases.findById(
+    const ordersDetail = await OrderUseCases.findById(
       orderGateway,
       productGateway,
       customerGateway,
-      orderProductGateway,
       id,
     );
 
-    return OrderAdapter.adaptJson(orderAndProducts);
+    return OrderAdapter.adaptJson(ordersDetail);
   }
 
   static async create(
     database: IDatabase,
     payment: IPayment,
     notes: string,
-    productsAndQuantity: ProductAndQuantity[],
+    productWithQuantity: ProductWithQuantity[],
     customerId?: number,
   ): Promise<string> {
     const orderGateway = new OrderGateway(database);
     const productGateway = new ProductGateway(database);
     const customerGateway = new CustomerGateway(database);
-    const orderProductGateway = new OrderProductGateway(database);
     const paymentGateway = new PaymentGateway(payment);
 
-    const orderAndProductsAndPayment = await OrderUseCases.create(
+    const ordersDetailWithPayment = await OrderUseCases.create(
       orderGateway,
       productGateway,
       customerGateway,
-      orderProductGateway,
       paymentGateway,
-      productsAndQuantity,
+      productWithQuantity,
       notes,
       customerId,
     );
 
-    return OrderAdapter.adaptJsonWithPayment(orderAndProductsAndPayment);
+    return OrderAdapter.adaptJsonWithPayment(ordersDetailWithPayment);
   }
 
   static async update(
@@ -78,18 +71,16 @@ export class OrderController {
     const orderGateway = new OrderGateway(database);
     const productGateway = new ProductGateway(database);
     const customerGateway = new CustomerGateway(database);
-    const orderProductGateway = new OrderProductGateway(database);
 
-    const orderAndProducts = await OrderUseCases.update(
+    const ordersDetail = await OrderUseCases.update(
       orderGateway,
       productGateway,
       customerGateway,
-      orderProductGateway,
       id,
       status,
     );
 
-    return OrderAdapter.adaptJson(orderAndProducts);
+    return OrderAdapter.adaptJson(ordersDetail);
   }
 
   static async updateStatusOnPaymentReceived(
@@ -98,21 +89,18 @@ export class OrderController {
     paymentId: number,
   ): Promise<void> {
     const orderGateway = new OrderGateway(database);
-    const orderProductGateway = new OrderProductGateway(database);
     const paymentGateway = new PaymentGateway(payment);
 
     await OrderUseCases.updateStatusOnPaymentReceived(
       orderGateway,
       paymentGateway,
-      orderProductGateway,
       paymentId,
     );
   }
 
   static async delete(database: IDatabase, id: number): Promise<void> {
     const orderGateway = new OrderGateway(database);
-    const orderProductGateway = new OrderProductGateway(database);
 
-    await OrderUseCases.delete(orderGateway, orderProductGateway, id);
+    await OrderUseCases.delete(orderGateway, id);
   }
 }

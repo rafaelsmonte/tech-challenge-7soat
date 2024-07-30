@@ -31,9 +31,4 @@ export interface IDatabase {
   createOrder(order: Order): Promise<Order>;
   updateOrderStatus(order: Order): Promise<Order>;
   deleteOrder(id: number): Promise<void>;
-
-  // OrderProduct
-  findOrderProductsByOrderId(orderId: number): Promise<OrderProduct[]>;
-  createOrderProduct(orderProduct: OrderProduct): Promise<OrderProduct>;
-  deleteOrderProduct(id: number): Promise<void>;
 }

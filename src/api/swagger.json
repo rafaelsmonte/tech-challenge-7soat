@@ -289,7 +289,7 @@
                   "type": "string",
                   "example": "any"
                 },
-                "productsAndQuantity": {
+                "productsWithQuantity": {
                   "type": "object",
                   "example": "any"
                 }

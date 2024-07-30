@@ -1,6 +1,4 @@
-import { Product } from 'src/entities/product.entity';
-
 export type ProductWithQuantity = {
-  product: Product;
+  productId: number;
   quantity: number;
 };
