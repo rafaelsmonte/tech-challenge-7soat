@@ -29,6 +29,10 @@ spec:
             - name: tech-challenge-7soat-volume-claim-db
               mountPath: /var/lib/postgresql/data
               subPath: postgres-data
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "1000m"
           readinessProbe:
             exec:
               command:

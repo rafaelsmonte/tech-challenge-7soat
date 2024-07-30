@@ -315,11 +315,11 @@ Requirements:
 1. Deploy Database
 
 ```
-kubectl apply -f deployment/db/1-db-secrets-store.yaml
-kubectl apply -f deployment/db/2-db-secrets.yaml
-kubectl apply -f deployment/db/3-db-storage-class.yaml
-kubectl apply -f deployment/db/4-db-stateful-set.yaml
-kubectl apply -f deployment/db/5-db-service.yaml
+kubectl apply -f infra/deployment/db/1-db-secrets-store.yaml
+kubectl apply -f infra/deployment/db/2-db-secrets.yaml
+kubectl apply -f infra/deployment/db/3-db-storage-class.yaml
+kubectl apply -f infra/deployment/db/4-db-stateful-set.yaml
+kubectl apply -f infra/deployment/db/5-db-service.yaml
 ```
 
 2. Deploy API
@@ -327,12 +327,12 @@ kubectl apply -f deployment/db/5-db-service.yaml
 **Note**: Make sure the api ECR image is the latest one in deployment file, otherwise, follow the instructions on *API ECR Image Deployment below*
 
 ```
-kubectl apply -f deployment/api/1-api-secrets-store.yaml
-kubectl apply -f deployment/api/2-api-secrets.yaml
-kubectl apply -f deployment/api/3-api-deployment.yaml
-kubectl apply -f deployment/api/4-api-hpa.yaml
-kubectl apply -f deployment/api/5-api-service-load-balancer.yaml
-kubectl apply -f deployment/api/6-api-service-cluster-ip.yaml
+kubectl apply -f infra/deployment/api/1-api-secrets-store.yaml
+kubectl apply -f infra/deployment/api/2-api-secrets.yaml
+kubectl apply -f infra/deployment/api/3-api-deployment.yaml
+kubectl apply -f infra/deployment/api/4-api-hpa.yaml
+kubectl apply -f infra/deployment/api/5-api-service-load-balancer.yaml
+kubectl apply -f infra/deployment/api/6-api-service-cluster-ip.yaml
 ```
 
 *API API ECR Image Deployment*
@@ -346,21 +346,21 @@ From the projects root directory, execute the following command:
 1. Monitoring - Prometheus
 
 ```
-kubectl apply -f deployment/monitoring/prometheus/1-prometheus-node-exporter-daemonset.yaml
-kubectl apply -f deployment/monitoring/prometheus/2-prometheus-service-account.yaml
-kubectl apply -f deployment/monitoring/prometheus/3-prometheus-cluster-role.yaml
-kubectl apply -f deployment/monitoring/prometheus/4-prometheus-cluster-role-binding.yaml
-kubectl apply -f deployment/monitoring/prometheus/5-prometheus-config-map.yaml
-kubectl apply -f deployment/monitoring/prometheus/6-prometheus-dployment.yaml
-kubectl apply -f deployment/monitoring/prometheus/7-prometheus-service.yaml
+kubectl apply -f infra/deployment/monitoring/prometheus/1-prometheus-node-exporter-daemonset.yaml
+kubectl apply -f infra/deployment/monitoring/prometheus/2-prometheus-service-account.yaml
+kubectl apply -f infra/deployment/monitoring/prometheus/3-prometheus-cluster-role.yaml
+kubectl apply -f infra/deployment/monitoring/prometheus/4-prometheus-cluster-role-binding.yaml
+kubectl apply -f infra/deployment/monitoring/prometheus/5-prometheus-config-map.yaml
+kubectl apply -f infra/deployment/monitoring/prometheus/6-prometheus-dployment.yaml
+kubectl apply -f infra/deployment/monitoring/prometheus/7-prometheus-service.yaml
 ```
 
 4. Monitoring - Grafana
 
 ```
-kubectl apply -f deployment/monitoring/grafana/1-grafana-config-map.yaml
-kubectl apply -f deployment/monitoring/grafana/2-grafana-deployment.yaml
-kubectl apply -f deployment/monitoring/grafana/3-grafana-service.yaml
+kubectl apply -f infra/deployment/monitoring/grafana/1-grafana-config-map.yaml
+kubectl apply -f infra/deployment/monitoring/grafana/2-grafana-deployment.yaml
+kubectl apply -f infra/deployment/monitoring/grafana/3-grafana-service.yaml
 ```
 
 ## Grafana Dashboards
