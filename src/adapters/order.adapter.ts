@@ -14,6 +14,7 @@ export const OrderAdapter = {
         trackingId: order.getTrackingId(),
         totalPrice: order.getTotalPrice(),
         status: order.getStatus(),
+        paymentId: order.getPaymentId(),
         customer: customer
           ? {
               id: customer.getId(),
@@ -56,6 +57,7 @@ export const OrderAdapter = {
       trackingId: order.getTrackingId(),
       totalPrice: order.getTotalPrice(),
       status: order.getStatus(),
+      paymentId: order.getPaymentId(),
       customer: customer
         ? {
             id: customer.getId(),
@@ -98,6 +100,7 @@ export const OrderAdapter = {
       trackingId: order.getTrackingId(),
       totalPrice: order.getTotalPrice(),
       status: order.getStatus(),
+      paymentId: order.getPaymentId(),
       customer: customer
         ? {
             id: customer.getId(),

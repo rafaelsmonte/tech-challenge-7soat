@@ -292,7 +292,10 @@ export class TechChallengeApp {
           paymentId,
         )
           .then(() => {
-            response.setHeader('Content-type', 'application/json').status(200);
+            response
+              .setHeader('Content-type', 'application/json')
+              .status(200)
+              .send();
           })
           .catch((error) => this.handleError(error, response));
       },

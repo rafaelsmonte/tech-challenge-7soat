@@ -179,6 +179,8 @@ export class OrderUseCases {
     } else {
       order.setStatus(OrderStatus.PAYMENT_FAILED);
     }
+
+    await orderGateway.updateStatus(order);
   }
 
   static async delete(orderGateway: IOrderGateway, id: number): Promise<void> {
