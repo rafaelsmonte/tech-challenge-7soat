@@ -1,0 +1,41 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+
+env:
+  REPO_NAME: rsmonte/tech-challenge-7soat
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Login into Docker
+      env: 
+        DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME}}
+        DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+      run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+    - name: Build the Docker image
+      run: docker build -t ${{env.REPO_NAME}}:latest .
+    - name: Push to DockerHub
+      run: docker push ${{env.REPO_NAME}}:latest
+
+  deploy:
+    runs-on: self-hosted
+    needs: build-and-push  
+    steps:
+      - name: Login into Docker
+        env: 
+          DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME}}
+          DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+        run: sudo docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+      - name: Removing Old Docker Container
+        run: sudo docker rm -f tech-challenge-7soat-server || true 
+      - name: Removing Old Docker Image
+        run: sudo docker rmi ${{env.REPO_NAME}}:latest || true
+      - name: Pulling Docker Image
+        run: sudo docker pull ${{env.REPO_NAME}}:latest
+      - name: Starting Docker Container
+        run: sudo docker run -d -p 3000:3000 --name tech-challenge-7soat-server ${{env.REPO_NAME}}:latest
