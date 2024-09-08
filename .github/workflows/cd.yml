@@ -1,8 +1,11 @@
 name: Docker Image CI
 
 on:
-  push:
-    branches: [ "main" ]
+  workflow_run:
+    workflows: ["main"]
+    branches: [main]
+    types:
+      - completed
 
 env:
   REPO_NAME: rsmonte/tech-challenge-7soat
