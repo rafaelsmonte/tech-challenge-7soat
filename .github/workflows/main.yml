@@ -3,7 +3,8 @@ name: Docker Image CI
 on:
   push:
     branches: [ "main" ]
-
+env:
+  REPO_NAME: rsmonte/tech-challenge-7soat
 jobs:
   sonar:
     name: Sonar
