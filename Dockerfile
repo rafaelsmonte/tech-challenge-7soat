@@ -1,29 +1,21 @@
-FROM node:20-alpine as builder
+FROM node:18-alpine3.15
 
-ENV NODE_ENV build
+# Create app directory
+WORKDIR /usr/src/app
 
-USER node
-WORKDIR /home/node
+# Bundle app source
+COPY package.json yarn.lock ./
+COPY tsconfig* ./
+# COPY nest-cli.json ./
+COPY prisma/ prisma/
+COPY src/ src/
+COPY docker/docker-entrypoint.sh docker-entrypoint.sh
 
-COPY package*.json yarn.lock ./
-RUN yarn install --frozen-lockfile
+# Building your code for production
+RUN apk add git
+RUN yarn install
+# RUN npx prisma generate
+RUN yarn build
+EXPOSE ${SERVICE_PORT}
 
-COPY --chown=node:node . .
-RUN yarn build \
-    && yarn install --frozen-lockfile --production
-
-# ---
-
-FROM node:20-alpine
-
-ENV NODE_ENV production
-
-USER node
-WORKDIR /home/node
-
-COPY --from=builder --chown=node:node /home/node/package*.json ./
-COPY --from=builder --chown=node:node /home/node/yarn.lock ./
-COPY --from=builder --chown=node:node /home/node/node_modules/ ./node_modules/
-COPY --from=builder --chown=node:node /home/node/dist/ ./dist/
-
-CMD ["node", "dist/app.js"]
+ENTRYPOINT ["sh", "/usr/src/app/docker-entrypoint.sh"]
