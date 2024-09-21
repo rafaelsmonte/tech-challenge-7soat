@@ -9,10 +9,8 @@ export class CustomerGateway implements ICustomerGateway {
     return this.database.findAllCustomers();
   }
 
-  public async findByTaxpayerRegistry(
-    taxpayerRegistry: string,
-  ): Promise<Customer | null> {
-    return this.database.findCustomerByTaxpayerRegistry(taxpayerRegistry);
+  public async findByAccountId(accountId: string): Promise<Customer | null> {
+    return this.database.findCustomerByAccountId(accountId);
   }
 
   public async findById(id: number): Promise<Customer | null> {
@@ -21,9 +19,5 @@ export class CustomerGateway implements ICustomerGateway {
 
   public async create(customer: Customer): Promise<Customer> {
     return this.database.saveCustomer(customer);
-  }
-
-  public async delete(id: number): Promise<void> {
-    return this.database.deleteCustomer(id);
   }
 }

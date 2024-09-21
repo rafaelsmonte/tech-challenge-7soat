@@ -74,9 +74,7 @@ export class PrismaDatabase implements IDatabase {
             customer.id,
             customer.createdAt,
             customer.updatedAt,
-            customer.name,
-            customer.taxpayerRegistry,
-            customer.email,
+            customer.accountId,
           ),
       );
     } catch (error) {
@@ -84,13 +82,11 @@ export class PrismaDatabase implements IDatabase {
     }
   }
 
-  async findCustomerByTaxpayerRegistry(
-    taxpayerRegistry: string,
-  ): Promise<Customer | null> {
+  async findCustomerByAccountId(accountId: string): Promise<Customer | null> {
     try {
       const customer: PrismaCustomer =
-        await this.prismaClient.customer.findUnique({
-          where: { taxpayerRegistry },
+        await this.prismaClient.customer.findFirst({
+          where: { accountId },
         });
 
       if (!customer) return null;
@@ -99,9 +95,7 @@ export class PrismaDatabase implements IDatabase {
         customer.id,
         customer.createdAt,
         customer.updatedAt,
-        customer.name,
-        customer.taxpayerRegistry,
-        customer.email,
+        customer.accountId,
       );
     } catch (error) {
       throw new DatabaseError('Failed to find customer');
@@ -121,9 +115,7 @@ export class PrismaDatabase implements IDatabase {
         customer.id,
         customer.createdAt,
         customer.updatedAt,
-        customer.name,
-        customer.taxpayerRegistry,
-        customer.email,
+        customer.accountId,
       );
     } catch (error) {
       throw new DatabaseError('Failed to find customer');
@@ -135,9 +127,7 @@ export class PrismaDatabase implements IDatabase {
       const createdCustomer: PrismaCustomer =
         await this.prismaClient.customer.create({
           data: {
-            name: customer.getName(),
-            taxpayerRegistry: customer.getTaxpayerRegistry(),
-            email: customer.getEmail(),
+            accountId: customer.getAccountId(),
           },
         });
 
@@ -145,20 +135,10 @@ export class PrismaDatabase implements IDatabase {
         createdCustomer.id,
         createdCustomer.createdAt,
         createdCustomer.updatedAt,
-        createdCustomer.name,
-        createdCustomer.taxpayerRegistry,
-        createdCustomer.email,
+        createdCustomer.accountId,
       );
     } catch (error) {
       throw new DatabaseError('Failed to save customer');
-    }
-  }
-
-  async deleteCustomer(id: number): Promise<void> {
-    try {
-      await this.prismaClient.customer.delete({ where: { id } });
-    } catch (error) {
-      throw new DatabaseError('Failed to delete customer');
     }
   }
 

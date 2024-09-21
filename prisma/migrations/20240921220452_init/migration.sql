@@ -9,9 +9,7 @@ CREATE TABLE "customers" (
     "id" SERIAL NOT NULL,
     "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMPTZ(3) NOT NULL,
-    "name" VARCHAR(256) NOT NULL,
-    "taxpayerRegistry" VARCHAR(256) NOT NULL,
-    "email" VARCHAR(256) NOT NULL,
+    "accountId" VARCHAR(256) NOT NULL,
 
     CONSTRAINT "customers_pkey" PRIMARY KEY ("id")
 );
@@ -66,9 +64,6 @@ CREATE TABLE "orderProducts" (
 
     CONSTRAINT "orderProducts_pkey" PRIMARY KEY ("id")
 );
-
--- CreateIndex
-CREATE UNIQUE INDEX "customers_taxpayerRegistry_key" ON "customers"("taxpayerRegistry");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "orders_paymentId_key" ON "orders"("paymentId");

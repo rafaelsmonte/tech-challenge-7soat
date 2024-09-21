@@ -7,6 +7,7 @@ import { ProductGateway } from '../gateways/product.gateway';
 import { IDatabase } from '../interfaces/database.interface';
 import { IPayment } from '../interfaces/payment.interface';
 import { OrderUseCases } from '../usecases/order.usecases';
+import { CustomerUseCases } from 'src/usecases/customer.usecases';
 
 export class OrderController {
   static async findAll(database: IDatabase): Promise<string> {
@@ -43,7 +44,7 @@ export class OrderController {
     payment: IPayment,
     notes: string,
     productWithQuantity: ProductWithQuantity[],
-    customerId?: number,
+    accountId?: string,
   ): Promise<string> {
     const orderGateway = new OrderGateway(database);
     const productGateway = new ProductGateway(database);
@@ -57,7 +58,7 @@ export class OrderController {
       paymentGateway,
       productWithQuantity,
       notes,
-      customerId,
+      accountId,
     );
 
     return OrderAdapter.adaptJsonWithPayment(ordersDetailWithPayment);

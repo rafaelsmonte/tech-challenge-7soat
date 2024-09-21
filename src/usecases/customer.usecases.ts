@@ -1,5 +1,4 @@
 import { Customer } from '../entities/customer.entity';
-import { CustomerAlreadyRegisteredError } from '../errors/customer-already-registered.error';
 import { CustomerNotFoundError } from '../errors/customer-not-found.error';
 import { ICustomerGateway } from '../interfaces/customer.gateway.interface';
 
@@ -20,45 +19,34 @@ export class CustomerUseCases {
     return customer;
   }
 
-  static async findByTaxpayerRegistry(
+  static async findByAccountId(
     customerGateway: ICustomerGateway,
-    taxpayerRegistry: string,
+    accountId: string,
   ): Promise<Customer> {
-    const customer = await customerGateway.findByTaxpayerRegistry(
-      taxpayerRegistry,
-    );
+    const customer = await customerGateway.findByAccountId(accountId);
 
     if (!customer) throw new CustomerNotFoundError('Customer not found');
 
     return customer;
   }
 
-  static async create(
+  static async findByAccountIdOrCreate(
     customerGateway: ICustomerGateway,
-    name: string,
-    taxpayerRegistry: string,
-    email: string,
+    accountId: string,
   ): Promise<Customer> {
-    const customer = await customerGateway.findByTaxpayerRegistry(
-      taxpayerRegistry,
-    );
+    let customer = await customerGateway.findByAccountId(accountId);
 
-    if (customer)
-      throw new CustomerAlreadyRegisteredError('Customer already registered');
+    if (!customer) {
+      customer = await this.create(customerGateway, accountId);
+    }
 
-    return await customerGateway.create(
-      Customer.new(name, taxpayerRegistry, email),
-    );
+    return customer;
   }
 
-  static async delete(
+  static async create(
     customerGateway: ICustomerGateway,
-    id: number,
-  ): Promise<void> {
-    const customer = await customerGateway.findById(id);
-
-    if (!customer) throw new CustomerNotFoundError('Customer not found');
-
-    await customerGateway.delete(id);
+    accountId: string,
+  ): Promise<Customer> {
+    return await customerGateway.create(Customer.new(accountId));
   }
 }

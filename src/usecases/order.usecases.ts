@@ -14,6 +14,7 @@ import { IProductGateway } from '../interfaces/product.gateway.interface';
 import { ProductWithQuantity } from 'src/types/product-with-quantity.type';
 import { OrderDetail } from 'src/types/order-detail.type';
 import { OrderDetailWithPayment } from 'src/types/order-detail-with-payment.type';
+import { CustomerUseCases } from './customer.usecases';
 
 export class OrderUseCases {
   static async findAll(
@@ -84,16 +85,20 @@ export class OrderUseCases {
     paymentGateway: IPaymentGateway,
     productsWithQuantity: ProductWithQuantity[],
     notes: string,
-    customerId?: number,
+    accountId?: string,
   ): Promise<OrderDetailWithPayment> {
     let productsDetailWithQuantity: ProductDetailWithQuantity[] = [];
     let customer: Customer | null = null;
+    let customerId: number | null = null;
     let totalPrice = 0;
 
-    if (customerId) {
-      customer = await customerGateway.findById(customerId);
+    if (accountId) {
+      customer = await CustomerUseCases.findByAccountIdOrCreate(
+        customerGateway,
+        accountId,
+      );
 
-      if (!customer) throw new CustomerNotFoundError('Customer not found!');
+      customerId = customer.getId();
     }
 
     for (const { productId, quantity } of productsWithQuantity) {
@@ -108,9 +113,7 @@ export class OrderUseCases {
 
     totalPrice = Number(totalPrice.toFixed(2));
 
-    const payment = await paymentGateway.create(
-      Payment.new(totalPrice, customer?.getEmail()),
-    );
+    const payment = await paymentGateway.create(Payment.new(totalPrice));
 
     const newOrder = await orderGateway.create(
       Order.new(

@@ -6,14 +6,10 @@ export class PaymentGateway implements IPaymentGateway {
   constructor(private paymentMethod: IPayment) {}
 
   public async create(payment: Payment): Promise<Payment> {
-    return this.paymentMethod.create(
-      payment.getAmount(),
-      payment.getPayerEmail(),
-    );
+    return this.paymentMethod.create(payment.getAmount());
   }
 
   public async isPaymentApproved(paymentId: number): Promise<boolean> {
     return this.paymentMethod.isPaymentApproved(paymentId);
   }
-
 }

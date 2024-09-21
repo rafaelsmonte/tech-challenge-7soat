@@ -7,9 +7,7 @@ export const CustomerAdapter = {
         id: customer.getId(),
         createdAt: customer.getCreatedAt(),
         updatedAt: customer.getUpdatedAt(),
-        name: customer.getName(),
-        taxpayerRegistry: customer.getTaxpayerRegistry(),
-        email: customer.getEmail(),
+        accountId: customer.getAccountId(),
       };
     });
 
@@ -23,9 +21,7 @@ export const CustomerAdapter = {
       id: customer.getId(),
       createdAt: customer.getCreatedAt(),
       updatedAt: customer.getUpdatedAt(),
-      name: customer.getName(),
-      taxpayerRegistry: customer.getTaxpayerRegistry(),
-      email: customer.getEmail(),
+      accountId: customer.getAccountId(),
     };
 
     return JSON.stringify(mappedCustomer);

@@ -18,9 +18,7 @@ export const OrderAdapter = {
         customer: customer
           ? {
               id: customer.getId(),
-              name: customer.getName(),
-              taxpayerRegistry: customer.getTaxpayerRegistry(),
-              email: customer.getEmail(),
+              accountId: customer.getAccountId(),
             }
           : null,
         products: productsDetailWithQuantity.map(
@@ -61,9 +59,7 @@ export const OrderAdapter = {
       customer: customer
         ? {
             id: customer.getId(),
-            name: customer.getName(),
-            taxpayerRegistry: customer.getTaxpayerRegistry(),
-            email: customer.getEmail(),
+            accountId: customer.getAccountId(),
           }
         : null,
       products: productsDetailWithQuantity.map((productDetailWithQuantity) => {
@@ -104,9 +100,7 @@ export const OrderAdapter = {
       customer: customer
         ? {
             id: customer.getId(),
-            name: customer.getName(),
-            taxpayerRegistry: customer.getTaxpayerRegistry(),
-            email: customer.getEmail(),
+            accountId: customer.getAccountId(),
           }
         : null,
       payment: {

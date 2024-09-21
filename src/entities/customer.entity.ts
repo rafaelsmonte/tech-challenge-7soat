@@ -4,29 +4,18 @@ export class Customer {
   private id: number;
   private createdAt: Date;
   private updatedAt: Date;
-  private name: string;
-  private taxpayerRegistry: string;
-  private email: string;
+  private accountId: string;
 
-  constructor(
-    id: number,
-    createdAt: Date,
-    updatedAt: Date,
-    name: string,
-    taxpayerRegistry: string,
-    email: string,
-  ) {
+  constructor(id: number, createdAt: Date, updatedAt: Date, accountId: string) {
     this.setId(id);
     this.setCreatedAt(createdAt);
     this.setUpdatedAt(updatedAt);
-    this.setName(name);
-    this.setTaxpayerRegistry(taxpayerRegistry);
-    this.setEmail(email);
+    this.setAccountId(accountId);
   }
 
-  static new(name: string, taxpayerRegistry: string, email: string): Customer {
+  static new(accountId: string): Customer {
     const now = new Date();
-    return new Customer(0, now, now, name, taxpayerRegistry, email);
+    return new Customer(0, now, now, accountId);
   }
 
   // getters
@@ -42,16 +31,8 @@ export class Customer {
     return this.updatedAt;
   }
 
-  public getName(): string {
-    return this.name;
-  }
-
-  public getTaxpayerRegistry(): string {
-    return this.taxpayerRegistry;
-  }
-
-  public getEmail(): string {
-    return this.email;
+  public getAccountId(): string {
+    return this.accountId;
   }
 
   // setters
@@ -67,29 +48,11 @@ export class Customer {
     this.updatedAt = updatedAt;
   }
 
-  public setName(name: string): void {
-    this.name = name;
+  public setAccountId(accountId: string): void {
+    this.accountId = accountId;
 
-    if (this.name.length > 50) {
-      throw new InvalidCustomerError('Name size must be lesser than 50');
-    }
-  }
-
-  public setTaxpayerRegistry(taxpayerRegistry: string): void {
-    this.taxpayerRegistry = taxpayerRegistry;
-
-    if (this.taxpayerRegistry.length > 50) {
-      throw new InvalidCustomerError(
-        'TaxpayerRegistry size must be lesser than 50',
-      );
-    }
-  }
-
-  public setEmail(email: string): void {
-    this.email = email;
-
-    if (this.email.length > 50) {
-      throw new InvalidCustomerError('Email size must be lesser than 50');
+    if (this.accountId.length === 0) {
+      throw new InvalidCustomerError('accountId is invalid');
     }
   }
 }

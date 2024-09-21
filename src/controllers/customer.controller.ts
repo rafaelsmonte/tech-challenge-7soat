@@ -18,38 +18,26 @@ export class CustomerController {
     return customerJson;
   }
 
-  static async findByTaxpayerRegistry(
+  static async findByAccountId(
     database: IDatabase,
-    taxpayerRegistry: string,
+    accountId: string,
   ): Promise<string> {
     const customerGateway = new CustomerGateway(database);
-    const customer = await CustomerUseCases.findByTaxpayerRegistry(
+    const customer = await CustomerUseCases.findByAccountId(
       customerGateway,
-      taxpayerRegistry,
+      accountId,
     );
     const customerJson = CustomerAdapter.adaptJson(customer);
     return customerJson;
   }
 
-  static async create(
-    database: IDatabase,
-    name: string,
-    taxpayerRegistry: string,
-    email: string,
-  ): Promise<string> {
+  static async create(database: IDatabase, accountId: string): Promise<string> {
     const customerGateway = new CustomerGateway(database);
     const newCustomer = await CustomerUseCases.create(
       customerGateway,
-      name,
-      taxpayerRegistry,
-      email,
+      accountId,
     );
     const customerJson = CustomerAdapter.adaptJson(newCustomer);
     return customerJson;
-  }
-
-  static async delete(database: IDatabase, id: number): Promise<void> {
-    const customerGateway = new CustomerGateway(database);
-    await CustomerUseCases.delete(customerGateway, id);
   }
 }

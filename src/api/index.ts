@@ -19,6 +19,7 @@ import { IPayment } from '../interfaces/payment.interface';
 import { InvalidPaymentOrderStatusError } from '../errors/invalid-payment-status.error';
 import { IncorrectPaymentActionError } from '../errors/incorrect-payment-action.error';
 import { createHmac } from 'crypto';
+import { cognitoAuthMiddleware } from './cognito-auth.middleware';
 
 export class TechChallengeApp {
   constructor(private database: IDatabase, private payment: IPayment) {}
@@ -71,51 +72,6 @@ export class TechChallengeApp {
         })
         .catch((error) => this.handleError(error, response));
     });
-
-    app.get(
-      '/customer/check-if-exists/:taxpayerRegistry',
-      async (request: Request, response: Response) => {
-        const taxpayerRegistry = request.params.taxpayerRegistry;
-        await CustomerController.findByTaxpayerRegistry(
-          this.database,
-          taxpayerRegistry,
-        )
-          .then((customer) => {
-            response
-              .setHeader('Content-type', 'application/json')
-              .status(200)
-              .send(customer);
-          })
-          .catch((error) => this.handleError(error, response));
-      },
-    );
-
-    app.post('/customer', async (request: Request, response: Response) => {
-      const { name, taxpayerRegistry, email } = request.body;
-      await CustomerController.create(
-        this.database,
-        name,
-        taxpayerRegistry,
-        email,
-      )
-        .then((customer) => {
-          response
-            .setHeader('Content-type', 'application/json')
-            .status(200)
-            .send(customer);
-        })
-        .catch((error) => this.handleError(error, response));
-    });
-
-    app.delete(
-      '/customer/:id',
-      async (request: Request, response: Response) => {
-        const id = Number(request.params.id);
-        await CustomerController.delete(this.database, id)
-          .then(() => response.status(204).send())
-          .catch((error) => this.handleError(error, response));
-      },
-    );
 
     // Category endpoints
     app.get('/category', async (request: Request, response: Response) => {
@@ -203,23 +159,29 @@ export class TechChallengeApp {
         .catch((error) => this.handleError(error, response));
     });
 
-    app.post('/order', async (request: Request, response: Response) => {
-      const { customerId, notes, productsWithQuantity } = request.body;
-      await OrderController.create(
-        this.database,
-        this.payment,
-        notes,
-        productsWithQuantity,
-        customerId,
-      )
-        .then((order) => {
-          response
-            .setHeader('Content-type', 'application/json')
-            .status(200)
-            .send(order);
-        })
-        .catch((error) => this.handleError(error, response));
-    });
+    app.post(
+      '/order',
+      cognitoAuthMiddleware,
+      async (request: Request, response: Response) => {
+        const { notes, productsWithQuantity } = request.body;
+        const accountId = (request as any).accountId;
+
+        await OrderController.create(
+          this.database,
+          this.payment,
+          notes,
+          productsWithQuantity,
+          accountId,
+        )
+          .then((order) => {
+            response
+              .setHeader('Content-type', 'application/json')
+              .status(200)
+              .send(order);
+          })
+          .catch((error) => this.handleError(error, response));
+      },
+    );
 
     // Mercado Pago Webhook
     app.post(

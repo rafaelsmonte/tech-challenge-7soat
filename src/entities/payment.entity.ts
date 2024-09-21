@@ -1,7 +1,6 @@
 export class Payment {
   private id: number;
   private amount: number;
-  private payerEmail?: string;
   private pixQrCode: string;
   private pixQrCodeBase64: string;
 
@@ -10,17 +9,15 @@ export class Payment {
     amount: number,
     pixQrCode: string,
     pixQrCodeBase64: string,
-    payerEmail?: string,
   ) {
     this.setId(id);
     this.setAmount(amount);
     this.setPixQrCode(pixQrCode);
     this.setPixQrCodeBase64(pixQrCodeBase64);
-    this.setPayerEmail(payerEmail);
   }
 
-  static new(amount: number, payerEmail?: string): Payment {
-    return new Payment(0, amount, '', '', payerEmail);
+  static new(amount: number): Payment {
+    return new Payment(0, amount, '', '');
   }
 
   // getters
@@ -30,10 +27,6 @@ export class Payment {
 
   public getAmount(): number {
     return this.amount;
-  }
-
-  public getPayerEmail(): string {
-    return this.payerEmail;
   }
 
   public getPixQrCode(): string {
@@ -51,10 +44,6 @@ export class Payment {
 
   public setAmount(amount: number): void {
     this.amount = amount;
-  }
-
-  public setPayerEmail(payerEmail?: string): void {
-    this.payerEmail = payerEmail;
   }
 
   public setPixQrCode(pixQrCode: string): void {

@@ -10,12 +10,9 @@ export interface IDatabase {
 
   // Customer
   findAllCustomers(): Promise<Customer[]>;
-  findCustomerByTaxpayerRegistry(
-    taxpayerRegistry: string,
-  ): Promise<Customer | null>;
+  findCustomerByAccountId(accountId: string): Promise<Customer | null>;
   findCustomerById(id: number): Promise<Customer | null>;
   saveCustomer(customer: Customer): Promise<Customer>;
-  deleteCustomer(id: number): Promise<void>;
 
   // Product
   findAllProducts(): Promise<Product[]>;

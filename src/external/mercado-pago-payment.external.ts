@@ -2,11 +2,10 @@ import { IPayment } from '../interfaces/payment.interface';
 import { MercadoPagoConfig, Payment as MercadoPagoPayment } from 'mercadopago';
 import { Payment } from '../entities/payment.entity';
 import { PaymentError } from '../errors/payment.error';
-import { createHmac } from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
 
 export class MercadoPago implements IPayment {
-  async create(amount: number, payerEmail?: string): Promise<Payment> {
+  async create(amount: number): Promise<Payment> {
     try {
       const client = new MercadoPagoConfig({
         accessToken: process.env.MERCADO_PAGO_ACCESS_TOKEN || '',
@@ -19,7 +18,7 @@ export class MercadoPago implements IPayment {
         description: '',
         payment_method_id: 'pix',
         payer: {
-          email: payerEmail ?? 'no_customer@stub.com',
+          email: 'stub@stub.com',
         },
       };
 
@@ -36,13 +35,7 @@ export class MercadoPago implements IPayment {
       if (!paymentId || !pixQrCode || !pixQrCodeBase64)
         throw new PaymentError('Failed to create payment');
 
-      return new Payment(
-        paymentId,
-        amount,
-        pixQrCode,
-        pixQrCodeBase64,
-        payerEmail,
-      );
+      return new Payment(paymentId, amount, pixQrCode, pixQrCodeBase64);
     } catch (error: any) {
       console.log(error);
       throw new PaymentError('Failed to create payment');

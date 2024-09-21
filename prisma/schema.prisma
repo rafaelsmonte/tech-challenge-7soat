@@ -8,13 +8,11 @@ datasource db {
 }
 
 model Customer {
-  id               Int      @id @default(autoincrement())
-  createdAt        DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt        DateTime @updatedAt @db.Timestamptz(3)
-  name             String   @db.VarChar(256)
-  taxpayerRegistry String   @unique @db.VarChar(256)
-  email            String   @db.VarChar(256)
-  order            Order[]
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+  accountId String   @db.VarChar(256)
+  order     Order[]
 
   @@map("customers")
 }
