@@ -17,6 +17,8 @@ RUN apk add --no-cache python3 make g++ zip
 RUN apk add git
 RUN yarn install
 
+RUN npx prisma generate
+
 RUN yarn build
 EXPOSE ${SERVICE_PORT}
 
