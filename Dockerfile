@@ -11,10 +11,12 @@ COPY prisma/ prisma/
 COPY src/ src/
 COPY docker/docker-entrypoint.sh docker-entrypoint.sh
 
-# Building your code for production
+RUN apk add --no-cache python3 make g++ zip
+
+
 RUN apk add git
 RUN yarn install
-# RUN npx prisma generate
+
 RUN yarn build
 EXPOSE ${SERVICE_PORT}
 
