@@ -75,6 +75,7 @@ export class TechChallengeApp {
 
     // Category endpoints
     app.get('/category', async (request: Request, response: Response) => {
+      console.log('/category');
       await CategoryController.findAll(this.database)
         .then((categories) => {
           response

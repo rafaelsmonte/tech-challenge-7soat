@@ -21,7 +21,9 @@ export class PrismaDatabase implements IDatabase {
   private prismaClient: PrismaClient;
 
   constructor() {
-    this.prismaClient = new PrismaClient();
+    this.prismaClient = new PrismaClient({
+      log: ['query', 'info', 'warn', 'error'],
+    });
   }
 
   async findAllCategories(): Promise<Category[]> {
