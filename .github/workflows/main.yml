@@ -3,6 +3,18 @@ name: Docker Image CI
 on:
   push:
     branches: [ "main" ]
+sonar:
+  name: Sonar
+  continue-on-error: true #remover
+  runs-on: ubuntu-latest
+  steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0 
+    - uses: sonarsource/sonarqube-scan-action@master
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 jobs:
   build-and-push:
   #needs: sonar
@@ -30,32 +42,8 @@ jobs:
       run: |
         docker build -f docker/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-  # sonar:
-  #   name: Sonar
-  #   continue-on-error: true #remover
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #       with:
-  #         fetch-depth: 0 
-  #     - uses: sonarsource/sonarqube-scan-action@master
-  #       env:
-  #         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-  #         SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-  # build-and-push:
-  #   needs: sonar
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - uses: actions/checkout@v4
-  #   - name: Login into Docker
-  #     env: 
-  #       DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME}}
-  #       DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
-  #     run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-  #   - name: Build the Docker image
-  #     run: docker build -t ${{env.REPO_NAME}}:latest .
-  #   - name: Push to DockerHub
-  #     run: docker push ${{env.REPO_NAME}}:latest
+
+
 
 
   # deploy:
