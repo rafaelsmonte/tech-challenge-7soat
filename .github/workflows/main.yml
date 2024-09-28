@@ -3,19 +3,20 @@ name: Docker Image CI
 on:
   push:
     branches: [ "main" ]
-sonar:
-  name: Sonar
-  continue-on-error: true #remover
-  runs-on: ubuntu-latest
-  steps:
-    - uses: actions/checkout@v3
-      with:
-        fetch-depth: 0 
-    - uses: sonarsource/sonarqube-scan-action@master
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
 jobs:
+  sonar:
+    name: Sonar
+    continue-on-error: true #remover
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 
+      - uses: sonarsource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
   build-and-push:
   #needs: sonar
     name: Build Image
