@@ -48,10 +48,10 @@ jobs:
     
     
     
-    - name: Install eksctl
-      run: |
-        curl --silent --location "https://github.com/weaveworks/eksctl/releases/download/latest_release/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
-        sudo mv /tmp/eksctl /usr/local/bin
+    # - name: Install EKSCTL
+    #   run: |
+    #     curl --silent --location "https://github.com/weaveworks/eksctl/releases/download/latest_release/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+    #     sudo mv /tmp/eksctl /usr/local/bin
 
     - name: Update EKS deployment with new image
       env:
@@ -61,7 +61,7 @@ jobs:
         CLUSTER_NAME: tech-challenge-7soat
         IMAGE_TAG: latest
       run: |
-          eksctl utils write-kubeconfig --cluster=$CLUSTER_NAME --region=secrets.AWS_ECR_REGION
+          aws eks update-kubeconfig --name $EKS_CLUSTER_NAME --region $AWS_REGION
           kubectl rollout restart deployment/$DEPLOYMENT_NAME 
           kubectl set image deployment/$DEPLOYMENT_NAME $CLUSTER_NAME=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG 
 
