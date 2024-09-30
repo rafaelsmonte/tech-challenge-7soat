@@ -39,31 +39,12 @@ jobs:
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY:  tech-challenge-7soat-ecr-api
-        IMAGE_TAG: latest
+        LATEST_TAG: latest
+        BUILD_VERSION_TAG: $(date +%Y-%m-%d-%I_%M_%S_utc)
       run: |
         docker build -f docker/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$BUILD_VERSION
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
 
 
-
-  # deploy:
-  #   runs-on: self-hosted
-  #   needs: build-and-push  
-  #   steps:
-  #     - name: Login into Docker
-  #       env: 
-  #         DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME}}
-  #         DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
-  #       run: sudo docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-  #     - name: Removing Old Docker Container
-  #       run: sudo docker rm -f tech-challenge-7soat-server || true 
-  #     - name: Removing Old Docker Image
-  #       run: sudo docker rmi ${{env.REPO_NAME}}:latest || true
-  #     - name: Pulling Docker Image
-  #       run: sudo docker pull ${{env.REPO_NAME}}:latest
-  #     - name: Starting Docker Container
-  #       run: |
-  #         sudo docker run -d -p 3000:3000 --name tech-challenge-7soat-server \
-  #           -e DATABASE_URL=${{ secrets.DATABASE_URL }} \
-  #           ${{ env.REPO_NAME }}:latest
