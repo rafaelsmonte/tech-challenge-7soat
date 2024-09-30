@@ -1,11 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
 import promMid from 'express-prometheus-middleware';
 import { CategoryController } from '../controllers/category.controller';
-import { CustomerController } from '../controllers/customer.controller';
 import { OrderController } from '../controllers/order.controller';
 import { ProductController } from '../controllers/product.controller';
 import { CategoryNotFoundError } from '../errors/category-not-found.error';
-import { CustomerAlreadyRegisteredError } from '../errors/customer-already-registered.error';
 import { CustomerNotFoundError } from '../errors/customer-not-found.error';
 import { DatabaseError } from '../errors/database.error';
 import { InvalidCustomerError } from '../errors/invalid-customer.error';
@@ -48,30 +46,6 @@ export class TechChallengeApp {
     //Swagger
     const options = require('./swagger.json');
     app.use('/docs', swaggerUi.serve, swaggerUi.setup(options));
-
-    // Customer endpoints
-    app.get('/customer', async (request: Request, response: Response) => {
-      await CustomerController.findAll(this.database)
-        .then((customers) => {
-          response
-            .setHeader('Content-type', 'application/json')
-            .status(200)
-            .send(customers);
-        })
-        .catch((error) => this.handleError(error, response));
-    });
-
-    app.get('/customer/:id', async (request: Request, response: Response) => {
-      const id = Number(request.params.id);
-      await CustomerController.findById(this.database, id)
-        .then((customer) => {
-          response
-            .setHeader('Content-type', 'application/json')
-            .status(200)
-            .send(customer);
-        })
-        .catch((error) => this.handleError(error, response));
-    });
 
     // Category endpoints
     app.get('/category', async (request: Request, response: Response) => {
@@ -311,8 +285,6 @@ export class TechChallengeApp {
       response.status(404).json({ message: error.message });
     } else if (error instanceof CategoryNotFoundError) {
       response.status(404).json({ message: error.message });
-    } else if (error instanceof CustomerAlreadyRegisteredError) {
-      response.status(409).json({ message: error.message });
     } else if (error instanceof DatabaseError) {
       response.status(500).json({ message: error.message });
     } else if (error instanceof PaymentError) {
