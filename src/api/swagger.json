@@ -10,18 +10,6 @@
   "schemes": ["http"],
   "paths": {
     "/customer": {
-      "get": {
-        "description": "Retrieve a list of customers",
-        "produces": ["application/json"],
-        "responses": {
-          "200": {
-            "description": "A list of customers"
-          },
-          "default": {
-            "description": "Unexpected error"
-          }
-        }
-      },
       "post": {
         "description": "Create a new customer",
         "produces": ["application/json"],
@@ -37,7 +25,7 @@
                   "type": "string",
                   "example": "any"
                 },
-                "taxpayerRegistry": {
+                "taxpayerId": {
                   "type": "string",
                   "example": "any"
                 },
@@ -48,91 +36,7 @@
               }
             }
           }
-        ],
-        "responses": {
-          "201": {
-            "description": "Customer created successfully"
-          },
-          "default": {
-            "description": "Unexpected error"
-          }
-        }
-      }
-    },
-    "/customer/{id}": {
-      "get": {
-        "description": "Retrieve details of a customer by ID",
-        "produces": ["application/json"],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "number",
-            "description": "ID of the customer to retrieve"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Customer details"
-          },
-          "404": {
-            "description": "Customer not found"
-          },
-          "default": {
-            "description": "Unexpected error"
-          }
-        }
-      },
-      "delete": {
-        "description": "Delete a customer by ID",
-        "produces": ["application/json"],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "description": "ID of the customer to delete"
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Customer deleted successfully"
-          },
-          "404": {
-            "description": "Customer not found"
-          },
-          "default": {
-            "description": "Unexpected error"
-          }
-        }
-      }
-    },
-    "/customer/check-if-exists/{taxpayerRegistry}": {
-      "get": {
-        "description": "Check if a customer exists by taxpayer registry",
-        "produces": ["application/json"],
-        "parameters": [
-          {
-            "name": "taxpayerRegistry",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "description": "Taxpayer registry of the customer to check"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Customer exists"
-          },
-          "404": {
-            "description": "Customer not found"
-          },
-          "default": {
-            "description": "Unexpected error"
-          }
-        }
+        ]
       }
     },
     "/category": {
