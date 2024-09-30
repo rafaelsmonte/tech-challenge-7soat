@@ -21,9 +21,7 @@ export class PrismaDatabase implements IDatabase {
   private prismaClient: PrismaClient;
 
   constructor() {
-    this.prismaClient = new PrismaClient({
-      log: ['query', 'info', 'warn', 'error'],
-    });
+    this.prismaClient = new PrismaClient();
   }
 
   async findAllCategories(): Promise<Category[]> {
@@ -62,25 +60,6 @@ export class PrismaDatabase implements IDatabase {
       );
     } catch (error) {
       throw new DatabaseError('Failed to find category');
-    }
-  }
-
-  async findAllCustomers(): Promise<Customer[]> {
-    try {
-      const customers: PrismaCustomer[] =
-        await this.prismaClient.customer.findMany();
-
-      return customers.map(
-        (customer) =>
-          new Customer(
-            customer.id,
-            customer.createdAt,
-            customer.updatedAt,
-            customer.accountId,
-          ),
-      );
-    } catch (error) {
-      throw new DatabaseError('Failed to find customers');
     }
   }
 

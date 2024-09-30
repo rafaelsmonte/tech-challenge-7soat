@@ -9,7 +9,6 @@ export interface IDatabase {
   findCategoryById(id: number): Promise<Category | null>;
 
   // Customer
-  findAllCustomers(): Promise<Customer[]>;
   findCustomerByAccountId(accountId: string): Promise<Customer | null>;
   findCustomerById(id: number): Promise<Customer | null>;
   saveCustomer(customer: Customer): Promise<Customer>;
