@@ -42,9 +42,10 @@ jobs:
         LATEST_TAG: latest
         BUILD_VERSION_TAG: $(date +%Y-%m-%d-%I_%M_%S_utc)
       run: |
-        docker build -f docker/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$BUILD_VERSION
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$LATEST_TAG
+        docker build -f docker/Dockerfile -t "service-$BUILD_VERSION_TAG" .
+        docker tag "service-$BUILD_VERSION_TAG:latest" "$ECR_REGISTRY/$ECR_REPOSITORY:service-$BUILD_VERSION_TAG" && docker push "$ECR_REGISTRY/$ECR_REPOSITORY:service-$BUILD_VERSION_TAG"
+        docker tag "service-$BUILD_VERSION_TAG:latest" "$ECR_REGISTRY/$ECR_REPOSITORY:service-$LATEST_TAG" && docker push "$ECR_REGISTRY/$ECR_REPOSITORY:service-$LATEST_TAG"
+
 
 
 
