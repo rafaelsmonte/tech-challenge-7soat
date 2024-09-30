@@ -45,6 +45,27 @@ jobs:
         docker build -f docker/Dockerfile -t "service-$BUILD_VERSION_TAG" .
         docker tag "service-$BUILD_VERSION_TAG:latest" "$ECR_REGISTRY/$ECR_REPOSITORY:service-$BUILD_VERSION_TAG" && docker push "$ECR_REGISTRY/$ECR_REPOSITORY:service-$BUILD_VERSION_TAG"
         docker tag "service-$BUILD_VERSION_TAG:latest" "$ECR_REGISTRY/$ECR_REPOSITORY:$LATEST_TAG" && docker push "$ECR_REGISTRY/$ECR_REPOSITORY:$LATEST_TAG"
+    
+    
+    
+    - name: Install eksctl
+      run: |
+        curl --silent --location "https://github.com/weaveworks/eksctl/releases/download/latest_release/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+        sudo mv /tmp/eksctl /usr/local/bin
+
+    - name: Update EKS deployment with new image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: tech-challenge-7soat-ecr-api
+        DEPLOYMENT_NAME: tech-challenge-7soat-api-deployment
+        CLUSTER_NAME: tech-challenge-7soat
+        IMAGE_TAG: latest
+      run: |
+          eksctl utils write-kubeconfig --cluster=$CLUSTER_NAME --region=secrets.AWS_ECR_REGION
+          kubectl rollout restart deployment/$DEPLOYMENT_NAME 
+          kubectl set image deployment/$DEPLOYMENT_NAME $CLUSTER_NAME=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG 
+
+      
 
 
 
