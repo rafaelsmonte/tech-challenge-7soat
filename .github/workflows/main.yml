@@ -64,7 +64,7 @@ jobs:
         CLUSTER_NAME: tech-challenge-7soat
         IMAGE_TAG: latest
       run: |
-          eksctl utils write-kubeconfig --cluster=$CLUSTER_NAME --region= ${{ secrets.AWS_ECR_REGION }}
+          eksctl utils write-kubeconfig --cluster=$CLUSTER_NAME --region=us-east-1
           kubectl rollout restart deployment/$DEPLOYMENT_NAME 
           kubectl set image deployment/$DEPLOYMENT_NAME $CLUSTER_NAME=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG 
 
