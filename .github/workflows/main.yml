@@ -49,7 +49,7 @@ jobs:
     
   deploy: 
     needs: build-and-push
-    name: Build Image
+    name: Deploy to EKS Image
     runs-on: ubuntu-latest
     environment: production
     steps: 
